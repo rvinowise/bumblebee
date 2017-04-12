@@ -1,25 +1,18 @@
 package game.engine;
 
 
-import android.app.Activity;
 import android.app.ActivityManager;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.pm.ConfigurationInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.opengl.GLES20;
 //import android.opengl.GLES32;
 import static android.opengl.GLES20.*;
 import android.opengl.GLSurfaceView;
 //import android.opengl.Matrix;
 import android.opengl.GLUtils;
 import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.Vector;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -31,7 +24,6 @@ import game.engine.units.animation.Animated;
 import game.engine.units.animation.Animation_type;
 import game.engine.units.Physical;
 import game.engine.units.animation.Sprite_for_loading;
-import game.engine.utils.primitives.Rectangle;
 import game.engine.opengl.Program;
 
 public abstract class Engine
@@ -65,7 +57,7 @@ public abstract class Engine
     public void init(Context context) {
 
         prepare_graphic_settings();
-        load_animations(context);
+        load_sprites(context);
         load_shaders(context);
         init_primitives();
         init_scene();
@@ -142,20 +134,18 @@ public abstract class Engine
 
     abstract public Vector<Sprite_for_loading> getSprites_for_loading();
 
-    protected void load_animations(Context context) {
+    protected void load_sprites(Context context) {
         Vector<Sprite_for_loading> sprites = getSprites_for_loading();
         for (Sprite_for_loading sprite: sprites) {
-            Animation_type animation_type = new Animation_type();
+            Bitmap bmp = load_bitmap_for_sprite(context, sprite);
+
+            Animation_type animation_type = new Animation_type(bmp, sprite.getSprite_rect(), sprite.getFrames_qty());
             glGenTextures(1, animation_type.getTexture().getHandleRef() , 0);
             if (animation_type.getTexture().getHandle() == 0) {
                 throw new RuntimeException("can't create texture");
             }
 
-            final BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inScaled = false;
-            Bitmap bmp = BitmapFactory.decodeResource(
-                    context.getResources(), sprite.getResource_id(), options);
-            //GLES32.glActiveTexture(GLES32.GL_TEXTURE0);
+
             glBindTexture(GL_TEXTURE_2D, animation_type.getTexture().getHandle());
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -165,6 +155,14 @@ public abstract class Engine
             animation_types.add(animation_type);
         }
 
+    }
+
+    private Bitmap load_bitmap_for_sprite(Context context, Sprite_for_loading sprite) {
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inScaled = false;
+        Bitmap bmp = BitmapFactory.decodeResource(
+                context.getResources(), sprite.getResource_id(), options);
+        return bmp;
     }
 
 
@@ -177,7 +175,7 @@ public abstract class Engine
     {
         final float current_moment = System.nanoTime();
         final float time_since_last_step = (current_moment - moment_of_last_step) / 1000000000f;
-        final float framerate = 0.01f;
+        final float framerate = 1f;
         if (time_since_last_step > framerate) {
             step();
             moment_of_last_step = current_moment;
@@ -204,12 +202,19 @@ public abstract class Engine
     private void prepare_to_draw_instance(Animated in_animated) {
         int u_matrix_location = glGetUniformLocation(shader_program.getProgram(), "u_matrix");
         int u_texture_matrix_location = glGetUniformLocation(shader_program.getProgram(), "u_texture_matrix");
+        int u_texture_scale_location = glGetUniformLocation(shader_program.getProgram(), "u_texture_scale");
 
         Matrix final_matrix = in_animated.get_model_matrix();
         final_matrix.multiply(viewport.getProjection_matrix());
-        //final_matrix.multiply(new Matrix().clear().rotate(33));
+
         glUniformMatrix4fv(u_matrix_location, 1, false, final_matrix.data(), 0);
         glUniformMatrix4fv(u_texture_matrix_location, 1, false, in_animated.getTexture_matrix().data(), 0);
+        glUniform2fv(u_texture_scale_location, 1,
+                new float[]{
+                        in_animated.getCurrent_animation().getTexture_scale().getX(),
+                        in_animated.getCurrent_animation().getTexture_scale().getY(),
+                        },
+                0);
     }
 
 

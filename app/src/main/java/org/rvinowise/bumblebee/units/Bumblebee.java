@@ -13,7 +13,7 @@ public class Bumblebee extends Animated {
 
     public Bumblebee() {
         //startAnimation();
-        vector.setX(0.02f);
+        //vector.setX(0.02f);
     }
 
     public static Vector<Integer> getAnimationNames() {
@@ -25,6 +25,7 @@ public class Bumblebee extends Animated {
 
     @Override
     public void step() {
+        super.step();
         position = position.add(vector);
     }
 

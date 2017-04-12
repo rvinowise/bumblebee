@@ -9,31 +9,35 @@ import game.engine.utils.primitives.Point;
 
 public class Animated extends Drawable {
     private int current_frame;
+
+
+
     private Animation_type current_animation;
 
     private Matrix texture_matrix = new Matrix();
 
 
     public Animated() {
-        set_first_frame();
+        //set_first_frame();
     }
 
     public void step() {
+        super.step();
         set_next_frame();
-
-        if (current_frame > current_animation.getFrames_qty()) {
-            set_first_frame();
-        }
     }
 
     private void set_next_frame() {
         current_frame++;
-        texture_matrix.translate(new Point(
-                current_animation.getFrame_offset().getX(),0));
+        if (current_frame > current_animation.getFrames_qty()) {
+            set_first_frame();
+        }
+        current_animation.setMatrix_to_next_frame(texture_matrix, current_frame);
     }
+
     private void set_first_frame() {
         current_frame=0;
-        texture_matrix.clear();
+        current_animation.setMatrix_to_first_frame(texture_matrix);
+        //current_animation.setMatrix_to_frame(texture_matrix, 0);
 
     }
 
@@ -53,5 +57,9 @@ public class Animated extends Drawable {
 
     public Matrix getTexture_matrix() {
         return texture_matrix;
+    }
+
+    public Animation_type getCurrent_animation() {
+        return current_animation;
     }
 }

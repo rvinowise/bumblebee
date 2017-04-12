@@ -14,6 +14,7 @@ import game.engine.Engine;
 import game.engine.units.animation.Sprite_for_loading;
 import game.engine.units.animation.Animated;
 import game.engine.utils.primitives.Point;
+import game.engine.utils.primitives.Rectangle;
 
 
 public class BumblebeeEngine extends Engine
@@ -21,12 +22,13 @@ public class BumblebeeEngine extends Engine
 
 
     public BumblebeeEngine() {
+
     }
 
 
     @Override
     public void init_scene() {
-        getViewport().set_scale_of_shortest_side(20);
+        getViewport().set_scale_of_shortest_side(5);
 
         Animated animated = new Bumblebee();
         this.add_animated(animated);
@@ -43,8 +45,8 @@ public class BumblebeeEngine extends Engine
     @Override
     public Vector<Sprite_for_loading> getSprites_for_loading() {
         Vector<Sprite_for_loading> result = new Vector<Sprite_for_loading>();
-        result.add(new Sprite_for_loading(R.drawable.anim_bumblebee_fly, 3, 2, 6));
-        result.add(new Sprite_for_loading(R.drawable.anim_bumblebee_fly, 3, 2, 4));
+        result.add(new Sprite_for_loading(R.drawable.anim_bumblebee_fly, new Rectangle (32,32), 6));
+        //result.add(new Sprite_for_loading(R.drawable.balloon_red, new Rectangle (128,128), 1));
         return result;
     }
 

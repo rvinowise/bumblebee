@@ -7,7 +7,7 @@ public class Sprite_for_loading {
     private Rectangle sprite_rect;
     private int horizontal_qty;
     private int vertical_qty;
-    private int size;
+    private int frames_qty;
 
     /*public static Sprite_for_loading prepare_for_loading(int in_res_id, Rectangle_shape in_rectangle) {
         Sprite_for_loading result = new Sprite_for_loading();
@@ -19,24 +19,20 @@ public class Sprite_for_loading {
     }*/
 
 
-    public Sprite_for_loading(int in_res_id, Rectangle in_rectangle) {
+    public Sprite_for_loading(int in_res_id, Rectangle in_rectangle, int in_frames_qty) {
         resource_id = in_res_id;
         sprite_rect = in_rectangle;
+        frames_qty = in_frames_qty;
     }
 
     public Sprite_for_loading(
-            int in_res_id, int in_horizontal_qty, int in_vertical_qty, int in_size) {
+            int in_res_id, int in_horizontal_qty, int in_images_qty) {
         resource_id = in_res_id;
         horizontal_qty = in_horizontal_qty;
-        vertical_qty = in_vertical_qty;
-        size = in_size;
+        frames_qty = in_images_qty;
     }
 
 
-    public void requestSprite(int in_res_id, Rectangle in_rectangle) {
-        resource_id = in_res_id;
-        sprite_rect = in_rectangle;
-    }
     public int getResource_id() {
         return resource_id;
     }
@@ -51,6 +47,9 @@ public class Sprite_for_loading {
 
     public int getVertical_qty() {
         return vertical_qty;
+    }
+    public int getFrames_qty() {
+        return frames_qty;
     }
 
 
