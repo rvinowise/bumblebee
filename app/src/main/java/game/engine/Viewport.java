@@ -6,6 +6,9 @@ import static android.opengl.GLES20.*;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 
+import java.util.Collection;
+
+import game.engine.units.Physical;
 import game.engine.utils.primitives.Rectangle;
 import game.engine.opengl.matrices.Matrix;
 import game.engine.opengl.matrices.Projection_matrix;
@@ -21,14 +24,28 @@ public class Viewport {
     private float scale_of_short = 1;
     private Point eye_position;
 
+    private Physical watched;
+    private Point watched_pos;
+    //private Point watched_pos_luft = new Point(0, );
+
     public Viewport() {
 
     }
-    /*public Viewport(Rectangle in_view_rect) {
-        set_view_dimension((int)in_view_rect.getWidth(), (int)in_view_rect.getHeight());
-    }*/
 
-    //@RequiresApi(api = Build.VERSION_CODES.FROYO)
+    public void watch_object(Physical in_watched, Point in_position) {
+        watched = in_watched;
+        watched_pos = in_position;
+    }
+
+    public void adjust_to_watched(Collection<Physical> physicals) {
+        if (watched == null) {
+            return;
+        }
+        Point offset_from_ideal = watched.getPosition().minus(watched_pos);
+        for (Physical physical: physicals) {
+            physical.transpose(offset_from_ideal.reversed());
+        }
+    }
 
     public void set_scale_of_shortest_side(float in_scale) {
         scale_of_short = in_scale;

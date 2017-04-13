@@ -9,10 +9,10 @@ import static game.engine.opengl.primitives.Shape.*;
 
 public class Rectangle_shape {
 
-    private static final float scale=1f;
+    private static final float scale=0.5f;
     private static final float[] shape = {
-            // X, Y, Z,
-            // X Y
+            // ver: X, Y
+            // tex: X, Y
             -scale, -scale,
             0.0f, 1.0f,
 

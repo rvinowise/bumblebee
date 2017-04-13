@@ -33,11 +33,19 @@ public class Point {
                 );
         return res_point;
     }
-    public Point substract(Point in_point) {
+    public Point minus(Point in_point) {
         Point res_point = new Point(
                 this.x - in_point.x,
                 this.y - in_point.y,
                 this.z - in_point.z
+        );
+        return res_point;
+    }
+    public Point reversed() {
+        Point res_point = new Point(
+                -this.x,
+                -this.y,
+                -this.z
         );
         return res_point;
     }

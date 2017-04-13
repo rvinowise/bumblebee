@@ -28,10 +28,11 @@ public class Animated extends Drawable {
 
     private void set_next_frame() {
         current_frame++;
-        if (current_frame > current_animation.getFrames_qty()) {
+        if (current_frame >= current_animation.getFrames_qty()) {
             set_first_frame();
+        } else {
+            current_animation.setMatrix_to_next_frame(texture_matrix, current_frame);
         }
-        current_animation.setMatrix_to_next_frame(texture_matrix, current_frame);
     }
 
     private void set_first_frame() {

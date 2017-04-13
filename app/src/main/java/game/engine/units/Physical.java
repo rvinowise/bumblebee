@@ -21,6 +21,9 @@ public class Physical {
     public void setPosition(Point position) {
         this.position = position;
     }
+    public void transpose(Point in_position) {
+        this.position = this.position.add(in_position);
+    }
 
     public Point getVector() {
         return vector;
@@ -31,5 +34,6 @@ public class Physical {
     }
 
     public void step() {
+        position = position.add(vector);
     }
 }

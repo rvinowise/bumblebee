@@ -26,7 +26,7 @@ public class Bumblebee extends Animated {
     @Override
     public void step() {
         super.step();
-        position = position.add(vector);
+
     }
 
 }

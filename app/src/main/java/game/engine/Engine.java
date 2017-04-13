@@ -87,6 +87,8 @@ public abstract class Engine
         for (Physical physical: physicals) {
             physical.step();
         }
+        viewport.adjust_to_watched(physicals);
+
     }
 
     @Override
@@ -166,16 +168,19 @@ public abstract class Engine
     }
 
 
-    public abstract void init_scene();
+    public void init_scene() {
+        moment_of_last_step = System.nanoTime();
+    }
 
     float moment_of_last_step;
 
     @Override
     public void onDrawFrame(GL10 glUnused)
     {
+
         final float current_moment = System.nanoTime();
         final float time_since_last_step = (current_moment - moment_of_last_step) / 1000000000f;
-        final float framerate = 1f;
+        final float framerate = 0.01f;
         if (time_since_last_step > framerate) {
             step();
             moment_of_last_step = current_moment;
@@ -189,7 +194,7 @@ public abstract class Engine
 
         prepare_to_draw_sprites();
         for (Animation_type animation_type: animation_types) {
-            animation_type.prepare_to_draw_instances();
+            animation_type.prepare_to_draw_instances(shader_program);
 
             for (Animated animated: animation_type.getInstances()) {
                 prepare_to_draw_instance(animated);
@@ -202,19 +207,13 @@ public abstract class Engine
     private void prepare_to_draw_instance(Animated in_animated) {
         int u_matrix_location = glGetUniformLocation(shader_program.getProgram(), "u_matrix");
         int u_texture_matrix_location = glGetUniformLocation(shader_program.getProgram(), "u_texture_matrix");
-        int u_texture_scale_location = glGetUniformLocation(shader_program.getProgram(), "u_texture_scale");
 
         Matrix final_matrix = in_animated.get_model_matrix();
         final_matrix.multiply(viewport.getProjection_matrix());
 
         glUniformMatrix4fv(u_matrix_location, 1, false, final_matrix.data(), 0);
         glUniformMatrix4fv(u_texture_matrix_location, 1, false, in_animated.getTexture_matrix().data(), 0);
-        glUniform2fv(u_texture_scale_location, 1,
-                new float[]{
-                        in_animated.getCurrent_animation().getTexture_scale().getX(),
-                        in_animated.getCurrent_animation().getTexture_scale().getY(),
-                        },
-                0);
+
     }
 
 

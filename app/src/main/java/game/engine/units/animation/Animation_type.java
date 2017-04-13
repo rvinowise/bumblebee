@@ -9,10 +9,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
+import game.engine.opengl.Program;
 import game.engine.opengl.Texture;
 import game.engine.opengl.matrices.Matrix;
 import game.engine.utils.primitives.Point;
 import game.engine.utils.primitives.Rectangle;
+
+import static android.opengl.GLES20.glGetUniformLocation;
+import static android.opengl.GLES20.glUniform2fv;
 
 public class Animation_type {
     private Texture texture = new Texture();
@@ -43,8 +47,17 @@ public class Animation_type {
     public Texture getTexture() {
         return texture;
     }
-    public void prepare_to_draw_instances() {
+
+    public void prepare_to_draw_instances(Program shader_program) {
         texture.bind();
+
+        int u_texture_scale_location = glGetUniformLocation(shader_program.getProgram(), "u_texture_scale");
+        glUniform2fv(u_texture_scale_location, 1,
+                new float[]{
+                        getTexture_scale().getX(),
+                        getTexture_scale().getY(),
+                },
+                0);
     }
 
     public int getFrames_qty() {
@@ -64,23 +77,23 @@ public class Animation_type {
 
     public Matrix setMatrix_to_first_frame(Matrix matrix) {
         matrix.clear();
-        //matrix.
         return matrix;
     }
-    /*public Matrix setMatrix_to_frame(Matrix matrix, int in_frame) {
-        matrix.clear();
-        matrix.
-    }*/
+
     public Matrix setMatrix_to_next_frame(Matrix matrix, int frame) {
-        if (frame < qty_in_row) {
-            matrix.translate(new Point(texture_scale.getX(),0));
-        } else {
+        if (is_first_frame_of_next_row(frame)) {
             matrix.clear();
             final int current_row = (int) Math.ceil(frame / qty_in_row);
             matrix.translate(new Point(0,texture_scale.getY()*current_row));
+        } else {
+            matrix.translate(new Point(texture_scale.getX(),0));
         }
 
         return matrix;
+    }
+
+    private boolean is_first_frame_of_next_row(int in_frame) {
+        return (in_frame%qty_in_row == 0);
     }
 
     public Point getTexture_scale() {
