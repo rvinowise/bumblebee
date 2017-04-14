@@ -2,14 +2,15 @@ package org.rvinowise.bumblebee.units;
 
 
 import org.rvinowise.bumblebee.R;
-
 import java.util.Vector;
-
 import game.engine.units.animation.Animated;
+
+import game.engine.pos_functions.*;
 
 
 public class Bumblebee extends Animated {
 
+    private float rush_speed = 0.01f;
 
     public Bumblebee() {
         //startAnimation();
@@ -29,4 +30,7 @@ public class Bumblebee extends Animated {
 
     }
 
+    public void rush(float direction) {
+        vector = vector.plus(pos_functions.lendir(rush_speed, direction));
+    }
 }

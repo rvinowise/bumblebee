@@ -25,7 +25,7 @@ public class Point {
         z = in_z;
     }
 
-    public Point add(Point in_point) {
+    public Point plus(Point in_point) {
         Point res_point = new Point(
                 in_point.x + this.x,
                 in_point.y + this.y,

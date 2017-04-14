@@ -12,6 +12,9 @@ import android.opengl.GLSurfaceView;
 //import android.opengl.Matrix;
 import android.opengl.GLUtils;
 import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.animation.Animation;
 
 import java.util.Vector;
 
@@ -38,10 +41,10 @@ public abstract class Engine
     private game.engine.opengl.Program shader_program;
 
     private Vector<Physical> physicals = new Vector<Physical>();
-    private Vector<Animated> animated = new Vector<Animated>();
     private Vector<Animation_type> animation_types = new Vector<Animation_type>();
 
     private Viewport viewport = new Viewport();
+    private Human_control control = new Human_control();
 
     private boolean initialized = false;
 
@@ -78,16 +81,32 @@ public abstract class Engine
     public void add_physical(Physical in_physical) {
         physicals.add(in_physical);
     }
-    public void add_animated(Animated in_animated) {
-        animated.add(in_animated);
-        physicals.add(in_animated);
-    }
 
     public void step() {
-        for (Physical physical: physicals) {
-            physical.step();
+        //for (Physical physical: physicals) {
+        for(int i_physical = 0; i_physical < physicals.size(); i_physical++) {
+            Physical physical = physicals.get(i_physical);
+            if (no_need_more(physical)) {
+                remove(i_physical);
+            } else {
+                physical.step();
+            }
         }
         viewport.adjust_to_watched(physicals);
+
+    }
+
+    protected abstract boolean no_need_more(Physical physical);
+
+    protected void remove(int i_physical) {
+        Physical physical = physicals.get(i_physical);
+        if (physical instanceof Animated) {
+            Animated animated = (Animated)physical;
+            animated.getCurrent_animation().removeInstance(animated);
+        }
+
+
+        physicals.remove(i_physical);
 
     }
 
@@ -266,9 +285,7 @@ public abstract class Engine
     public Vector<Physical> getPhysicals() {
         return physicals;
     }
-    public Vector<Animated> getAnimated() {
-        return animated;
-    }
+
     public Vector<Animation_type> getAnimations() {
         return animation_types;
     }
@@ -283,4 +300,12 @@ public abstract class Engine
         // retain this fragment
         setRetainInstance(true);
     }*/
+
+    public boolean onTouch(View v, MotionEvent event) {
+        return control.onTouch(v, event);
+    }
+
+    protected Human_control getControl() {
+        return control;
+    }
 }

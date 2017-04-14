@@ -1,10 +1,7 @@
 package game.engine;
 
 
-import android.opengl.GLES20;
 import static android.opengl.GLES20.*;
-import android.os.Build;
-import android.support.annotation.RequiresApi;
 
 import java.util.Collection;
 
@@ -35,6 +32,10 @@ public class Viewport {
     public void watch_object(Physical in_watched, Point in_position) {
         watched = in_watched;
         watched_pos = in_position;
+    }
+
+    public void setWatched_pos(Point in_pos) {
+        watched_pos = in_pos;
     }
 
     public void adjust_to_watched(Collection<Physical> physicals) {
@@ -83,8 +84,8 @@ public class Viewport {
     }
     private void update_matrices_according_to_my_state() {
         view_matrix = new View_matrix(
-                eye_position.add(new Point(0,0,2)),
-                eye_position.add(new Point(0,0,-5)),
+                eye_position.plus(new Point(0,0,2)),
+                eye_position.plus(new Point(0,0,-5)),
                 new Point(0,1,0)
         );
         projection_matrix = new Projection_matrix(this.view_rect, 1, 10);
@@ -96,7 +97,7 @@ public class Viewport {
     public Projection_matrix getProjection_matrix() {
         return projection_matrix;
     }
-    public Rectangle getView_rect() {
+    public Rectangle getRect() {
         return view_rect;
     }
 

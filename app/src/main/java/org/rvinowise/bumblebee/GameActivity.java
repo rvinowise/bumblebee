@@ -91,11 +91,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        if (event.getAction()==ACTION_DOWN) {
-            //ads.can_show_rewarded();
-            return true;
-        }
-        return false;
+        return engine.onTouch(v, event);
     }
 
 
