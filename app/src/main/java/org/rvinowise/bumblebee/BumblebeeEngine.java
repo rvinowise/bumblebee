@@ -1,8 +1,5 @@
 package org.rvinowise.bumblebee;
 
-import android.view.MotionEvent;
-import android.view.View;
-
 import org.rvinowise.bumblebee.units.Bumblebee;
 import org.rvinowise.bumblebee.walls.Balloon;
 
@@ -14,6 +11,7 @@ import java.util.Vector;
 import javax.microedition.khronos.opengles.GL10;
 
 import game.engine.Engine;
+import game.engine.pos_functions.pos_functions;
 import game.engine.units.Physical;
 import game.engine.units.animation.Sprite_for_loading;
 import game.engine.units.animation.Animated;
@@ -54,13 +52,10 @@ public class BumblebeeEngine extends Engine
         getViewport().watch_object(bumblebee, new Point(-3,0));
 
         Animated balloon = add_balloon();
-        balloon.setPosition(new Point(2, (float) -0.1));
-        getPhysicals().lastElement().setVector(new Point(-0.01f, -0.01f));
-
+        balloon.setPosition(bumblebee.getPosition().plus(new Point(4, -2)));
 
         balloon = add_balloon();
-        balloon.setPosition(new Point(3, (float) 2));
-        balloon.setVector(new Point(0.004f, 0.00f));
+        balloon.setPosition(bumblebee.getPosition().plus(new Point(7, -3)));
 
 
         super.init_scene();
@@ -85,19 +80,51 @@ public class BumblebeeEngine extends Engine
     @Override
     public void step() {
         player_control();
-        process_units_physics();
-        super.step();
+        process_player_physics();
+        process_elementary_physics();
+
         generator.step();
     }
 
-    private void process_units_physics() {
-        final Point gravity_vector = new Point(0f,-0.001f);
-        bumblebee.setVector(bumblebee.getVector().plus(gravity_vector));
+    private void process_elementary_physics() {
+        super.step();
     }
+
+    private void process_player_physics() {
+        //final Point gravity_vector = new Point(0f,-0.001f);
+        //bumblebee.setVector(bumblebee.getVector().plus(gravity_vector));
+
+        final Point go_forward_vector = new Point(0.01f,0f);
+        if (bumblebee.getVector().getX() < 0.1) {
+            bumblebee.setVector(bumblebee.getVector().plus(go_forward_vector));
+        }
+
+        Collection<Physical> collided = getCollided_circle(bumblebee);
+        player_jump_from_balloons(collided);
+    }
+
+    private void player_jump_from_balloons(Collection<Physical> collided) {
+        for (Physical physical: collided) {
+            if (physical instanceof Balloon) {
+                jump_from_balloon(bumblebee, (Balloon)physical);
+            }
+        }
+    }
+
+    private void jump_from_balloon(Physical jumper, Balloon from) {
+        final Point prev_position = jumper.getPosition().minus(jumper.getVector());
+        final float dir_from_balloon = pos_functions.poidir(from.getPosition(), prev_position);
+        final float corner_to_straight_from =pos_functions.corner(jumper.getVectorDirection(), dir_from_balloon);
+        float bounce_dir = Math.abs(corner_to_straight_from) - Math.abs(jumper.getVectorDirection());
+        bounce_dir = bounce_dir * Math.signum(corner_to_straight_from);
+        float bounce_speed = jumper.getVectorLength();
+        jumper.setVector(pos_functions.lendir(bounce_speed, bounce_dir));
+    }
+
 
     private void player_control() {
         if (getControl().isTouched()) {
-            bumblebee.rush(-90);
+            bumblebee.rush(90);
         }
     }
 

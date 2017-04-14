@@ -1,14 +1,17 @@
 package game.engine.units;
 
+import game.engine.pos_functions.pos_functions;
 import game.engine.utils.primitives.Point;
 
 
-public class Physical {
+abstract public class Physical {
 
 
     protected Point position = new Point(0,0);
 
     protected Point vector = new Point(0,0);
+
+
 
     public Physical() {
 
@@ -35,5 +38,15 @@ public class Physical {
 
     public void step() {
         position = position.plus(vector);
+    }
+
+    abstract public float getRadius();
+
+    public float getVectorDirection() {
+        return pos_functions.poidir(new Point(0,0), getVector());
+    }
+
+    public float getVectorLength() {
+        return pos_functions.poidis(new Point(0,0), getVector());
     }
 }

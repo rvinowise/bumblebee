@@ -6,12 +6,12 @@ import game.engine.units.animation.Animated;
 
 public class Balloon extends Animated {
 
-    static public float getRadius() {
+    static public float getStandardRadius() {
         return 0.4f;
     }
 
     public Balloon() {
-
+        setRadius(getStandardRadius());
     }
 
 

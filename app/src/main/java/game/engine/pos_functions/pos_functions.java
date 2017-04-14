@@ -61,8 +61,8 @@ public class pos_functions {
 	}
 
 
-	static public float  corner(int c1,int c2) {
-		int a; int b;
+	static public float  corner(float c1,float c2) {
+		float a; float b;
 		a=360-c1+c2;
 		if (a>360) {
 			a=a-360;

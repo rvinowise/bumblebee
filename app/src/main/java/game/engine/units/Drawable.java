@@ -5,6 +5,7 @@ import game.engine.opengl.matrices.Matrix;
 
 public class Drawable extends Physical {
     private float direction;
+    private float radius;
 
     public float getDirection() {
         return direction;
@@ -22,4 +23,12 @@ public class Drawable extends Physical {
         return model_matrix;
     }
 
+    @Override
+    public float getRadius() {
+        return radius;
+    }
+
+    public void setRadius(float in_radius) {
+        radius = in_radius;
+    }
 }

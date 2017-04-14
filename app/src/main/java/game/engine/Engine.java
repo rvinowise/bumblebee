@@ -16,6 +16,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 
+import org.rvinowise.bumblebee.units.Bumblebee;
+
+import java.util.Collection;
 import java.util.Vector;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -23,6 +26,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 import game.engine.opengl.matrices.Matrix;
 import game.engine.opengl.primitives.Rectangle_shape;
+import game.engine.pos_functions.pos_functions;
 import game.engine.units.animation.Animated;
 import game.engine.units.animation.Animation_type;
 import game.engine.units.Physical;
@@ -30,7 +34,6 @@ import game.engine.units.animation.Sprite_for_loading;
 import game.engine.opengl.Program;
 
 public abstract class Engine
-        //extends Fragment
         implements GLSurfaceView.Renderer
 
 {
@@ -83,7 +86,6 @@ public abstract class Engine
     }
 
     public void step() {
-        //for (Physical physical: physicals) {
         for(int i_physical = 0; i_physical < physicals.size(); i_physical++) {
             Physical physical = physicals.get(i_physical);
             if (no_need_more(physical)) {
@@ -105,9 +107,7 @@ public abstract class Engine
             animated.getCurrent_animation().removeInstance(animated);
         }
 
-
         physicals.remove(i_physical);
-
     }
 
     @Override
@@ -199,7 +199,7 @@ public abstract class Engine
 
         final float current_moment = System.nanoTime();
         final float time_since_last_step = (current_moment - moment_of_last_step) / 1000000000f;
-        final float framerate = 0.01f;
+        final float framerate = 0.02f;
         if (time_since_last_step > framerate) {
             step();
             moment_of_last_step = current_moment;
@@ -307,5 +307,17 @@ public abstract class Engine
 
     protected Human_control getControl() {
         return control;
+    }
+
+    public Collection<Physical> getCollided_circle(Physical in_physical) {
+        Vector<Physical> result = new Vector<Physical>();
+        for (Physical physical: physicals) {
+            final float collision_distance = in_physical.getRadius() + physical.getRadius();
+            final float real_distance = pos_functions.poidis(in_physical.getPosition(), physical.getPosition());
+            if (real_distance <= collision_distance) {
+                result.add(physical);
+            }
+        }
+        return result;
     }
 }

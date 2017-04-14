@@ -10,9 +10,10 @@ import game.engine.pos_functions.*;
 
 public class Bumblebee extends Animated {
 
-    private float rush_speed = 0.01f;
+    private float rush_speed = 0.05f;
 
     public Bumblebee() {
+        setRadius(0.3f);
         //startAnimation();
         //vector.setX(0.02f);
     }
