@@ -120,14 +120,15 @@ public class Program {
         Program.current = null;
     }
 
-    /**
-     * Define the uniform variable name to be used in the shader.
-     * @param name
-     */
+
     public void define_uniform(String name) {
         uniforms.put(name, glGetUniformLocation(program, name));
     }
 
+    public int get_uniform(String name) {
+        //return (Integer)uniforms.get(name);
+        return glGetUniformLocation(program, name);
+    }
 
 
     /**

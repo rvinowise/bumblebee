@@ -43,13 +43,15 @@ public abstract class Engine
 
     private game.engine.opengl.Program shader_program;
 
-    private Vector<Physical> physicals = new Vector<Physical>();
-    private Vector<Animation_type> animation_types = new Vector<Animation_type>();
+    final private Vector<Physical> physicals = new Vector<Physical>();
+    final private Vector<Animation_type> animation_types = new Vector<Animation_type>();
 
-    private Viewport viewport = new Viewport();
-    private Human_control control = new Human_control();
+    final private Viewport viewport = new Viewport();
+    final private Human_control control = new Human_control();
 
     private boolean initialized = false;
+
+    final private Score score = new Score();
 
 
     protected Engine() {
@@ -67,6 +69,12 @@ public abstract class Engine
         load_shaders(context);
         init_primitives();
         init_scene();
+        init_score();
+    }
+
+    private void init_score() {
+        score.init_opengl();
+        score.prepare_text("Lol 78 81 95");
     }
 
 
@@ -95,6 +103,7 @@ public abstract class Engine
             }
         }
         viewport.adjust_to_watched(physicals);
+        //score.prepare_text();
 
     }
 
@@ -137,8 +146,10 @@ public abstract class Engine
 
             shader_program.define_uniform("u_matrix");
             shader_program.define_uniform("u_texture_matrix");
+            shader_program.define_uniform("u_texture_scale");
             shader_program.bind_attribute("a_position");
             shader_program.bind_attribute("a_texture_position");
+
 
             shader_program.link();
             shader_program.validate();
@@ -221,18 +232,16 @@ public abstract class Engine
                 glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
             }
         }
+
+        score.draw(shader_program);
     }
 
     private void prepare_to_draw_instance(Animated in_animated) {
-        int u_matrix_location = glGetUniformLocation(shader_program.getProgram(), "u_matrix");
-        int u_texture_matrix_location = glGetUniformLocation(shader_program.getProgram(), "u_texture_matrix");
-
         Matrix final_matrix = in_animated.get_model_matrix();
         final_matrix.multiply(viewport.getProjection_matrix());
 
-        glUniformMatrix4fv(u_matrix_location, 1, false, final_matrix.data(), 0);
-        glUniformMatrix4fv(u_texture_matrix_location, 1, false, in_animated.getTexture_matrix().data(), 0);
-
+        glUniformMatrix4fv(shader_program.get_uniform("u_matrix"), 1, false, final_matrix.data(), 0);
+        glUniformMatrix4fv(shader_program.get_uniform("u_texture_matrix"), 1, false, in_animated.getTexture_matrix().data(), 0);
     }
 
 

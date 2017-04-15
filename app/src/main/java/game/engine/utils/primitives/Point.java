@@ -1,6 +1,7 @@
 package game.engine.utils.primitives;
 
 
+import static java.lang.Math.*;
 
 public class Point {
 
@@ -41,6 +42,15 @@ public class Point {
         );
         return res_point;
     }
+    public Point abs_minus(Point in_point) {
+        Point res_point = new Point(
+                signum(this.x) * abs(this.x) - in_point.x,
+                signum(this.y) * abs(this.y) - in_point.y,
+                signum(this.z) * abs(this.z) - in_point.z
+        );
+        return res_point;
+    }
+
     public Point reversed() {
         Point res_point = new Point(
                 -this.x,
@@ -68,5 +78,19 @@ public class Point {
     public void setZ(float z) {
         this.z = z;
     }
+
+    public boolean is_null() {
+        return (x==0)&&(y==0);
+    }
+
+    public Point divide(float i) {
+        Point res_point = new Point(
+                this.x/2,
+                this.y/2,
+                this.z/2
+        );
+        return res_point;
+    }
+
 }
 

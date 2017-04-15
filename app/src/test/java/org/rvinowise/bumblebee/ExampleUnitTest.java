@@ -2,6 +2,7 @@ package org.rvinowise.bumblebee;
 
 import org.junit.Test;
 
+import static game.engine.pos_functions.pos_functions.corner;
 import static org.junit.Assert.*;
 
 /**
@@ -14,4 +15,23 @@ public class ExampleUnitTest {
     public void addition_isCorrect() throws Exception {
         assertEquals(4, 2 + 2);
     }
+
+
+    @Test
+    public void test_corner() {
+        float a = 30;
+        float b = 70;
+        float c;
+        c = corner(200, 210);
+        c = corner(210, 200);
+        c = corner(-210, -200);
+        c = corner(-200, -210);
+
+        c = corner(-210, 200);
+        c = corner(200, -210);
+
+        c = corner(210, -200);
+        c = corner(-200, 210);
+    }
+
 }

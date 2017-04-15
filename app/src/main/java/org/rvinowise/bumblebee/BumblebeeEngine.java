@@ -2,6 +2,7 @@ package org.rvinowise.bumblebee;
 
 import org.rvinowise.bumblebee.units.Bumblebee;
 import org.rvinowise.bumblebee.walls.Balloon;
+import org.rvinowise.bumblebee.walls.Water;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -31,6 +32,8 @@ public class BumblebeeEngine extends Engine
         return balloons;
     }
 
+    private float water_height = -2;
+
     public BumblebeeEngine() {
 
     }
@@ -49,13 +52,15 @@ public class BumblebeeEngine extends Engine
         getPhysicals().lastElement().setVector(new Point(0.1f, -0.00f));
         //animated.setDirection(330);
 
-        getViewport().watch_object(bumblebee, new Point(-3,0));
+        getViewport().watch_object(bumblebee, new Rectangle(0,0,0,0));
 
         Animated balloon = add_balloon();
         balloon.setPosition(bumblebee.getPosition().plus(new Point(4, -2)));
 
         balloon = add_balloon();
         balloon.setPosition(bumblebee.getPosition().plus(new Point(7, -3)));
+
+        Water.init(getViewport(), getAnimations().get(2), getPhysicals());
 
 
         super.init_scene();
@@ -91,8 +96,8 @@ public class BumblebeeEngine extends Engine
     }
 
     private void process_player_physics() {
-        //final Point gravity_vector = new Point(0f,-0.001f);
-        //bumblebee.setVector(bumblebee.getVector().plus(gravity_vector));
+        final Point gravity_vector = new Point(0f,-0.001f);
+        bumblebee.setVector(bumblebee.getVector().plus(gravity_vector));
 
         final Point go_forward_vector = new Point(0.01f,0f);
         if (bumblebee.getVector().getX() < 0.1) {
@@ -113,10 +118,9 @@ public class BumblebeeEngine extends Engine
 
     private void jump_from_balloon(Physical jumper, Balloon from) {
         final Point prev_position = jumper.getPosition().minus(jumper.getVector());
-        final float dir_from_balloon = pos_functions.poidir(from.getPosition(), prev_position);
-        final float corner_to_straight_from =pos_functions.corner(jumper.getVectorDirection(), dir_from_balloon);
-        float bounce_dir = Math.abs(corner_to_straight_from) - Math.abs(jumper.getVectorDirection());
-        bounce_dir = bounce_dir * Math.signum(corner_to_straight_from);
+        final float dir_to_balloon = pos_functions.poidir(prev_position, from.getPosition());
+        float corner =pos_functions.corner(jumper.getVectorDirection(), dir_to_balloon);
+        float bounce_dir = (dir_to_balloon-180) + corner;
         float bounce_speed = jumper.getVectorLength();
         jumper.setVector(pos_functions.lendir(bounce_speed, bounce_dir));
     }
@@ -145,16 +149,20 @@ public class BumblebeeEngine extends Engine
         Vector<Sprite_for_loading> result = new Vector<Sprite_for_loading>();
         result.add(new Sprite_for_loading(R.drawable.anim_bumblebee_fly_real, new Rectangle (32,32), 6));
         result.add(new Sprite_for_loading(R.drawable.balloon_red, new Rectangle (128,128), 1));
+        result.add(new Sprite_for_loading(R.drawable.water, new Rectangle (256,32), 5));
         return result;
     }
 
     @Override
     public void onSurfaceChanged(GL10 glUnused, int width, int height) {
         super.onSurfaceChanged(glUnused, width, height);
-        getViewport().setWatched_pos(new Point(
-                getViewport().getRect().getLeft()/2,
-                0
-        ));
+        getViewport().setWatched_rect(
+                new Rectangle(
+                    getViewport().getRect().getLeft()+(bumblebee.getRadius()*2),
+                    getViewport().getRect().getLeft()+(bumblebee.getRadius()*2)+2,
+                        0,
+                        getViewport().getRect().getTop()-(bumblebee.getRadius())
+                ));
 
     }
 
@@ -167,5 +175,7 @@ public class BumblebeeEngine extends Engine
     }
 
 
-
+    public float getWaterHeight() {
+        return water_height;
+    }
 }

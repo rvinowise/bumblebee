@@ -1,5 +1,7 @@
 package game.engine.pos_functions;
 
+import org.testng.annotations.Test;
+
 import java.lang.Math.*;
 import static java.lang.Math.*;
 
@@ -62,20 +64,12 @@ public class pos_functions {
 
 
 	static public float  corner(float c1,float c2) {
-		float a; float b;
-		a=360-c1+c2;
-		if (a>360) {
-			a=a-360;
+		float res;
+		res = c2 - c1;
+		if (abs(res) > 180) {
+			res = -signum(res) * (360 - abs(res));
 		}
-		b=360-a;
-		if (a<b) {
-			return a;
-		} else if (b<a) {
-			return -b;
-		} else if (c1!=c2) {
-			return 180;
-		}
-		return 0;
+		return res;
 	}
 
 
@@ -182,12 +176,5 @@ public class pos_functions {
 		return point;
 	}
 
-	static public float abs(float inNumber) {
-		if (inNumber > 0) {
-			return inNumber;
-		} else {
-			return -inNumber;
-		}
-	}
 
 }

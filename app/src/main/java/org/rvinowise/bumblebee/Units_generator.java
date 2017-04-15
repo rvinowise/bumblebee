@@ -2,6 +2,7 @@ package org.rvinowise.bumblebee;
 
 
 import org.rvinowise.bumblebee.walls.Balloon;
+import org.rvinowise.bumblebee.walls.Water;
 
 import java.util.Random;
 
@@ -22,7 +23,12 @@ public class Units_generator {
         if (too_few_balloons()) {
             create_balloon_ahead();
         }
+        if (Water.no_water_ahead()) {
+            Water.prolongate();
+        }
     }
+
+
 
     private boolean too_few_balloons() {
         if (engine.getBalloons().size() < 7) {
@@ -38,5 +44,6 @@ public class Units_generator {
         Balloon balloon = engine.add_balloon();
         balloon.setPosition(new Point(line_ahead, random_height));
     }
+
 
 }

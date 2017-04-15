@@ -16,6 +16,11 @@ public class Matrix {
         return m_data;
     }
 
+    public static Matrix getClear() {
+        Matrix matrix = new Matrix();
+        return matrix.clear();
+    }
+
     public Matrix clear() {
         android.opengl.Matrix.setIdentityM(m_data, 0);
         return this;

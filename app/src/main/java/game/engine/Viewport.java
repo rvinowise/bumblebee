@@ -22,29 +22,40 @@ public class Viewport {
     private Point eye_position;
 
     private Physical watched;
-    private Point watched_pos;
-    //private Point watched_pos_luft = new Point(0, );
+    //private Point watched_pos;
+    //private Point watched_pos_luft = new Point(0, 1);
+    private Rectangle watched_rect;
 
     public Viewport() {
 
     }
 
-    public void watch_object(Physical in_watched, Point in_position) {
+    public void watch_object(Physical in_watched, Rectangle in_rect) {
         watched = in_watched;
-        watched_pos = in_position;
+        watched_rect = in_rect;
     }
 
-    public void setWatched_pos(Point in_pos) {
-        watched_pos = in_pos;
+    public void setWatched_rect(Rectangle in_rect) {
+         watched_rect = in_rect;
+    }
+    public void setWatched_rect(Point in_position) {
+        watched_rect = new Rectangle(in_position.getX(),in_position.getX(),in_position.getY(),in_position.getY());
     }
 
     public void adjust_to_watched(Collection<Physical> physicals) {
         if (watched == null) {
             return;
         }
-        Point offset_from_ideal = watched.getPosition().minus(watched_pos);
-        for (Physical physical: physicals) {
-            physical.transpose(offset_from_ideal.reversed());
+        //Point offset_from_ideal = watched.getPosition().minus(watched_rect.get_center());
+
+        if (!watched_rect.has_inside(watched.getPosition())) {
+            Point needed_offset =
+                    watched_rect.get_nearest_point(watched.getPosition()).minus(
+                            watched.getPosition());
+
+            for (Physical physical : physicals) {
+                physical.transpose(needed_offset);
+            }
         }
     }
 
@@ -108,5 +119,9 @@ public class Viewport {
         model_matrix.multiply(view_matrix);
         model_matrix.multiply(projection_matrix);
         //return res_matrix;
+    }
+
+    public Rectangle getWatched_rect() {
+        return watched_rect;
     }
 }

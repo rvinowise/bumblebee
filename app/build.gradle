@@ -33,6 +33,8 @@ dependencies {
     //compile 'com.google.android.gms:play-services:10.2.1'
 
     testCompile 'junit:junit:4.12'
+    compile 'junit:junit:4.12'
+    compile 'org.testng:testng:6.9.6'
 }
 
 

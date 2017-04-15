@@ -51,8 +51,7 @@ public class Animation_type {
     public void prepare_to_draw_instances(Program shader_program) {
         texture.bind();
 
-        int u_texture_scale_location = glGetUniformLocation(shader_program.getProgram(), "u_texture_scale");
-        glUniform2fv(u_texture_scale_location, 1,
+        glUniform2fv(shader_program.get_uniform("u_texture_scale"), 1,
                 new float[]{
                         getTexture_scale().getX(),
                         getTexture_scale().getY(),
