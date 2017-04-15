@@ -23,9 +23,9 @@ public class Units_generator {
         if (too_few_balloons()) {
             create_balloon_ahead();
         }
-        if (Water.no_water_ahead()) {
+        /*if (Water.no_water_ahead()) {
             Water.prolongate();
-        }
+        }*/
     }
 
 
@@ -40,7 +40,7 @@ public class Units_generator {
     private void create_balloon_ahead() {
         float line_ahead = engine.getViewport().getRect().getRight()+ Balloon.getStandardRadius();
         float random_height = engine.getViewport().getRect().getBottom()+
-                random.nextInt((int) (engine.getViewport().getRect().getHeight() - Balloon.getStandardRadius()*2));
+                random.nextInt((int) (engine.getViewport().getRect().getHeight()+1 - Balloon.getStandardRadius()*2));
         Balloon balloon = engine.add_balloon();
         balloon.setPosition(new Point(line_ahead, random_height));
     }

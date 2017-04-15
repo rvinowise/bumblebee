@@ -43,7 +43,7 @@ public class BumblebeeEngine extends Engine
     public void init_scene() {
 
 
-        getViewport().set_scale_of_shortest_side(5);
+        getViewport().set_scale_of_shortest_side(7);
 
         bumblebee = new Bumblebee();
         this.add_physical(bumblebee);
@@ -60,7 +60,7 @@ public class BumblebeeEngine extends Engine
         balloon = add_balloon();
         balloon.setPosition(bumblebee.getPosition().plus(new Point(7, -3)));
 
-        Water.init(getViewport(), getAnimations().get(2), getPhysicals());
+        //Water.init(getViewport(), getAnimations().get(2), getPhysicals());
 
 
         super.init_scene();

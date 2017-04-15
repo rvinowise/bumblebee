@@ -40,4 +40,9 @@ public class Matrix {
     public void multiply(Matrix in_matrix) {
         android.opengl.Matrix.multiplyMM(m_data, 0, in_matrix.data(), 0, m_data, 0);
     }
+
+    public Matrix scale(Point point) {
+        android.opengl.Matrix.scaleM(m_data, 0, point.getX(), point.getY(), point.getZ());
+        return this;
+    }
 }
