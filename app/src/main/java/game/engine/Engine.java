@@ -32,6 +32,7 @@ import game.engine.units.animation.Animation_type;
 import game.engine.units.Physical;
 import game.engine.units.animation.Sprite_for_loading;
 import game.engine.opengl.Program;
+import static java.lang.Math.*;
 
 public abstract class Engine
         implements GLSurfaceView.Renderer
@@ -74,7 +75,7 @@ public abstract class Engine
 
     private void init_score() {
         score.init_opengl();
-        score.prepare_text("Lol 78 81 95");
+        score.prepare_text("123");
     }
 
 
@@ -203,6 +204,7 @@ public abstract class Engine
     }
 
     float moment_of_last_step;
+    float last_delay = 0;
 
     @Override
     public void onDrawFrame(GL10 glUnused)
@@ -214,9 +216,21 @@ public abstract class Engine
         if (time_since_last_step > framerate) {
             step();
             moment_of_last_step = current_moment;
+            process_fps(time_since_last_step);
+            draw();
         }
 
-        draw();
+
+
+
+    }
+
+    private void process_fps(float in_delay) {
+        final float relevant_delay_difference = 0.000001f;
+        if (abs(last_delay - in_delay) > relevant_delay_difference) {
+            score.prepare_text(String.valueOf(in_delay));
+        }
+        last_delay = in_delay;
     }
 
     public void draw() {

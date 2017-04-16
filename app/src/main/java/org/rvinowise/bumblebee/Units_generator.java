@@ -23,9 +23,9 @@ public class Units_generator {
         if (too_few_balloons()) {
             create_balloon_ahead();
         }
-        /*if (Water.no_water_ahead()) {
+        if (Water.no_water_ahead()) {
             Water.prolongate();
-        }*/
+        }
     }
 
 

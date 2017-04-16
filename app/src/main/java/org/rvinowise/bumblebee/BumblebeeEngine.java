@@ -34,8 +34,16 @@ public class BumblebeeEngine extends Engine
 
     private float water_height = -2;
 
-    public BumblebeeEngine() {
 
+    public BumblebeeViewport getBumblebeeViewport() {
+        return bumblebee_viewport;
+    }
+
+    BumblebeeViewport bumblebee_viewport;
+
+
+    public BumblebeeEngine() {
+        //viewport = new BumblebeeViewport(super.getViewport());
     }
 
 
@@ -43,7 +51,7 @@ public class BumblebeeEngine extends Engine
     public void init_scene() {
 
 
-        getViewport().set_scale_of_shortest_side(7);
+        super.getViewport().set_scale_of_shortest_side(7);
 
         bumblebee = new Bumblebee();
         this.add_physical(bumblebee);
@@ -52,7 +60,7 @@ public class BumblebeeEngine extends Engine
         getPhysicals().lastElement().setVector(new Point(0.1f, -0.00f));
         //animated.setDirection(330);
 
-        getViewport().watch_object(bumblebee, new Rectangle(0,0,0,0));
+        init_viewport();
 
         Animated balloon = add_balloon();
         balloon.setPosition(bumblebee.getPosition().plus(new Point(4, -2)));
@@ -60,10 +68,17 @@ public class BumblebeeEngine extends Engine
         balloon = add_balloon();
         balloon.setPosition(bumblebee.getPosition().plus(new Point(7, -3)));
 
-        //Water.init(getViewport(), getAnimations().get(2), getPhysicals());
+        Water.init(super.getViewport(), getAnimations().get(2), (Collection)getPhysicals());
+
 
 
         super.init_scene();
+    }
+
+    private void init_viewport() {
+        bumblebee_viewport = new BumblebeeViewport(super.getViewport(), bumblebee);
+        super.getViewport().watch_object(bumblebee);
+        getBumblebeeViewport().setWatch_upto_bottom(0);
     }
 
     public Balloon add_balloon() {
@@ -86,9 +101,29 @@ public class BumblebeeEngine extends Engine
     public void step() {
         player_control();
         process_player_physics();
+        process_changing_viewport();
         process_elementary_physics();
+        Water.step_instances();
+
 
         generator.step();
+    }
+
+    private void process_changing_viewport() {
+
+        float distance_to_water = bumblebee.getPosition().getY() - Water.getLast_instance().getPosition().getY();
+        if (
+                (getBumblebeeViewport().getWatch_upto_bottom() == 0)&&
+                (distance_to_water < super.getViewport().getRect().getHeight()/2)
+                ) {
+            getBumblebeeViewport().setWatch_upto_bottom(super.getViewport().getRect().getBottom());
+        } else if (
+                (getBumblebeeViewport().getWatch_upto_bottom() < 0)&&
+                (distance_to_water >= super.getViewport().getRect().getHeight()/2)
+                ) {
+            getBumblebeeViewport().setWatch_upto_bottom(0);
+        }
+
     }
 
     private void process_elementary_physics() {
@@ -138,10 +173,18 @@ public class BumblebeeEngine extends Engine
     }
 
     private boolean is_left_map(Physical physical) {
-        if (physical.getPosition().getX() < -getViewport().getRect().getWidth()/2) {
+        if (physical instanceof Water) {
+            return is_water_left_map((Water) physical);
+        }
+
+        if (physical.getPosition().getX() < -super.getViewport().getRect().getWidth()/2) {
             return true;
         }
         return false;
+    }
+
+    private boolean is_water_left_map(Water water) {
+        return (water.getPosition().getX()+water.getRect().getWidth()/2) < super.getViewport().getRect().getLeft();
     }
 
     @Override
@@ -156,15 +199,9 @@ public class BumblebeeEngine extends Engine
     @Override
     public void onSurfaceChanged(GL10 glUnused, int width, int height) {
         super.onSurfaceChanged(glUnused, width, height);
-        getViewport().setWatched_rect(
-                new Rectangle(
-                    getViewport().getRect().getLeft()+(bumblebee.getRadius()*2),
-                    getViewport().getRect().getLeft()+(bumblebee.getRadius()*2)+2,
-                        0,
-                        getViewport().getRect().getTop()-(bumblebee.getRadius())
-                ));
-
+        //update_watched_rect();
     }
+
 
     public void onAdLoaded() {
 

@@ -12,6 +12,7 @@ import java.util.Vector;
 
 import game.engine.Viewport;
 import game.engine.opengl.Texture;
+import game.engine.opengl.matrices.Matrix;
 import game.engine.units.animation.Animated;
 import game.engine.units.animation.Animation_type;
 import game.engine.utils.primitives.Point;
@@ -22,7 +23,7 @@ public class Water extends Animated {
 
 
     Point top_left = new Point();
-    //Rectangle rect;
+    Rectangle rect;
     static Deque<Water> instances = new ArrayDeque<Water>();
     static Viewport viewport;
     static Animation_type animation;
@@ -39,15 +40,22 @@ public class Water extends Animated {
     private static void create_first_instances() {
         Point position = new Point(
                 0,
-                -3
+                -4
         );
         Water new_water = new Water();
         new_water.setPosition(position);
         instances.addLast(new_water);
+        engine_animated.add(new_water);
+    }
+
+    public static void step_instances() {
+        for (Water water: instances) {
+            water.step();
+        }
     }
 
     public static float getStandardWidth() {
-        return 4;
+        return 8;
     }
 
     public static Collection<Water> getInstances() {
@@ -60,6 +68,7 @@ public class Water extends Animated {
 
     public Water() {
         this.startAnimation(animation);
+        rect = new Rectangle(-getStandardWidth()/2,getStandardWidth()/2,0f,1f);
     }
 
     public float getLevel() {
@@ -70,7 +79,7 @@ public class Water extends Animated {
     public static boolean no_water_ahead() {
         Water last_instance = getLast_instance();
         if (
-                (last_instance.getPosition().getX() + getStandardWidth()) <
+                (last_instance.getPosition().getX() + getStandardWidth()/4) <
                 viewport.getRect().getRight()
             ) {
             return true;
@@ -80,12 +89,24 @@ public class Water extends Animated {
 
     public static void prolongate() {
         Point position = new Point(
-                getLast_instance().getPosition().getX()+getStandardWidth()*2,
+                getLast_instance().getPosition().getX()+getStandardWidth(),
                 getLast_instance().getPosition().getY()
         );
         Water new_water = new Water();
         new_water.setPosition(position);
-        instances.offer(new_water);
+        instances.addLast(new_water);
+        engine_animated.add(new_water);
+    }
+
+    public Matrix get_model_matrix() {
+        Matrix model_matrix = super.get_model_matrix();
+        model_matrix.scale(new Point(rect.getWidth(),rect.getHeight(),1));
+        return model_matrix;
+    }
+
+
+    public Rectangle getRect() {
+        return rect;
     }
 
 

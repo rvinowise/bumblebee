@@ -30,9 +30,8 @@ public class Viewport {
 
     }
 
-    public void watch_object(Physical in_watched, Rectangle in_rect) {
+    public void watch_object(Physical in_watched) {
         watched = in_watched;
-        watched_rect = in_rect;
     }
 
     public void setWatched_rect(Rectangle in_rect) {
@@ -46,7 +45,6 @@ public class Viewport {
         if (watched == null) {
             return;
         }
-        //Point offset_from_ideal = watched.getPosition().minus(watched_rect.get_center());
 
         if (!watched_rect.has_inside(watched.getPosition())) {
             Point needed_offset =
