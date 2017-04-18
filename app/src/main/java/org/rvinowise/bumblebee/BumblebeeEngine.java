@@ -78,6 +78,7 @@ public class BumblebeeEngine extends Engine
     private void init_viewport() {
         bumblebee_viewport = new BumblebeeViewport(super.getViewport(), bumblebee);
         super.getViewport().watch_object(bumblebee);
+        super.getViewport().set_view_dimension(1, 1);
         getBumblebeeViewport().setWatch_upto_bottom(0);
     }
 

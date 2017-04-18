@@ -85,12 +85,7 @@ public class Viewport {
         projection_matrix = new Projection_matrix(this.view_rect, -10, 10);
     }
 
-    public void set_view_rect(Rectangle in_view_rect) {
-        this.eye_position = in_view_rect.get_center();
-        this.view_rect = in_view_rect;
-        update_matrices_according_to_my_state();
 
-    }
     private void update_matrices_according_to_my_state() {
         view_matrix = new View_matrix(
                 eye_position.plus(new Point(0,0,2)),
