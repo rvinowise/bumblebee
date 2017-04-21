@@ -1,19 +1,16 @@
 package org.rvinowise.bumblebee;
 
 import android.app.Activity;
-import android.content.Context;
 //import android.support.v7.app.AppCompatActivity;
 import android.content.res.Configuration;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
-import game.engine.Engine;
 import game.engine.ads.Ads;
-
-import static android.view.MotionEvent.ACTION_DOWN;
 
 
 public class GameActivity extends Activity implements View.OnTouchListener {
@@ -79,8 +76,8 @@ public class GameActivity extends Activity implements View.OnTouchListener {
     @Override
     public void onConfigurationChanged(Configuration config) {
         super.onConfigurationChanged(config);
-        engine.getViewport().set_view_dimension(
-                config.screenWidthDp, config.screenHeightDp);
+        engine.change_resolution(config.screenWidthDp, config.screenHeightDp);
+
     }
 
     /*@Override

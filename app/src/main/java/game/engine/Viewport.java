@@ -42,7 +42,7 @@ public class Viewport {
     }
 
     public void adjust_to_watched(Collection<Physical> physicals) {
-        if (watched == null) {
+        if ((watched == null)||(watched_rect==null)) {
             return;
         }
 
@@ -60,9 +60,12 @@ public class Viewport {
     public void set_scale_of_shortest_side(float in_scale) {
         scale_of_short = in_scale;
     }
+    public float get_scale_of_shortest_side() {
+        return scale_of_short;
+    }
 
 
-    public void set_view_dimension(int width, int height) {
+    public void set_view_resolution(int width, int height) {
 
         final float aspectRatio = width > height ?
                 (float) width / (float) height :
@@ -83,17 +86,9 @@ public class Viewport {
         );*/
 
         projection_matrix = new Projection_matrix(this.view_rect, -10, 10);
+
     }
 
-
-    private void update_matrices_according_to_my_state() {
-        view_matrix = new View_matrix(
-                eye_position.plus(new Point(0,0,2)),
-                eye_position.plus(new Point(0,0,-5)),
-                new Point(0,1,0)
-        );
-        projection_matrix = new Projection_matrix(this.view_rect, 1, 10);
-    }
 
     public View_matrix getView_matrix() {
         return view_matrix;

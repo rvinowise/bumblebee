@@ -13,7 +13,7 @@ public class Bumblebee extends Animated {
     private float rush_speed = 0.05f;
 
     public Bumblebee() {
-        setRadius(0.3f);
+        setRadius(0.5f);
         //startAnimation();
         //vector.setX(0.02f);
     }

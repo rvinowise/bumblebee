@@ -14,9 +14,6 @@ import android.opengl.GLUtils;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.Animation;
-
-import org.rvinowise.bumblebee.units.Bumblebee;
 
 import java.util.Collection;
 import java.util.Vector;
@@ -32,6 +29,8 @@ import game.engine.units.animation.Animation_type;
 import game.engine.units.Physical;
 import game.engine.units.animation.Sprite_for_loading;
 import game.engine.opengl.Program;
+import game.engine.utils.primitives.Point;
+
 import static java.lang.Math.*;
 
 public abstract class Engine
@@ -65,12 +64,21 @@ public abstract class Engine
 
     public void init(Context context) {
 
+        init_gl(context);
+        init_logic();
+    }
+
+    private void init_gl(Context context) {
         prepare_graphic_settings();
         load_sprites(context);
         load_shaders(context);
+        init_score();
+    }
+
+    private void init_logic() {
         init_primitives();
         init_scene();
-        init_score();
+
     }
 
     private void init_score() {
@@ -172,7 +180,9 @@ public abstract class Engine
         for (Sprite_for_loading sprite: sprites) {
             Bitmap bmp = load_bitmap_for_sprite(context, sprite);
 
-            Animation_type animation_type = new Animation_type(bmp, sprite.getSprite_rect(), sprite.getFrames_qty());
+            //Animation_type animation_type = new Animation_type(bmp, sprite.getSprite_rect(), sprite.getFrames_qty());
+            Animation_type animation_type = new Animation_type(
+                    bmp, sprite);
             glGenTextures(1, animation_type.getTexture().getHandleRef() , 0);
             if (animation_type.getTexture().getHandle() == 0) {
                 throw new RuntimeException("can't create texture");
@@ -254,7 +264,12 @@ public abstract class Engine
         Matrix final_matrix = in_animated.get_model_matrix();
         final_matrix.multiply(viewport.getProjection_matrix());
 
-        glUniformMatrix4fv(shader_program.get_uniform("u_matrix"), 1, false, final_matrix.data(), 0);
+        glUniformMatrix4fv(shader_program.get_uniform("u_matrix"), 1, false,
+                final_matrix.scale(new Point(
+                        in_animated.getCurrent_animation().essential_texture_scale,
+                        in_animated.getCurrent_animation().essential_texture_scale
+                )).data(),
+                0);
         glUniformMatrix4fv(shader_program.get_uniform("u_texture_matrix"), 1, false, in_animated.getTexture_matrix().data(), 0);
     }
 
@@ -291,7 +306,7 @@ public abstract class Engine
     @Override
     public void onSurfaceChanged(GL10 glUnused, int width, int height)
     {
-        viewport.set_view_dimension(width, height);
+        viewport.set_view_resolution(width, height);
     }
 
     public void onResume() {

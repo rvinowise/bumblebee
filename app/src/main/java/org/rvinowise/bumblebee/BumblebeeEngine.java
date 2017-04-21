@@ -14,6 +14,7 @@ import javax.microedition.khronos.opengles.GL10;
 import game.engine.Engine;
 import game.engine.pos_functions.pos_functions;
 import game.engine.units.Physical;
+import game.engine.units.animation.Animation_type;
 import game.engine.units.animation.Sprite_for_loading;
 import game.engine.units.animation.Animated;
 import game.engine.utils.primitives.Point;
@@ -55,7 +56,7 @@ public class BumblebeeEngine extends Engine
 
         bumblebee = new Bumblebee();
         this.add_physical(bumblebee);
-        bumblebee.startAnimation(this.getAnimations().get(0));
+        bumblebee.startAnimation(Animation_type.get_animation(R.drawable.anim_bumblebee_fly));
         bumblebee.setPosition(new Point(0, (float) 0.1));
         getPhysicals().lastElement().setVector(new Point(0.1f, -0.00f));
         //animated.setDirection(330);
@@ -68,7 +69,7 @@ public class BumblebeeEngine extends Engine
         balloon = add_balloon();
         balloon.setPosition(bumblebee.getPosition().plus(new Point(7, -3)));
 
-        Water.init(super.getViewport(), getAnimations().get(2), (Collection)getPhysicals());
+        Water.init(super.getViewport(), Animation_type.get_animation(R.drawable.water), (Collection)getPhysicals());
 
 
 
@@ -78,15 +79,17 @@ public class BumblebeeEngine extends Engine
     private void init_viewport() {
         bumblebee_viewport = new BumblebeeViewport(super.getViewport(), bumblebee);
         super.getViewport().watch_object(bumblebee);
-        super.getViewport().set_view_dimension(1, 1);
-        getBumblebeeViewport().setWatch_upto_bottom(0);
+    }
+
+
+    private boolean is_resolution_known() {
+        return (getViewport().getRect() != null);
     }
 
     public Balloon add_balloon() {
         Balloon balloon = new Balloon();
         super.add_physical(balloon);
         balloons.add(balloon);
-        balloon.startAnimation(this.getAnimations().get(1));
         return balloon;
     }
     protected void remove(int i_physical) {
@@ -102,7 +105,7 @@ public class BumblebeeEngine extends Engine
     public void step() {
         player_control();
         process_player_physics();
-        process_changing_viewport();
+        process_maybe_changing_viewport();
         process_elementary_physics();
         Water.step_instances();
 
@@ -110,19 +113,24 @@ public class BumblebeeEngine extends Engine
         generator.step();
     }
 
-    private void process_changing_viewport() {
+    public void process_maybe_changing_viewport() {
 
-        float distance_to_water = bumblebee.getPosition().getY() - Water.getLast_instance().getPosition().getY();
-        if (
-                (getBumblebeeViewport().getWatch_upto_bottom() == 0)&&
-                (distance_to_water < super.getViewport().getRect().getHeight()/2)
-                ) {
-            getBumblebeeViewport().setWatch_upto_bottom(super.getViewport().getRect().getBottom());
-        } else if (
-                (getBumblebeeViewport().getWatch_upto_bottom() < 0)&&
-                (distance_to_water >= super.getViewport().getRect().getHeight()/2)
-                ) {
+        if (Water.getLast_instance() == null) {
             getBumblebeeViewport().setWatch_upto_bottom(0);
+        } else {
+            final float water_y = Water.getLast_instance().getPosition().getY();
+            float distance_to_water = bumblebee.getPosition().getY() - water_y;
+            if (
+                    (getBumblebeeViewport().getWatch_upto_bottom() == 0) &&
+                            (distance_to_water < super.getViewport().getRect().getHeight() / 2)
+                    ) {
+                getBumblebeeViewport().setWatch_upto_bottom(super.getViewport().getRect().getBottom());
+            } else if (
+                    (getBumblebeeViewport().getWatch_upto_bottom() < 0) &&
+                            (distance_to_water >= super.getViewport().getRect().getHeight() / 2)
+                    ) {
+                getBumblebeeViewport().setWatch_upto_bottom(0);
+            }
         }
 
     }
@@ -191,8 +199,9 @@ public class BumblebeeEngine extends Engine
     @Override
     public Vector<Sprite_for_loading> getSprites_for_loading() {
         Vector<Sprite_for_loading> result = new Vector<Sprite_for_loading>();
-        result.add(new Sprite_for_loading(R.drawable.anim_bumblebee_fly_real, new Rectangle (32,32), 6));
+        result.add(new Sprite_for_loading(R.drawable.anim_bumblebee_fly, new Rectangle (180,220), 6, 2));
         result.add(new Sprite_for_loading(R.drawable.balloon_red, new Rectangle (128,128), 1));
+        result.add(new Sprite_for_loading(R.drawable.strawberry, new Rectangle (128,128), 1));
         result.add(new Sprite_for_loading(R.drawable.water, new Rectangle (256,32), 5));
         return result;
     }
@@ -200,6 +209,7 @@ public class BumblebeeEngine extends Engine
     @Override
     public void onSurfaceChanged(GL10 glUnused, int width, int height) {
         super.onSurfaceChanged(glUnused, width, height);
+        change_resolution(width, height);
         //update_watched_rect();
     }
 
@@ -215,5 +225,12 @@ public class BumblebeeEngine extends Engine
 
     public float getWaterHeight() {
         return water_height;
+    }
+
+    public void change_resolution(int screenWidth, int screenHeight) {
+        getViewport().set_view_resolution(screenWidth, screenHeight);
+        if (getViewport().getWatched_rect() == null) {
+            getBumblebeeViewport().setWatch_upto_bottom(0);
+        }
     }
 }

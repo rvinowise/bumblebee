@@ -63,7 +63,7 @@ public class Water extends Animated {
     }
 
     public static Water getLast_instance() {
-        return instances.getLast();
+        return instances.peekLast();
     }
 
     public Water() {
