@@ -22,7 +22,10 @@ public class Animation_type {
     private Rectangle sprite_rect;
 
     private Point animation_texture_scale;
-    public float essential_texture_scale;
+
+
+
+    private float essential_texture_scale;
     private int qty_in_row;
 
     private Point frame_offset;
@@ -118,6 +121,8 @@ public class Animation_type {
         return animation_texture_scale;
     }
 
-
+    public float getEssential_texture_scale() {
+        return essential_texture_scale;
+    }
 }
 

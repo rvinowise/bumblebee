@@ -11,6 +11,7 @@ import java.util.Queue;
 import java.util.Vector;
 
 import game.engine.Viewport;
+import game.engine.opengl.Program;
 import game.engine.opengl.Texture;
 import game.engine.opengl.matrices.Matrix;
 import game.engine.units.animation.Animated;
@@ -109,5 +110,8 @@ public class Water extends Animated {
         return rect;
     }
 
+    public void draw(Program shader_program) {
+        animation.prepare_to_draw_instances(shader_program);
+    }
 
 }

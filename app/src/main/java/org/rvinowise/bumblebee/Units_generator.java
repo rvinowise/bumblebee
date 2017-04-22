@@ -3,6 +3,7 @@ package org.rvinowise.bumblebee;
 
 import org.rvinowise.bumblebee.walls.Balloon;
 import org.rvinowise.bumblebee.walls.Water;
+import org.rvinowise.bumblebee.walls.Grass;
 
 import java.util.Random;
 
@@ -25,6 +26,9 @@ public class Units_generator {
         }
         if (Water.no_water_ahead()) {
             Water.prolongate();
+        }
+        if (Grass.no_more_instances_ahead()) {
+            Grass.prolongate();
         }
     }
 

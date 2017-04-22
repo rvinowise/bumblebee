@@ -142,9 +142,16 @@ public abstract class Engine
 
     private void prepare_graphic_settings() {
         glClearColor(0.5f, 0.5f, 0.5f, 0.5f);
+        glClearDepthf(1.0f);
         glEnable(GL_CULL_FACE);
+
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        glEnable( GL_DEPTH_TEST );
+        glDepthFunc( GL_LEQUAL );
+        glDepthMask( true );
+
     }
 
     private void load_shaders(Context context) {
@@ -180,7 +187,6 @@ public abstract class Engine
         for (Sprite_for_loading sprite: sprites) {
             Bitmap bmp = load_bitmap_for_sprite(context, sprite);
 
-            //Animation_type animation_type = new Animation_type(bmp, sprite.getSprite_rect(), sprite.getFrames_qty());
             Animation_type animation_type = new Animation_type(
                     bmp, sprite);
             glGenTextures(1, animation_type.getTexture().getHandleRef() , 0);
@@ -266,8 +272,8 @@ public abstract class Engine
 
         glUniformMatrix4fv(shader_program.get_uniform("u_matrix"), 1, false,
                 final_matrix.scale(new Point(
-                        in_animated.getCurrent_animation().essential_texture_scale,
-                        in_animated.getCurrent_animation().essential_texture_scale
+                        in_animated.getCurrent_animation().getEssential_texture_scale(),
+                        in_animated.getCurrent_animation().getEssential_texture_scale()
                 )).data(),
                 0);
         glUniformMatrix4fv(shader_program.get_uniform("u_texture_matrix"), 1, false, in_animated.getTexture_matrix().data(), 0);

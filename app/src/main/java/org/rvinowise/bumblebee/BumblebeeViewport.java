@@ -23,6 +23,10 @@ public class BumblebeeViewport {
     }
     public void setWatch_upto_bottom(float watch_up_to_bottom) {
         watch_upto_bottom = watch_up_to_bottom;
+
+        assert(viewport != null);
+        assert(viewport.getRect() != null);
+
         viewport.setWatched_rect(
                 new Rectangle(
                         viewport.getRect().getLeft() + (bumblebee.getRadius() * 2),

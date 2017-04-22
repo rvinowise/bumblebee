@@ -2,6 +2,7 @@ package org.rvinowise.bumblebee;
 
 import org.rvinowise.bumblebee.units.Bumblebee;
 import org.rvinowise.bumblebee.walls.Balloon;
+import org.rvinowise.bumblebee.walls.Grass;
 import org.rvinowise.bumblebee.walls.Water;
 
 import java.util.Collection;
@@ -70,6 +71,7 @@ public class BumblebeeEngine extends Engine
         balloon.setPosition(bumblebee.getPosition().plus(new Point(7, -3)));
 
         Water.init(super.getViewport(), Animation_type.get_animation(R.drawable.water), (Collection)getPhysicals());
+        Grass.init(super.getViewport(), Animation_type.get_animation(R.drawable.grass_test), (Collection)getPhysicals());
 
 
 
@@ -199,10 +201,13 @@ public class BumblebeeEngine extends Engine
     @Override
     public Vector<Sprite_for_loading> getSprites_for_loading() {
         Vector<Sprite_for_loading> result = new Vector<Sprite_for_loading>();
+
+        result.add(new Sprite_for_loading(R.drawable.grass_test, new Rectangle (512,512), 1, 2));
         result.add(new Sprite_for_loading(R.drawable.anim_bumblebee_fly, new Rectangle (180,220), 6, 2));
-        result.add(new Sprite_for_loading(R.drawable.balloon_red, new Rectangle (128,128), 1));
+        //result.add(new Sprite_for_loading(R.drawable.balloon_red, new Rectangle (128,128), 1));
         result.add(new Sprite_for_loading(R.drawable.strawberry, new Rectangle (128,128), 1));
         result.add(new Sprite_for_loading(R.drawable.water, new Rectangle (256,32), 5));
+
         return result;
     }
 
@@ -230,7 +235,11 @@ public class BumblebeeEngine extends Engine
     public void change_resolution(int screenWidth, int screenHeight) {
         getViewport().set_view_resolution(screenWidth, screenHeight);
         if (getViewport().getWatched_rect() == null) {
-            getBumblebeeViewport().setWatch_upto_bottom(0);
+            try {
+                getBumblebeeViewport().setWatch_upto_bottom(0);
+            } catch (Exception e)  {
+                assert(false);
+            }
         }
     }
 }

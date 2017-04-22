@@ -30,6 +30,10 @@ public class Matrix {
         android.opengl.Matrix.translateM(m_data, 0, in_point.getX(), in_point.getY(), 0);
         return this;
     }
+    public Matrix set_z(float in_z) {
+        android.opengl.Matrix.translateM(m_data, 0, 0, 0, in_z);
+        return this;
+    }
     public Matrix rotate(float direction) {
         android.opengl.Matrix.rotateM(m_data, 0, direction, 0, 0, 1);
         return this;
