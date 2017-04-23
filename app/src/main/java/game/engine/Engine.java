@@ -62,10 +62,10 @@ public abstract class Engine
         context = in_context;
     }
 
-    public void init(Context context) {
+    private void init(Context context) {
 
         init_gl(context);
-        init_logic();
+        init_logic(); // todo why here, in GL thread? must be after resolution determining in main thread
     }
 
     private void init_gl(Context context) {
@@ -131,12 +131,7 @@ public abstract class Engine
     @Override
     public void onSurfaceCreated(GL10 glUnused, EGLConfig config)
     {
-        if (!initialized) {
-            init(context);
-            initialized = true;
-        }
-
-
+        init_gl(context);
     }
 
 
@@ -336,13 +331,6 @@ public abstract class Engine
         return viewport;
     }
 
-
-
-    /*public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // retain this fragment
-        setRetainInstance(true);
-    }*/
 
     public boolean onTouch(View v, MotionEvent event) {
         return control.onTouch(v, event);

@@ -2,8 +2,8 @@ package org.rvinowise.bumblebee_jumper;
 
 import org.rvinowise.bumblebee_jumper.units.Bumblebee;
 import org.rvinowise.bumblebee_jumper.walls.Balloon;
-import org.rvinowise.bumblebee_jumper.walls.Grass;
-import org.rvinowise.bumblebee_jumper.walls.Water;
+import org.rvinowise.bumblebee_jumper.background.Grass;
+import org.rvinowise.bumblebee_jumper.background.Water;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -14,7 +14,6 @@ import javax.microedition.khronos.opengles.GL10;
 
 import game.engine.Engine;
 import game.engine.pos_functions.pos_functions;
-import game.engine.units.Drawable;
 import game.engine.units.Physical;
 import game.engine.units.animation.Animation_type;
 import game.engine.units.animation.Sprite_for_loading;
@@ -71,9 +70,9 @@ public class BumblebeeEngine extends Engine
         balloon = add_balloon();
         balloon.setPosition(bumblebee.getPosition().plus(new Point(7, -3)));
 
-        Water.init(super.getViewport(), Animation_type.get_animation(R.drawable.water), (Collection)getPhysicals());
-        Grass.init(super.getViewport(), Animation_type.get_animation(R.drawable.grass), (Collection)getPhysicals());
-
+        //Water.init(super.getViewport(), Animation_type.get_animation(R.drawable.water), (Collection)getPhysicals());
+        //Grass.init(super.getViewport(), Animation_type.get_animation(R.drawable.grass), (Collection)getPhysicals());
+        generator.init_scene();
 
 
         super.init_scene();
@@ -239,7 +238,6 @@ public class BumblebeeEngine extends Engine
     }
 
     public void change_resolution(int screenWidth, int screenHeight) {
-        getViewport().set_view_resolution(screenWidth, screenHeight);
         if (getViewport().getWatched_rect() == null) {
             try {
                 getBumblebeeViewport().setWatch_upto_bottom(0);

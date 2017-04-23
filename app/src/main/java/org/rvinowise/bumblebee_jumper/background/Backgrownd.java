@@ -1,4 +1,4 @@
-package org.rvinowise.bumblebee_jumper.walls;
+package org.rvinowise.bumblebee_jumper.background;
 
 
 import java.util.ArrayDeque;
@@ -19,27 +19,33 @@ public class Backgrownd extends Animated {
 
     protected static Deque<Animated> instances = new ArrayDeque<Animated>();
     protected static Viewport viewport;
+
     protected static Animation_type animation;
     protected static Collection<Animated> engine_animated;
 
+
+    public static Animation_type getAnimation() {
+        return animation;
+    }
     public static void init(Viewport in_viewport, Animation_type in_animation,
                             Collection<Animated> in_engine_animated) {
         viewport = in_viewport;
         animation = in_animation;
         engine_animated = in_engine_animated;
-        create_first_instances();
+        //create_first_instances();
     }
 
-    private static void create_first_instances() {
-        Point position = new Point(
-                0,
-                animation.getEssential_texture_scale().getX()/2
-        );
-        Animated new_instance = new Animated();
-        new_instance.setPosition(position);
-        new_instance.startAnimation(animation);
-        instances.addLast(new_instance);
-        engine_animated.add(new_instance);
+    public static void create_first_instances(float in_y) {
+        Point position = new Point(viewport.getRect().getLeft(), in_y);
+        Point offset = new Point(getAnimation().getEssential_texture_scale().getX(), 0);
+        int qty_needed = (int) (viewport.getRect().getWidth() / getAnimation().getEssential_texture_scale().getX());
+        for (int i_instance = 0; i_instance < qty_needed; i_instance++) {
+            Backgrownd new_backgrownd = new Backgrownd();
+            new_backgrownd.setPosition(position);
+            register_instance(new_backgrownd);
+            position = position.plus(offset);
+        }
+
     }
 
     public static void step_instances() {

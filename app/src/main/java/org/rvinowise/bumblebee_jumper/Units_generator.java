@@ -2,8 +2,8 @@ package org.rvinowise.bumblebee_jumper;
 
 
 import org.rvinowise.bumblebee_jumper.walls.Balloon;
-import org.rvinowise.bumblebee_jumper.walls.Water;
-import org.rvinowise.bumblebee_jumper.walls.Grass;
+import org.rvinowise.bumblebee_jumper.background.Water;
+import org.rvinowise.bumblebee_jumper.background.Grass;
 
 import java.util.Random;
 
@@ -18,6 +18,12 @@ public class Units_generator {
         engine = in_engine;
     }
 
+    public void init_scene() {
+        Water.create_first_instances(-4);
+        Grass.create_first_instances(Water.getLast_instance().getPosition().getY()+
+                Water.getAnimation().getEssential_texture_scale().getY()/2);
+
+    }
 
 
     public void step() {
