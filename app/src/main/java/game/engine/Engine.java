@@ -141,16 +141,16 @@ public abstract class Engine
 
 
     private void prepare_graphic_settings() {
-        glClearColor(0.5f, 0.5f, 0.5f, 0.5f);
-        glClearDepthf(1.0f);
+        glClearColor(0.5f, 0.5f, 0.5f, 1f);
+        //glClearDepthf(1.0f);
         glEnable(GL_CULL_FACE);
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        glEnable( GL_DEPTH_TEST );
-        glDepthFunc( GL_LEQUAL );
-        glDepthMask( true );
+        //glEnable( GL_DEPTH_TEST );
+        //glDepthFunc( GL_LEQUAL );
+        //glDepthMask( true );
 
     }
 
@@ -233,9 +233,9 @@ public abstract class Engine
             step();
             moment_of_last_step = current_moment;
             process_fps(time_since_last_step);
-            draw();
-        }
 
+        }
+        draw();
 
 
 
@@ -250,7 +250,7 @@ public abstract class Engine
     }
 
     public void draw() {
-        glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT);
 
         prepare_to_draw_sprites();
         for (Animation_type animation_type: animation_types) {
@@ -271,10 +271,9 @@ public abstract class Engine
         final_matrix.multiply(viewport.getProjection_matrix());
 
         glUniformMatrix4fv(shader_program.get_uniform("u_matrix"), 1, false,
-                final_matrix.scale(new Point(
-                        in_animated.getCurrent_animation().getEssential_texture_scale(),
+                final_matrix.scale(
                         in_animated.getCurrent_animation().getEssential_texture_scale()
-                )).data(),
+                ).data(),
                 0);
         glUniformMatrix4fv(shader_program.get_uniform("u_texture_matrix"), 1, false, in_animated.getTexture_matrix().data(), 0);
     }

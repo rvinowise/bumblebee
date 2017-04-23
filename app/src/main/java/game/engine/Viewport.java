@@ -45,7 +45,6 @@ public class Viewport {
         if ((watched == null)||(watched_rect==null)) {
             return;
         }
-
         if (!watched_rect.has_inside(watched.getPosition())) {
             Point needed_offset =
                     watched_rect.get_nearest_point(watched.getPosition()).minus(

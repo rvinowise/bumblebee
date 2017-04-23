@@ -46,7 +46,7 @@ public class Matrix {
     }
 
     public Matrix scale(Point point) {
-        android.opengl.Matrix.scaleM(m_data, 0, point.getX(), point.getY(), point.getZ());
+        android.opengl.Matrix.scaleM(m_data, 0, point.getX(), point.getY(), 1);
         return this;
     }
 }

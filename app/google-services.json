@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:910469422960:android:e5d7b40b3b6f8510",
         "android_client_info": {
-          "package_name": "org.rvinowise.bumblebee"
+          "package_name": "org.rvinowise.bumblebee_jumper"
         }
       },
       "oauth_client": [
@@ -18,7 +18,7 @@
           "client_id": "910469422960-8fd5icopjjedpkiudu0pg7be7pqa0tc5.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "org.rvinowise.bumblebee",
+            "package_name": "org.rvinowise.bumblebee_jumper",
             "certificate_hash": "befdca0508ec70b622f4cd66416f7d2012c88ac4"
           }
         },

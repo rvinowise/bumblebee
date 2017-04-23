@@ -12,7 +12,7 @@ import com.google.android.gms.ads.reward.RewardedVideoAd;
 import com.google.android.gms.ads.reward.RewardedVideoAdListener;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
-import org.rvinowise.bumblebee.R; //todo make it more universal
+import org.rvinowise.bumblebee_jumper.R; //todo make it more universal
 
 
 public class Ads extends AdListener implements RewardedVideoAdListener {
