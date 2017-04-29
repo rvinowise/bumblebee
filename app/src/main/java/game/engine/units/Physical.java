@@ -8,6 +8,11 @@ abstract public class Physical {
 
 
     protected Point position = new Point(0,0);
+    protected float direction;
+
+
+
+    protected float radius;
 
     protected Point vector = new Point(0,0);
 
@@ -24,6 +29,21 @@ abstract public class Physical {
     public void setPosition(Point position) {
         this.position = position;
     }
+
+    public float getDirection() {
+        return direction;
+    }
+    public void setDirection(float direction) {
+        this.direction = direction;
+    }
+    public void setRadius(float radius) {
+        this.radius = radius;
+    }
+
+    public float getRadius() {
+        return radius;
+    }
+
     public void transpose(Point in_position) {
         this.position = this.position.plus(in_position);
     }
@@ -39,8 +59,6 @@ abstract public class Physical {
     public void step() {
         position = position.plus(vector);
     }
-
-    abstract public float getRadius();
 
     public float getVectorDirection() {
         return pos_functions.poidir(new Point(0,0), getVector());

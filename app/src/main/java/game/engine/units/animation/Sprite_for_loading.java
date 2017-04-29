@@ -13,12 +13,12 @@ public class Sprite_for_loading {
     public Point getEssential_texture_scale() {
         return essential_texture_scale;
     }
-
-    public void setEssential_texture_scale(Point essential_texture_scale) {
-        this.essential_texture_scale = essential_texture_scale;
-    }
-
     private Point essential_texture_scale;
+
+    public Point getCenter_offset() {
+        return center_offset;
+    }
+    private Point center_offset;
 
     /*public static Sprite_for_loading prepare_for_loading(int in_res_id, Rectangle_shape in_rectangle) {
         Sprite_for_loading result = new Sprite_for_loading();
@@ -31,22 +31,28 @@ public class Sprite_for_loading {
 
 
     public Sprite_for_loading(int in_res_id, Rectangle in_rectangle, int in_frames_qty) {
-        this(in_res_id, in_rectangle, in_frames_qty, new Point(1,1));
+        this(in_res_id, in_rectangle, in_frames_qty, new Point(1,1), new Point(0,0));
     }
 
     public Sprite_for_loading(int in_res_id, Rectangle in_rectangle, int in_frames_qty,
-                              float in_essential_texture_scale) {
-        resource_id = in_res_id;
-        sprite_rect = in_rectangle;
-        frames_qty = in_frames_qty;
-        essential_texture_scale = new Point(in_essential_texture_scale, in_essential_texture_scale);
+                              float scale) {
+        this(in_res_id, in_rectangle, in_frames_qty, new Point(scale,scale), new Point(0,0));
     }
     public Sprite_for_loading(int in_res_id, Rectangle in_rectangle, int in_frames_qty,
-                              Point in_essential_texture_scale) {
+                              float scale, Point center_offset) {
+        this(in_res_id, in_rectangle, in_frames_qty, new Point(scale, scale), center_offset);
+    }
+    public Sprite_for_loading(int in_res_id, Rectangle in_rectangle, int in_frames_qty,
+                              Point scale) {
+        this(in_res_id, in_rectangle, in_frames_qty, scale, new Point(0,0));
+    }
+    public Sprite_for_loading(int in_res_id, Rectangle in_rectangle, int in_frames_qty,
+                              Point scale, Point center_offset) {
         resource_id = in_res_id;
         sprite_rect = in_rectangle;
         frames_qty = in_frames_qty;
-        essential_texture_scale = in_essential_texture_scale;
+        essential_texture_scale = scale;
+        this.center_offset = center_offset;
     }
 
     /*public Sprite_for_loading(

@@ -4,7 +4,7 @@ import org.rvinowise.bumblebee_jumper.R;
 
 import game.engine.opengl.matrices.Matrix;
 import game.engine.units.animation.Animated;
-import game.engine.units.animation.Animation_type;
+import game.engine.units.animation.Animation;
 import game.engine.utils.primitives.Point;
 
 
@@ -17,7 +17,7 @@ public class Balloon extends Animated {
     public Balloon() {
 
         setRadius(getStandardRadius());
-        startAnimation(Animation_type.get_animation(R.drawable.strawberry));
+        startAnimation(Animation.valueOf(R.drawable.strawberry));
     }
 
     public Matrix get_model_matrix() {

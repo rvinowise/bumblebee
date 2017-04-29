@@ -2,8 +2,6 @@ package org.rvinowise.bumblebee_jumper;
 
 import org.rvinowise.bumblebee_jumper.units.Bumblebee;
 import org.rvinowise.bumblebee_jumper.walls.Balloon;
-import org.rvinowise.bumblebee_jumper.background.Grass;
-import org.rvinowise.bumblebee_jumper.background.Water;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -14,8 +12,8 @@ import javax.microedition.khronos.opengles.GL10;
 
 import game.engine.Engine;
 import game.engine.pos_functions.pos_functions;
-import game.engine.units.Physical;
-import game.engine.units.animation.Animation_type;
+import game.engine.units.animation.Animation;
+import game.engine.units.animation.Effect;
 import game.engine.units.animation.Sprite_for_loading;
 import game.engine.units.animation.Animated;
 import game.engine.utils.primitives.Point;
@@ -34,9 +32,6 @@ public class BumblebeeEngine extends Engine
         return balloons;
     }
 
-    private float water_height = -2;
-
-
     public BumblebeeViewport getBumblebeeViewport() {
         return bumblebee_viewport;
     }
@@ -45,42 +40,47 @@ public class BumblebeeEngine extends Engine
 
 
     public BumblebeeEngine() {
-        //viewport = new BumblebeeViewport(super.getViewport());
+
     }
 
+
+    /* инициализировать сцену.
+       создать и настроить контролирующие объекты (типа View),
+       на основе которых будут генерироваться новые объекты в процессе движения игры.
+            При изменении важных характеристик (соотношение сторон монитора),
+       эти контролирующие объекты изменятся/подстроятся      */
 
     @Override
     public void init_scene() {
-
-
-        super.getViewport().set_scale_of_shortest_side(7);
-
         bumblebee = new Bumblebee();
-        this.add_physical(bumblebee);
-        bumblebee.startAnimation(Animation_type.get_animation(R.drawable.anim_bumblebee_fly));
+        init_viewport(bumblebee); //RV тут создается bumblebeeViewport который нужен при onSurfaceChanged
+
+        bumblebee.startAnimation(Animation.valueOf(R.drawable.anim_bumblebee_fly));
         bumblebee.setPosition(new Point(0, (float) 0.1));
-        getPhysicals().lastElement().setVector(new Point(0.1f, -0.00f));
-        //animated.setDirection(330);
 
-        init_viewport();
 
-        Animated balloon = add_balloon();
-        balloon.setPosition(bumblebee.getPosition().plus(new Point(4, -2)));
 
-        balloon = add_balloon();
-        balloon.setPosition(bumblebee.getPosition().plus(new Point(7, -3)));
+        Animated strawberry = add_strawberry();
+        strawberry.setPosition(bumblebee.getPosition().plus(new Point(4, -2)));
 
-        //Water.init(super.getViewport(), Animation_type.get_animation(R.drawable.water), (Collection)getPhysicals());
-        //Grass.init(super.getViewport(), Animation_type.get_animation(R.drawable.grass), (Collection)getPhysicals());
+        strawberry = add_strawberry();
+        strawberry.setPosition(bumblebee.getPosition().plus(new Point(7, -3)));
+
+
         generator.init_scene();
 
+        /*Effect.create(Animation.valueOf(R.drawable.anim_bumblebee_fly),
+                bumblebee.getPosition().plus(new Point(2,0)),
+                        0);*/
 
-        super.init_scene();
+
+        super.register_first_step_as_done();
     }
 
-    private void init_viewport() {
-        bumblebee_viewport = new BumblebeeViewport(super.getViewport(), bumblebee);
-        super.getViewport().watch_object(bumblebee);
+    private void init_viewport(Animated watched_object) {
+
+        bumblebee_viewport = new BumblebeeViewport(super.getViewport(), watched_object);
+        super.getViewport().watch_object(watched_object);
     }
 
 
@@ -88,14 +88,13 @@ public class BumblebeeEngine extends Engine
         return (getViewport().getRect() != null);
     }
 
-    public Balloon add_balloon() {
+    public Balloon add_strawberry() {
         Balloon balloon = new Balloon();
-        super.add_physical(balloon);
         balloons.add(balloon);
         return balloon;
     }
     protected void remove(int i_physical) {
-        Physical physical = getPhysicals().get(i_physical);
+        Animated physical = getAnimateds().get(i_physical);
         if (physical instanceof Balloon) {
             balloons.remove(physical);
         }
@@ -109,30 +108,26 @@ public class BumblebeeEngine extends Engine
         process_player_physics();
         process_maybe_changing_viewport();
         process_elementary_physics();
-        Water.step_instances();
 
 
         generator.step();
     }
 
-    public void process_maybe_changing_viewport() {
+    private void process_maybe_changing_viewport() {
 
-        if (Water.getLast_instance() == null) {
+
+        final float water_y = generator.getWater_y();
+        float distance_to_water = bumblebee.getPosition().getY() - water_y;
+        if (
+                (getBumblebeeViewport().getWatch_upto_bottom() == 0) &&
+                        (distance_to_water < super.getViewport().getRect().getHeight() / 2)
+                ) {
+            getBumblebeeViewport().setWatch_upto_bottom(super.getViewport().getRect().getBottom());
+        } else if (
+                (getBumblebeeViewport().getWatch_upto_bottom() < 0) &&
+                        (distance_to_water >= super.getViewport().getRect().getHeight() / 2)
+                ) {
             getBumblebeeViewport().setWatch_upto_bottom(0);
-        } else {
-            final float water_y = Water.getLast_instance().getPosition().getY();
-            float distance_to_water = bumblebee.getPosition().getY() - water_y;
-            if (
-                    (getBumblebeeViewport().getWatch_upto_bottom() == 0) &&
-                            (distance_to_water < super.getViewport().getRect().getHeight() / 2)
-                    ) {
-                getBumblebeeViewport().setWatch_upto_bottom(super.getViewport().getRect().getBottom());
-            } else if (
-                    (getBumblebeeViewport().getWatch_upto_bottom() < 0) &&
-                            (distance_to_water >= super.getViewport().getRect().getHeight() / 2)
-                    ) {
-                getBumblebeeViewport().setWatch_upto_bottom(0);
-            }
         }
 
     }
@@ -150,19 +145,28 @@ public class BumblebeeEngine extends Engine
             bumblebee.setVector(bumblebee.getVector().plus(go_forward_vector));
         }
 
-        Collection<Physical> collided = getCollided_circle(bumblebee);
+        Collection<Animated> collided = getCollided_circle(bumblebee);
         player_jump_from_balloons(collided);
+
+        if (bumblebee.getPosition().getY() <= getWaterHeight()) {
+            Effect effect = Effect.create(Animation.valueOf(R.drawable.water_splash),
+                    new Point(bumblebee.getPosition().getX(), getWaterHeight()), 0);
+            effect.setAnimation_speed(0.5f);
+            bumblebee.setVector(new Point(
+                    bumblebee.getVector().getX(),
+                    -bumblebee.getVector().getY()));
+        }
     }
 
-    private void player_jump_from_balloons(Collection<Physical> collided) {
-        for (Physical physical: collided) {
-            if (physical instanceof Balloon) {
-                jump_from_balloon(bumblebee, (Balloon)physical);
+    private void player_jump_from_balloons(Collection<Animated> collided) {
+        for (Animated animated: collided) {
+            if (animated instanceof Balloon) {
+                jump_from_balloon(bumblebee, (Balloon)animated);
             }
         }
     }
 
-    private void jump_from_balloon(Physical jumper, Balloon from) {
+    private void jump_from_balloon(Animated jumper, Balloon from) {
         final Point prev_position = jumper.getPosition().minus(jumper.getVector());
         final float dir_to_balloon = pos_functions.poidir(prev_position, from.getPosition());
         float corner =pos_functions.corner(jumper.getVectorDirection(), dir_to_balloon);
@@ -179,47 +183,48 @@ public class BumblebeeEngine extends Engine
     }
 
     @Override
-    protected boolean no_need_more(Physical physical) {
-        return is_left_map(physical);
+    protected boolean no_need_more(Animated animted) {
+        if (super.no_need_more(animted)) {
+            return true;
+        }
+        return is_left_map(animted);
     }
 
-    private boolean is_left_map(Physical physical) {
-        if (physical instanceof Water) {
-            return is_backgroind_object_left_map((Animated) physical);
-        }
-        if (physical instanceof Grass) {
-            return is_backgroind_object_left_map((Animated) physical);
-        }
+    private boolean is_left_map(Animated animted) {
 
-        if (physical.getPosition().getX() < -super.getViewport().getRect().getWidth()/2) {
+        if (
+                (animted.getPosition().getX()+
+                        animted.getCurrent_animation().getEssential_texture_scale().getX()/2) <
+            super.getViewport().getRect().getLeft()) {
             return true;
         }
         return false;
     }
 
-    private boolean is_backgroind_object_left_map(Animated animated) {
-        return (animated.getPosition().getX()+
-                animated.getCurrent_animation().getEssential_texture_scale().getX()/2) <
-                super.getViewport().getRect().getLeft();
-    }
 
     @Override
     public Vector<Sprite_for_loading> getSprites_for_loading() {
         Vector<Sprite_for_loading> result = new Vector<Sprite_for_loading>();
 
         result.add(new Sprite_for_loading(R.drawable.grass, new Rectangle (512,512), 1, 12f));
-        result.add(new Sprite_for_loading(R.drawable.anim_bumblebee_fly, new Rectangle (180,220), 6, 2));
-        //result.add(new Sprite_for_loading(R.drawable.balloon_red, new Rectangle (128,128), 1));
+        result.add(new Sprite_for_loading(R.drawable.anim_bumblebee_fly, new Rectangle (160,220), 6, 2, new Point(0, 0)));
         result.add(new Sprite_for_loading(R.drawable.strawberry, new Rectangle (128,128), 1));
         result.add(new Sprite_for_loading(R.drawable.water, new Rectangle (256,32), 5, new Point(12,1)));
+        result.add(new Sprite_for_loading(R.drawable.water_splash, new Rectangle(62,62), 10, new Point(2,2), new Point(0, 19)));
 
         return result;
     }
 
+    boolean scene_created = false;
     @Override
     public void onSurfaceChanged(GL10 glUnused, int width, int height) {
+        super.getViewport().set_scale_of_shortest_side(7);
         super.onSurfaceChanged(glUnused, width, height);
-        change_resolution(width, height);
+        if (!scene_created) {
+            init_scene();
+            getBumblebeeViewport().setWatch_upto_bottom(0);
+        }
+        //change_resolution(width, height);
         //update_watched_rect();
     }
 
@@ -234,16 +239,11 @@ public class BumblebeeEngine extends Engine
 
 
     public float getWaterHeight() {
-        return water_height;
+        return generator.getWater_y();
     }
 
     public void change_resolution(int screenWidth, int screenHeight) {
-        if (getViewport().getWatched_rect() == null) {
-            try {
-                getBumblebeeViewport().setWatch_upto_bottom(0);
-            } catch (Exception e)  {
-                assert(false);
-            }
-        }
+        getBumblebeeViewport().setWatch_upto_bottom(0);
+
     }
 }

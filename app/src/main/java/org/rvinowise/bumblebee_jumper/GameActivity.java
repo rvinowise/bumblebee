@@ -35,7 +35,6 @@ public class GameActivity extends Activity implements View.OnTouchListener {
 
         glSurfaceView = new GLSurfaceView(this);
         glSurfaceView.setEGLContextClientVersion(2);
-        //glSurfaceView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
         glSurfaceView.setRenderer(engine);
 
         setContentView(glSurfaceView);

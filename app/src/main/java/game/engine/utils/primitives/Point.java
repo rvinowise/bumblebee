@@ -92,5 +92,14 @@ public class Point {
         return res_point;
     }
 
+    public Point multiple(Point other) {
+        Point res_point = new Point(
+                this.x * other.x,
+                this.y * other.y,
+                0
+        );
+        return res_point;
+    }
+
 }
 

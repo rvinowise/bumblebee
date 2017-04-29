@@ -6,6 +6,7 @@ import static android.opengl.GLES20.*;
 import java.util.Collection;
 
 import game.engine.units.Physical;
+import game.engine.units.animation.Animated;
 import game.engine.utils.primitives.Rectangle;
 import game.engine.opengl.matrices.Matrix;
 import game.engine.opengl.matrices.Projection_matrix;
@@ -21,7 +22,7 @@ public class Viewport {
     private float scale_of_short = 1;
     private Point eye_position;
 
-    private Physical watched;
+    private Animated watched;
     //private Point watched_pos;
     //private Point watched_pos_luft = new Point(0, 1);
     private Rectangle watched_rect;
@@ -30,7 +31,7 @@ public class Viewport {
 
     }
 
-    public void watch_object(Physical in_watched) {
+    public void watch_object(Animated in_watched) {
         watched = in_watched;
     }
 
@@ -41,7 +42,7 @@ public class Viewport {
         watched_rect = new Rectangle(in_position.getX(),in_position.getX(),in_position.getY(),in_position.getY());
     }
 
-    public void adjust_to_watched(Collection<Physical> physicals) {
+    public void adjust_to_watched(Collection<Animated> animateds) {
         if ((watched == null)||(watched_rect==null)) {
             return;
         }
@@ -50,8 +51,8 @@ public class Viewport {
                     watched_rect.get_nearest_point(watched.getPosition()).minus(
                             watched.getPosition());
 
-            for (Physical physical : physicals) {
-                physical.transpose(needed_offset);
+            for (Animated animated : animateds) {
+                animated.transpose(needed_offset);
             }
         }
     }

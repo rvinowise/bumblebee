@@ -4,18 +4,19 @@ package org.rvinowise.bumblebee_jumper;
 import org.rvinowise.bumblebee_jumper.units.Bumblebee;
 
 import game.engine.Viewport;
+import game.engine.units.animation.Animated;
 import game.engine.utils.primitives.Rectangle;
 
 
 public class BumblebeeViewport {
     Viewport viewport;
-    Bumblebee bumblebee;
+    Animated watched_object;
 
     float watch_upto_bottom;
 
-    public BumblebeeViewport(Viewport in_viewport, Bumblebee in_bumblebee) {
+    public BumblebeeViewport(Viewport in_viewport, Animated watched_animated) {
         viewport = in_viewport;
-        bumblebee = in_bumblebee;
+        watched_object = watched_animated;
     }
 
     public float getWatch_upto_bottom() {
@@ -29,10 +30,10 @@ public class BumblebeeViewport {
 
         viewport.setWatched_rect(
                 new Rectangle(
-                        viewport.getRect().getLeft() + (bumblebee.getRadius() * 2),
-                        viewport.getRect().getLeft() + (bumblebee.getRadius() * 2) + 6,
+                        viewport.getRect().getLeft() + (watched_object.getRadius() * 2),
+                        viewport.getRect().getLeft() + (watched_object.getRadius() * 2) + 6,
                         watch_up_to_bottom,
-                        viewport.getRect().getTop() - (bumblebee.getRadius())
+                        viewport.getRect().getTop() - (watched_object.getRadius())
                 ));
     }
 

@@ -1,9 +1,7 @@
 package game.engine;
 
 
-import android.app.ActivityManager;
 import android.content.Context;
-import android.content.pm.ConfigurationInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 //import android.opengl.GLES32;
@@ -25,11 +23,11 @@ import game.engine.opengl.matrices.Matrix;
 import game.engine.opengl.primitives.Rectangle_shape;
 import game.engine.pos_functions.pos_functions;
 import game.engine.units.animation.Animated;
-import game.engine.units.animation.Animation_type;
+import game.engine.units.animation.Animation;
 import game.engine.units.Physical;
+import game.engine.units.animation.Effect;
 import game.engine.units.animation.Sprite_for_loading;
 import game.engine.opengl.Program;
-import game.engine.utils.primitives.Point;
 
 import static java.lang.Math.*;
 
@@ -43,8 +41,8 @@ public abstract class Engine
 
     private game.engine.opengl.Program shader_program;
 
-    final private Vector<Physical> physicals = new Vector<Physical>();
-    final private Vector<Animation_type> animation_types = new Vector<Animation_type>();
+    final private Vector<Animated> animateds = new Vector<Animated>();
+    final private Vector<Animation> animations = new Vector<Animation>();
 
     final private Viewport viewport = new Viewport();
     final private Human_control control = new Human_control();
@@ -53,33 +51,29 @@ public abstract class Engine
 
     final private Score score = new Score();
 
+    static Engine instance;
 
     protected Engine() {
+        instance = this;
+    }
 
+    public static Engine getInstance() {
+        return instance;
     }
 
     public void setContext(Context in_context) {
         context = in_context;
     }
 
-    private void init(Context context) {
-
-        init_gl(context);
-        init_logic(); // todo why here, in GL thread? must be after resolution determining in main thread
-    }
 
     private void init_gl(Context context) {
         prepare_graphic_settings();
         load_sprites(context);
         load_shaders(context);
         init_score();
-    }
-
-    private void init_logic() {
         init_primitives();
-        init_scene();
-
     }
+
 
     private void init_score() {
         score.init_opengl();
@@ -87,45 +81,42 @@ public abstract class Engine
     }
 
 
-    private boolean opengl_supported(Context context) {
-        final ActivityManager activityManager =
-                (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-        final ConfigurationInfo configurationInfo = activityManager.getDeviceConfigurationInfo();
-        final boolean supportsEs2 = configurationInfo.reqGlEsVersion >= 0x20000;
-
-        if (supportsEs2) return true;
-        return false;
-    }
-
-
-    public void add_physical(Physical in_physical) {
-        physicals.add(in_physical);
+    public void add_animated(Animated in_animated) {
+        animateds.add(in_animated);
     }
 
     public void step() {
-        for(int i_physical = 0; i_physical < physicals.size(); i_physical++) {
-            Physical physical = physicals.get(i_physical);
-            if (no_need_more(physical)) {
+        for(int i_physical = 0; i_physical < animateds.size(); i_physical++) {
+            Animated animated = animateds.get(i_physical);
+            if (no_need_more(animated)) {
                 remove(i_physical);
             } else {
-                physical.step();
+                animated.step();
             }
         }
-        viewport.adjust_to_watched(physicals);
+        viewport.adjust_to_watched(animateds);
         //score.prepare_text();
 
     }
 
-    protected abstract boolean no_need_more(Physical physical);
+    protected boolean no_need_more(Animated animated) {
+        if (
+                (animated instanceof Effect) &&
+                (animated.next_step_should_be_first())
+                ) {
+            return true;
+        }
+        return false;
+    }
 
     protected void remove(int i_physical) {
-        Physical physical = physicals.get(i_physical);
+        Physical physical = animateds.get(i_physical);
         if (physical instanceof Animated) {
             Animated animated = (Animated)physical;
             animated.getCurrent_animation().removeInstance(animated);
         }
 
-        physicals.remove(i_physical);
+        animateds.remove(i_physical);
     }
 
     @Override
@@ -182,21 +173,21 @@ public abstract class Engine
         for (Sprite_for_loading sprite: sprites) {
             Bitmap bmp = load_bitmap_for_sprite(context, sprite);
 
-            Animation_type animation_type = new Animation_type(
+            Animation animation = new Animation(
                     bmp, sprite);
-            glGenTextures(1, animation_type.getTexture().getHandleRef() , 0);
-            if (animation_type.getTexture().getHandle() == 0) {
+            glGenTextures(1, animation.getTexture().getHandleRef() , 0);
+            if (animation.getTexture().getHandle() == 0) {
                 throw new RuntimeException("can't create texture");
             }
 
 
-            glBindTexture(GL_TEXTURE_2D, animation_type.getTexture().getHandle());
+            glBindTexture(GL_TEXTURE_2D, animation.getTexture().getHandle());
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             GLUtils.texImage2D(GL_TEXTURE_2D, 0, bmp, 0);
             bmp.recycle();
 
-            animation_types.add(animation_type);
+            animations.add(animation);
         }
 
     }
@@ -209,8 +200,9 @@ public abstract class Engine
         return bmp;
     }
 
+    public abstract void init_scene();
 
-    public void init_scene() {
+    public void register_first_step_as_done() {
         moment_of_last_step = System.nanoTime();
     }
 
@@ -248,10 +240,10 @@ public abstract class Engine
         glClear(GL_COLOR_BUFFER_BIT);
 
         prepare_to_draw_sprites();
-        for (Animation_type animation_type: animation_types) {
-            animation_type.prepare_to_draw_instances(shader_program);
+        for (Animation animation : animations) {
+            animation.prepare_to_draw_instances(shader_program);
 
-            for (Animated animated: animation_type.getInstances()) {
+            for (Animated animated: animation.getInstances()) {
                 prepare_to_draw_instance(animated);
 
                 glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
@@ -264,11 +256,12 @@ public abstract class Engine
     private void prepare_to_draw_instance(Animated in_animated) {
         Matrix final_matrix = in_animated.get_model_matrix();
         final_matrix.multiply(viewport.getProjection_matrix());
+        /*final_matrix.scale(
+                in_animated.getCurrent_animation().getEssential_texture_scale()
+        );*/
 
         glUniformMatrix4fv(shader_program.get_uniform("u_matrix"), 1, false,
-                final_matrix.scale(
-                        in_animated.getCurrent_animation().getEssential_texture_scale()
-                ).data(),
+                final_matrix.data(),
                 0);
         glUniformMatrix4fv(shader_program.get_uniform("u_texture_matrix"), 1, false, in_animated.getTexture_matrix().data(), 0);
     }
@@ -307,6 +300,7 @@ public abstract class Engine
     public void onSurfaceChanged(GL10 glUnused, int width, int height)
     {
         viewport.set_view_resolution(width, height);
+
     }
 
     public void onResume() {
@@ -320,12 +314,12 @@ public abstract class Engine
 
 
 
-    public Vector<Physical> getPhysicals() {
-        return physicals;
+    public Vector<Animated> getAnimateds() {
+        return animateds;
     }
 
-    public Vector<Animation_type> getAnimations() {
-        return animation_types;
+    public Vector<Animation> getAnimations() {
+        return animations;
     }
     public Viewport getViewport() {
         return viewport;
@@ -340,9 +334,9 @@ public abstract class Engine
         return control;
     }
 
-    public Collection<Physical> getCollided_circle(Physical in_physical) {
-        Vector<Physical> result = new Vector<Physical>();
-        for (Physical physical: physicals) {
+    public Collection<Animated> getCollided_circle(Animated in_physical) {
+        Vector<Animated> result = new Vector<Animated>();
+        for (Animated physical: animateds) {
             final float collision_distance = in_physical.getRadius() + physical.getRadius();
             final float real_distance = pos_functions.poidis(in_physical.getPosition(), physical.getPosition());
             if (real_distance <= collision_distance) {
