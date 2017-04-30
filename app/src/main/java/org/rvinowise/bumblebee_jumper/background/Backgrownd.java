@@ -18,28 +18,29 @@ public class Backgrownd {
     protected Viewport viewport;
 
     protected Animation animation;
+    protected Point size;
     protected Collection<Animated> engine_animated;
 
 
     public Animation getAnimation() {
         return animation;
     }
-    public void init(Viewport in_viewport, Animation in_animation,
+    public void init(Viewport in_viewport, Animation in_animation, Point in_size,
                             Collection<Animated> in_engine_animated) {
         viewport = in_viewport;
         animation = in_animation;
         engine_animated = in_engine_animated;
+        size = in_size;
         //create_first_instances();
     }
 
     public  void create_first_instances(float in_y) {
         Point position = new Point(viewport.getRect().getLeft(), in_y);
-        Point offset = new Point(getAnimation().getEssential_texture_scale().getX(), 0);
-        int qty_needed = (int)Math.ceil(viewport.getRect().getWidth() / getAnimation().getEssential_texture_scale().getX());
+        Point offset = new Point(getWidth(), 0);
+        int qty_needed = (int)Math.ceil(viewport.getRect().getWidth() / getWidth());
         for (int i_instance = 0; i_instance < qty_needed; i_instance++) {
-            Animated new_animated = new Animated();
+            Animated new_animated = create_instance();
             new_animated.setPosition(position);
-            register_instance(new_animated);
             position = position.plus(offset);
         }
 
@@ -52,8 +53,11 @@ public class Backgrownd {
         }
     }
 
-    public float getStandardWidth() {
-        return animation.getEssential_texture_scale().getX();
+    public float getWidth() {
+        return size.getX();
+    }
+    public float getHeight() {
+        return size.getY();
     }
 
     public Collection<Animated> getInstances() {
@@ -67,31 +71,35 @@ public class Backgrownd {
 
     public boolean no_more_instances_ahead() {
         Animated last_instance = getLast_instance();
-        if (last_instance == null) {
-            return true;
-        }
-        if (
-                (last_instance.getPosition().getX() + getStandardWidth()/2) <
-                viewport.getRect().getRight()
-            ) {
-            return true;
+        if (last_instance != null) {
+
+            if (
+                    (last_instance.getPosition().getX() + (getWidth() / 2)) <
+                            viewport.getRect().getRight()
+                    ) {
+                return true;
+            }
         }
         return false;
     }
 
     public void prolongate() {
         Point position = new Point(
-                getLast_instance().getPosition().getX()+getStandardWidth(),
+                getLast_instance().getPosition().getX()+ getWidth(),
                 getLast_instance().getPosition().getY()
         );
-        Animated new_animated = new Animated();
+        Animated new_animated = create_instance();
         new_animated.setPosition(position);
-        register_instance(new_animated);
+
     }
 
-    public void register_instance(Animated new_instance) {
+    public Animated create_instance() {
+        Animated new_instance = new Animated();
         instances.addLast(new_instance);
         new_instance.startAnimation(animation);
+        new_instance.setSize(size);
+        new_instance.setAnimation_speed(0.02f);
+        return new_instance;
     }
 
 

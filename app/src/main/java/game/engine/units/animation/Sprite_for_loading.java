@@ -15,10 +15,10 @@ public class Sprite_for_loading {
     }
     private Point essential_texture_scale;
 
-    public Point getCenter_offset() {
-        return center_offset;
+    public Point getOffset_from_center() {
+        return offset_from_center;
     }
-    private Point center_offset;
+    private Point offset_from_center;
 
     /*public static Sprite_for_loading prepare_for_loading(int in_res_id, Rectangle_shape in_rectangle) {
         Sprite_for_loading result = new Sprite_for_loading();
@@ -31,28 +31,28 @@ public class Sprite_for_loading {
 
 
     public Sprite_for_loading(int in_res_id, Rectangle in_rectangle, int in_frames_qty) {
-        this(in_res_id, in_rectangle, in_frames_qty, new Point(1,1), new Point(0,0));
+        this(in_res_id, in_rectangle, in_frames_qty, 1);
     }
 
     public Sprite_for_loading(int in_res_id, Rectangle in_rectangle, int in_frames_qty,
                               float scale) {
-        this(in_res_id, in_rectangle, in_frames_qty, new Point(scale,scale), new Point(0,0));
+        this(in_res_id, in_rectangle, in_frames_qty, scale,
+                new Point(in_rectangle.getWidth()/2, in_rectangle.getHeight()/2));
     }
     public Sprite_for_loading(int in_res_id, Rectangle in_rectangle, int in_frames_qty,
-                              float scale, Point center_offset) {
-        this(in_res_id, in_rectangle, in_frames_qty, new Point(scale, scale), center_offset);
-    }
-    public Sprite_for_loading(int in_res_id, Rectangle in_rectangle, int in_frames_qty,
-                              Point scale) {
-        this(in_res_id, in_rectangle, in_frames_qty, scale, new Point(0,0));
-    }
-    public Sprite_for_loading(int in_res_id, Rectangle in_rectangle, int in_frames_qty,
-                              Point scale, Point center_offset) {
+                              float scale, Point top_left_offset) {
         resource_id = in_res_id;
         sprite_rect = in_rectangle;
         frames_qty = in_frames_qty;
-        essential_texture_scale = scale;
-        this.center_offset = center_offset;
+        this.offset_from_center = new Point(in_rectangle.getWidth()/2 - top_left_offset.getX(),
+                top_left_offset.getY() - in_rectangle.getHeight()/2);
+
+        float side_ratio = in_rectangle.getRatio();
+        if (in_rectangle.getWidth() > in_rectangle.getHeight()) {
+            essential_texture_scale = new Point(side_ratio, 1).multiply(scale);
+        } else {
+            essential_texture_scale = new Point(1, side_ratio).multiply(scale);
+        }
     }
 
     /*public Sprite_for_loading(

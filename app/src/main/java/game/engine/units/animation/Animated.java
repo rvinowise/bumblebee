@@ -13,12 +13,16 @@ public class Animated extends Physical {
     private int steps_for_next_frame = 1;
     private int idle_steps = 0;
 
+    private Point physical_size;
+    private Point drowing_size;
+
 
     private Matrix texture_matrix = new Matrix();
 
 
     public Animated() {
         Engine.getInstance().add_animated(this);
+        physical_size = new Point(1,1);
         //set_first_frame();
     }
 
@@ -66,6 +70,7 @@ public class Animated extends Physical {
         current_animation.addInstance(this);
 
         set_first_frame();
+        update_size();
     }
 
 
@@ -85,7 +90,7 @@ public class Animated extends Physical {
 
         model_matrix.rotate(this.getDirection());
         model_matrix.scale(
-                this.getCurrent_animation().getEssential_texture_scale()
+                this.getDrowing_size()
         );
         model_matrix.translate(getCurrent_animation().getCenter_offset());
 
@@ -96,4 +101,18 @@ public class Animated extends Physical {
         this.steps_for_next_frame = Math.round(1/animation_speed);
     }
 
+    public void setSize(Point in_size) {
+        physical_size = in_size;
+        update_size();
+    }
+    private void update_size() {
+        drowing_size = physical_size.multiply(getCurrent_animation().getEssential_texture_scale());
+    }
+
+    private Point getDrowing_size() {
+        return drowing_size;
+    }
+    public Point getSize() {
+        return physical_size;
+    }
 }

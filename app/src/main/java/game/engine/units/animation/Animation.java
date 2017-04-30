@@ -60,8 +60,8 @@ public class Animation {
         );
         essential_texture_scale = in_sprite_data.getEssential_texture_scale();
         center_offset = new Point(
-                in_sprite_data.getCenter_offset().getX()/sprite_rect.getWidth(),
-                in_sprite_data.getCenter_offset().getY()/sprite_rect.getHeight());
+                in_sprite_data.getOffset_from_center().getX()/sprite_rect.getWidth(),
+                in_sprite_data.getOffset_from_center().getY()/sprite_rect.getHeight());
         animation_types.put(in_sprite_data.getResource_id(), this);
     }
 

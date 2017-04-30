@@ -1,7 +1,7 @@
 package org.rvinowise.bumblebee_jumper;
 
 import org.rvinowise.bumblebee_jumper.units.Bumblebee;
-import org.rvinowise.bumblebee_jumper.walls.Balloon;
+import org.rvinowise.bumblebee_jumper.walls.Strawberry;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -23,13 +23,13 @@ import game.engine.utils.primitives.Rectangle;
 public class BumblebeeEngine extends Engine
 {
 
-    private Set<Balloon> balloons = new HashSet<Balloon>();
+    private Set<Strawberry> strawberries = new HashSet<Strawberry>();
     private Bumblebee bumblebee;
 
     private Units_generator generator = new Units_generator(this);
 
-    public Collection<Balloon> getBalloons() {
-        return balloons;
+    public Collection<Strawberry> getStrawberries() {
+        return strawberries;
     }
 
     public BumblebeeViewport getBumblebeeViewport() {
@@ -59,7 +59,6 @@ public class BumblebeeEngine extends Engine
         bumblebee.setPosition(new Point(0, (float) 0.1));
 
 
-
         Animated strawberry = add_strawberry();
         strawberry.setPosition(bumblebee.getPosition().plus(new Point(4, -2)));
 
@@ -68,11 +67,6 @@ public class BumblebeeEngine extends Engine
 
 
         generator.init_scene();
-
-        /*Effect.create(Animation.valueOf(R.drawable.anim_bumblebee_fly),
-                bumblebee.getPosition().plus(new Point(2,0)),
-                        0);*/
-
 
         super.register_first_step_as_done();
     }
@@ -88,15 +82,15 @@ public class BumblebeeEngine extends Engine
         return (getViewport().getRect() != null);
     }
 
-    public Balloon add_strawberry() {
-        Balloon balloon = new Balloon();
-        balloons.add(balloon);
-        return balloon;
+    public Strawberry add_strawberry() {
+        Strawberry strawberry = new Strawberry();
+        strawberries.add(strawberry);
+        return strawberry;
     }
     protected void remove(int i_physical) {
         Animated physical = getAnimateds().get(i_physical);
-        if (physical instanceof Balloon) {
-            balloons.remove(physical);
+        if (physical instanceof Strawberry) {
+            strawberries.remove(physical);
         }
 
         super.remove(i_physical);
@@ -148,10 +142,11 @@ public class BumblebeeEngine extends Engine
         Collection<Animated> collided = getCollided_circle(bumblebee);
         player_jump_from_balloons(collided);
 
-        if (bumblebee.getPosition().getY() <= getWaterHeight()) {
+        if (bumblebee.getPosition().getY()-bumblebee.getRadius() <= getWaterHeight()) {
             Effect effect = Effect.create(Animation.valueOf(R.drawable.water_splash),
                     new Point(bumblebee.getPosition().getX(), getWaterHeight()), 0);
             effect.setAnimation_speed(0.5f);
+            effect.setSize(new Point(bumblebee.getRadius()*6, Math.abs(bumblebee.getVector().getY())*6));
             bumblebee.setVector(new Point(
                     bumblebee.getVector().getX(),
                     -bumblebee.getVector().getY()));
@@ -160,13 +155,14 @@ public class BumblebeeEngine extends Engine
 
     private void player_jump_from_balloons(Collection<Animated> collided) {
         for (Animated animated: collided) {
-            if (animated instanceof Balloon) {
-                jump_from_balloon(bumblebee, (Balloon)animated);
+            if (animated instanceof Strawberry) {
+                jump_from_strawberry(bumblebee, (Strawberry)animated);
+                (Strawberry) animated.explode(bumblebee);
             }
         }
     }
 
-    private void jump_from_balloon(Animated jumper, Balloon from) {
+    private void jump_from_strawberry(Animated jumper, Strawberry from) {
         final Point prev_position = jumper.getPosition().minus(jumper.getVector());
         final float dir_to_balloon = pos_functions.poidir(prev_position, from.getPosition());
         float corner =pos_functions.corner(jumper.getVectorDirection(), dir_to_balloon);
@@ -190,11 +186,11 @@ public class BumblebeeEngine extends Engine
         return is_left_map(animted);
     }
 
-    private boolean is_left_map(Animated animted) {
+    private boolean is_left_map(Animated animated) {
 
         if (
-                (animted.getPosition().getX()+
-                        animted.getCurrent_animation().getEssential_texture_scale().getX()/2) <
+                (animated.getPosition().getX()+
+                        animated.getSize().getX()/2) <
             super.getViewport().getRect().getLeft()) {
             return true;
         }
@@ -206,11 +202,12 @@ public class BumblebeeEngine extends Engine
     public Vector<Sprite_for_loading> getSprites_for_loading() {
         Vector<Sprite_for_loading> result = new Vector<Sprite_for_loading>();
 
-        result.add(new Sprite_for_loading(R.drawable.grass, new Rectangle (512,512), 1, 12f));
-        result.add(new Sprite_for_loading(R.drawable.anim_bumblebee_fly, new Rectangle (160,220), 6, 2, new Point(0, 0)));
-        result.add(new Sprite_for_loading(R.drawable.strawberry, new Rectangle (128,128), 1));
-        result.add(new Sprite_for_loading(R.drawable.water, new Rectangle (256,32), 5, new Point(12,1)));
-        result.add(new Sprite_for_loading(R.drawable.water_splash, new Rectangle(62,62), 10, new Point(2,2), new Point(0, 19)));
+        result.add(new Sprite_for_loading(R.drawable.grass, new Rectangle (512,512), 1));
+        result.add(new Sprite_for_loading(R.drawable.anim_bumblebee_fly, new Rectangle (160,220), 6, 2));
+        result.add(new Sprite_for_loading(R.drawable.strawberry, new Rectangle(128,128), 1));
+        result.add(new Sprite_for_loading(R.drawable.strawberry_explode, new Rectangle(100,150), 8, 2, new Point(47,32)));
+        result.add(new Sprite_for_loading(R.drawable.water, new Rectangle (256,35), 5, 1, new Point(0,4)));
+        result.add(new Sprite_for_loading(R.drawable.water_splash, new Rectangle(62,62), 10, 1, new Point(0, 50)));
 
         return result;
     }
@@ -224,8 +221,6 @@ public class BumblebeeEngine extends Engine
             init_scene();
             getBumblebeeViewport().setWatch_upto_bottom(0);
         }
-        //change_resolution(width, height);
-        //update_watched_rect();
     }
 
 

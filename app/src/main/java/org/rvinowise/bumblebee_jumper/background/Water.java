@@ -6,16 +6,17 @@ import java.util.Collection;
 import game.engine.Viewport;
 import game.engine.units.animation.Animated;
 import game.engine.units.animation.Animation;
+import game.engine.utils.primitives.Point;
 
 
 public class Water extends Backgrownd {
 
 
 
-    public void init(Viewport in_viewport, Animation in_animation,
-                            Collection<Animated> in_engine_animated) {
+    public void init(Viewport in_viewport, Animation in_animation, Point size,
+                     Collection<Animated> in_engine_animated) {
         animation = in_animation;
-        super.init(in_viewport, in_animation, in_engine_animated);
+        super.init(in_viewport, in_animation, size, in_engine_animated);
     }
 
     /*public static void create_first_instances(float in_y) {

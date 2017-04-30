@@ -92,7 +92,7 @@ public class Point {
         return res_point;
     }
 
-    public Point multiple(Point other) {
+    public Point multiply(Point other) {
         Point res_point = new Point(
                 this.x * other.x,
                 this.y * other.y,
@@ -100,6 +100,22 @@ public class Point {
         );
         return res_point;
     }
+    public Point multiply(float arg) {
+        Point res_point = new Point(
+                this.x * arg,
+                this.y * arg,
+                0
+        );
+        return res_point;
+    }
 
+    public Point reverse() {
+        Point res_point = new Point(
+                this.y,
+                this.x,
+                0
+        );
+        return res_point;
+    }
 }
 

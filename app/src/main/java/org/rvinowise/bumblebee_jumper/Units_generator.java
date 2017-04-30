@@ -2,7 +2,7 @@ package org.rvinowise.bumblebee_jumper;
 
 
 import org.rvinowise.bumblebee_jumper.background.Backgrownd;
-import org.rvinowise.bumblebee_jumper.walls.Balloon;
+import org.rvinowise.bumblebee_jumper.walls.Strawberry;
 
 import java.util.Collection;
 import java.util.Random;
@@ -22,14 +22,14 @@ public class Units_generator {
     }
 
     public void init_scene() {
-        water_flow.init(engine.getViewport(), Animation.valueOf(R.drawable.water),
+        water_flow.init(engine.getViewport(), Animation.valueOf(R.drawable.water), new Point(5,1),
                 (Collection)engine.getAnimateds());
-        grass_flow.init(engine.getViewport(), Animation.valueOf(R.drawable.grass),
+        grass_flow.init(engine.getViewport(), Animation.valueOf(R.drawable.grass), new Point(12,12),
                 (Collection)engine.getAnimateds());
 
         water_flow.create_first_instances(-4);
         grass_flow.create_first_instances(water_flow.getLast_instance().getPosition().getY()+
-                grass_flow.getAnimation().getEssential_texture_scale().getY()/2);
+                grass_flow.getHeight()/2);
 
     }
 
@@ -41,28 +41,28 @@ public class Units_generator {
         if (water_flow.no_more_instances_ahead()) {
             water_flow.prolongate();
         }
-        if (grass_flow.no_more_instances_ahead()) {
+        /*if (grass_flow.no_more_instances_ahead()) {
             grass_flow.prolongate();
-        }
+        }*/
         water_flow.step_instances();
-        grass_flow.step_instances();
+        //grass_flow.step_instances();
     }
 
 
 
     private boolean too_few_strawberries() {
-        if (engine.getBalloons().size() < 7) {
+        if (engine.getStrawberries().size() < 7) {
             return true;
         }
         return false;
     }
 
     private void create_strawberry_ahead() {
-        float line_ahead = engine.getViewport().getRect().getRight()+ Balloon.getStandardRadius();
+        float line_ahead = engine.getViewport().getRect().getRight()+ Strawberry.getStandardRadius();
         float random_height = engine.getViewport().getRect().getBottom()+
-                random.nextInt((int) (engine.getViewport().getRect().getHeight()+1 - Balloon.getStandardRadius()*2));
-        Balloon balloon = engine.add_strawberry();
-        balloon.setPosition(new Point(line_ahead, random_height));
+                random.nextInt((int) (engine.getViewport().getRect().getHeight()+1 - Strawberry.getStandardRadius()*2));
+        Strawberry strawberry = engine.add_strawberry();
+        strawberry.setPosition(new Point(line_ahead, random_height));
     }
 
 

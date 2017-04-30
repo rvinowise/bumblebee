@@ -10,7 +10,7 @@ public class Rectangle {
         top_left = new Point(left, top);
         bottom_right = new Point(right, bottom);
     }
-    public Rectangle(int width, int height) {
+    public Rectangle(float width, float height) {
         top_left = new Point(-width/2, height/2);
         bottom_right = new Point(width/2, -height/2);
     }
@@ -86,5 +86,15 @@ public class Rectangle {
         Point bottom_right_offset = bottom_right.minus(old_center);
         top_left = new_center.plus(top_left_offset);
         bottom_right = new_center.plus(bottom_right_offset);
+    }
+
+    public float getRatio_y_to_x() {
+        return getHeight()/getWidth();
+    }
+    public float getRatio() {
+        if (getHeight() > getWidth()) {
+            return getHeight()/getWidth();
+        }
+        return getWidth()/getHeight();
     }
 }
