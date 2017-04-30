@@ -45,21 +45,15 @@ public class pos_functions {
 		float y1 = inPoint1.getY();
 		float x2 = inPoint2.getX();
 		float y2 = inPoint2.getY();
-		if (x1==x2) {
-			if (y1>y2) {
-				return 90;
-			} else {
-				return 270;
-			}
-		} else {
-			if ((x1<x2)&&(y1>y2)) {
-				return (float) -(Math.atan((y2-y1)/(x2-x1))*180/Math.PI);
-			} else if (x1>x2) {
-				return (float) (180-atan((y2-y1)/(x2-x1))*180/Math.PI);
-			} else {
-				return (float) (360-atan((y2-y1)/(x2-x1))*180/Math.PI);
-			}
+
+		if ((x1<x2)&&(y1>y2)) {
+			return -(float) (Math.atan((y2-y1)/(x2-x1))*180/Math.PI);
+		} else if ((x1>x2)&&(y1>y2)) {
+			return (float) (180-atan((y2-y1)/(x2-x1))*180/Math.PI);
+		} else if ((x1>x2)&&(y1<y2)) {
+			return -(float) (180+atan((y2-y1)/(x2-x1))*180/Math.PI);
 		}
+		return -(float) (atan((y2-y1)/(x2-x1))*180/Math.PI);
 	}
 
 

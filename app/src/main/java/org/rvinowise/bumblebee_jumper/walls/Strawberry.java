@@ -4,8 +4,10 @@ import org.rvinowise.bumblebee_jumper.R;
 
 import game.engine.Engine;
 import game.engine.opengl.matrices.Matrix;
+import game.engine.pos_functions.pos_functions;
 import game.engine.units.animation.Animated;
 import game.engine.units.animation.Animation;
+import game.engine.units.animation.Effect;
 import game.engine.utils.primitives.Point;
 
 
@@ -28,7 +30,11 @@ public class Strawberry extends Animated {
     }
 
     public void explode(Animated exploder) {
-        Engine.getInstance().add_animated();
+        this.remove();
+
+        Effect.create(Animation.valueOf(R.drawable.strawberry_explode), this.getPosition(),
+                pos_functions.poidir(exploder.getPosition(), getPosition())-90);
+        //);)
     }
 
 }

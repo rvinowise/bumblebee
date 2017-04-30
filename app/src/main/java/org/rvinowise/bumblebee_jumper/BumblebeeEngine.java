@@ -58,8 +58,13 @@ public class BumblebeeEngine extends Engine
         bumblebee.startAnimation(Animation.valueOf(R.drawable.anim_bumblebee_fly));
         bumblebee.setPosition(new Point(0, (float) 0.1));
 
-
+        //test
+        bumblebee.setVector(new Point(-0.01f,0.4f));
         Animated strawberry = add_strawberry();
+        strawberry.setPosition(bumblebee.getPosition().plus(new Point(0, 5)));
+        // end_test
+
+        strawberry = add_strawberry();
         strawberry.setPosition(bumblebee.getPosition().plus(new Point(4, -2)));
 
         strawberry = add_strawberry();
@@ -156,17 +161,18 @@ public class BumblebeeEngine extends Engine
     private void player_jump_from_balloons(Collection<Animated> collided) {
         for (Animated animated: collided) {
             if (animated instanceof Strawberry) {
-                jump_from_strawberry(bumblebee, (Strawberry)animated);
-                (Strawberry) animated.explode(bumblebee);
+                Strawberry strawberry = (Strawberry)animated;
+                jump_from_strawberry(bumblebee, strawberry);
+                strawberry.explode(bumblebee);
             }
         }
     }
 
     private void jump_from_strawberry(Animated jumper, Strawberry from) {
-        final Point prev_position = jumper.getPosition().minus(jumper.getVector());
+        final Point prev_position = jumper.getPosition()/*.minus(jumper.getVector())*/;
         final float dir_to_balloon = pos_functions.poidir(prev_position, from.getPosition());
         float corner =pos_functions.corner(jumper.getVectorDirection(), dir_to_balloon);
-        float bounce_dir = (dir_to_balloon-180) + corner;
+        float bounce_dir = (dir_to_balloon) + corner-180;
         float bounce_speed = jumper.getVectorLength();
         jumper.setVector(pos_functions.lendir(bounce_speed, bounce_dir));
     }

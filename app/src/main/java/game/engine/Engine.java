@@ -105,8 +105,8 @@ public abstract class Engine
                 (animated.next_step_should_be_first())
                 ) {
             return true;
-        } else if (animated.marked_as_destroyed) {
-
+        } else if (animated.isMarked_for_remove()) {
+            return true;
         }
         return false;
     }

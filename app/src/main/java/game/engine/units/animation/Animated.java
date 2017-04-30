@@ -20,6 +20,10 @@ public class Animated extends Physical {
     private Matrix texture_matrix = new Matrix();
 
 
+
+    boolean marked_for_remove = false;
+
+
     public Animated() {
         Engine.getInstance().add_animated(this);
         physical_size = new Point(1,1);
@@ -88,7 +92,7 @@ public class Animated extends Physical {
 
         model_matrix.translate(this.getPosition());
 
-        model_matrix.rotate(this.getDirection());
+        model_matrix.rotate(-this.getDirection());
         model_matrix.scale(
                 this.getDrowing_size()
         );
@@ -114,5 +118,12 @@ public class Animated extends Physical {
     }
     public Point getSize() {
         return physical_size;
+    }
+
+    public void remove() {
+        this.marked_for_remove = true;
+    }
+    public boolean isMarked_for_remove() {
+        return marked_for_remove;
     }
 }
