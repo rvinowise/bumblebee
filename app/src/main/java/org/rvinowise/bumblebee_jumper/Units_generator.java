@@ -41,11 +41,11 @@ public class Units_generator {
         if (water_flow.no_more_instances_ahead()) {
             water_flow.prolongate();
         }
-        /*if (grass_flow.no_more_instances_ahead()) {
+        if (grass_flow.no_more_instances_ahead()) {
             grass_flow.prolongate();
-        }*/
+        }
         water_flow.step_instances();
-        //grass_flow.step_instances();
+        grass_flow.step_instances();
     }
 
 
@@ -61,8 +61,8 @@ public class Units_generator {
         float line_ahead = engine.getViewport().getRect().getRight()+ Strawberry.getStandardRadius();
         float random_height = engine.getViewport().getRect().getBottom()+
                 random.nextInt((int) (engine.getViewport().getRect().getHeight()+1 - Strawberry.getStandardRadius()*2));
-        Strawberry strawberry = engine.add_strawberry();
-        strawberry.setPosition(new Point(line_ahead, random_height));
+        Strawberry strawberry = engine.add_strawberry(new Point(line_ahead, random_height));
+        //strawberry.setPosition(new Point(line_ahead, random_height));
     }
 
 

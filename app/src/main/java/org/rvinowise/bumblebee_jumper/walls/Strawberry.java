@@ -35,6 +35,13 @@ public class Strawberry extends Animated {
         Effect.create(Animation.valueOf(R.drawable.strawberry_explode), this.getPosition(),
                 pos_functions.poidir(exploder.getPosition(), getPosition())-90);
         //);)
+        leave_some_parts();
+    }
+
+    private void leave_some_parts() {
+        Animated collar = new Animated();
+        collar.startAnimation(Animation.valueOf(R.drawable.strawberry_collar));
+        collar.setPosition(position);
     }
 
 }

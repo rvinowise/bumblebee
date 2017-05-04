@@ -129,7 +129,7 @@ public abstract class Engine
 
 
     private void prepare_graphic_settings() {
-        glClearColor(0.5f, 0.5f, 0.5f, 1f);
+        glClearColor(0.7f, 0.8f, 1f, 1f);
         //glClearDepthf(1.0f);
         glEnable(GL_CULL_FACE);
 
@@ -217,7 +217,7 @@ public abstract class Engine
 
         final float current_moment = System.nanoTime();
         final float time_since_last_step = (current_moment - moment_of_last_step) / 1000000000f;
-        final float framerate = 0.02f;
+        final float framerate = 0.033f;
         if (time_since_last_step > framerate) {
             step();
             moment_of_last_step = current_moment;
