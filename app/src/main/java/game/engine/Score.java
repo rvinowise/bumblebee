@@ -23,16 +23,17 @@ public class Score {
     Bitmap bitmap;
     Paint textPaint;
     Canvas canvas;
+    int value = 0;
 
     public Score() {
         matrix.clear();
-        matrix.scale(new Point(2,1,1));
+        matrix.scale(new Point(1,1,1));
 
         bitmap = Bitmap.createBitmap(256, 256, Bitmap.Config.ARGB_4444);
         canvas = new Canvas(bitmap);
         textPaint = new Paint();
 
-        textPaint.setTextSize(20);
+        textPaint.setTextSize(50);
         textPaint.setAntiAlias(true);
         //textPaint.setARGB(0xff, 0x00, 0x00, 0x00);
     }
@@ -56,7 +57,7 @@ public class Score {
         canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 
         textPaint.setARGB(0xff, 0x00, 0x00, 0x00);
-        canvas.drawText(text, 10,20, textPaint);
+        canvas.drawText(text, 0,50, textPaint);
         GLUtils.texImage2D(GL_TEXTURE_2D, 0, bitmap, 0);
 
         //bitmap.recycle();
@@ -68,5 +69,14 @@ public class Score {
         glUniformMatrix4fv(shader_program.get_uniform("u_matrix"), 1, false, matrix.data(), 0);
         glUniformMatrix4fv(shader_program.get_uniform("u_texture_matrix"), 1, false, Matrix.getClear().data(), 0);
         glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+    }
+
+    public int get_current() {
+        return value;
+    }
+
+    public void add(int value) {
+        this.value += value;
+        prepare_text(String.valueOf(this.value));
     }
 }

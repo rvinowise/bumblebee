@@ -185,6 +185,7 @@ public class BumblebeeEngine extends Engine
                 Strawberry strawberry = (Strawberry)animated;
                 jump_from_strawberry(bumblebee, strawberry);
                 strawberry.explode(bumblebee);
+                score.add(1);
             }
         }
     }

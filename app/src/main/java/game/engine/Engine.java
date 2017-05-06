@@ -49,7 +49,7 @@ public abstract class Engine
 
     private boolean initialized = false;
 
-    final private Score score = new Score();
+    final protected Score score = new Score();
 
     static Engine instance;
 
@@ -77,7 +77,7 @@ public abstract class Engine
 
     private void init_score() {
         score.init_opengl();
-        score.prepare_text("123");
+        //score.prepare_text("0");
     }
 
 
@@ -95,7 +95,7 @@ public abstract class Engine
             }
         }
         viewport.adjust_to_watched(animateds);
-        //score.prepare_text();
+        //value.prepare_text();
 
     }
 
@@ -233,7 +233,7 @@ public abstract class Engine
     private void process_fps(float in_delay) {
         final float relevant_delay_difference = 0.000001f;
         if (abs(last_delay - in_delay) > relevant_delay_difference) {
-            score.prepare_text(String.valueOf(in_delay));
+            //value.prepare_text(String.valueOf(in_delay));
         }
         last_delay = in_delay;
     }
