@@ -1,12 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Bumblebee</string>
 
-    <!-- Ads -->
-    <string name="app_admob_id">ca-app-pub-5352818398814409~1999466172</string>
+    <!-- start menu settings (pre-starting) -->
+    <string name="lab_hello">Hello, </string>
+    <string name="lab_hello_anonimous">Hello, anonymous</string>
+    <string name="btn_start_game">Start</string>
+    <string name="btn_show_leaderboard">Scores</string>
 
-    <string name="interstitial_ad_test">ca-app-pub-3940256099942544/1033173712</string>
-    <string name="rewarded_ad_test">"ca-app-pub-3940256099942544/5224354917"</string>
+    <!-- leaderboard settings (player signing in) -->
+    <string name="sign_in_why">Sign in for saving your score</string>
+    <string name="you_are_signed_in">You are signed in</string>
+    <string name="sign_in">Sign in</string>
+    <string name="sign_out">Sign out</string>
+    <string name="signing_other_error">There was an issue with sign in. Please try again later.</string>
 
-    <string name="bumblebee_interstitial_ad_1">ca-app-pub-5352818398814409/6429665779</string>
-    <string name="bumblebee_rewarded_ad">ca-app-pub-5352818398814409/2784868577</string>
 </resources>

@@ -1,7 +1,5 @@
 package game.engine.pos_functions;
 
-import org.testng.annotations.Test;
-
 import java.lang.Math.*;
 import static java.lang.Math.*;
 

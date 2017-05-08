@@ -1,4 +1,4 @@
-package org.rvinowise.bumblebee_jumper;
+package org.rvinowise.bumblebee_jumper.activities;
 
 import android.app.Activity;
 //import android.support.v7.app.AppCompatActivity;
@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 
+
+import org.rvinowise.bumblebee_jumper.BumblebeeEngine;
 
 import game.engine.ads.Ads;
 

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+
+    <!-- game start settings -->
+    <LinearLayout android:orientation="vertical"
+                  android:layout_width="match_parent"
+                  android:layout_height="0dp"
+                  android:layout_weight="1"
+                  android:gravity="center"
+                  android:padding="20dp">
+
+        <TextView android:id="@+id/lab_hello"
+                  android:layout_width="wrap_content"
+                  android:layout_weight="1"
+                  android:layout_height="wrap_content"
+                  android:text="Hello"
+                  />
+
+
+        <Button android:id="@+id/btn_start_game"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/btn_start_game"
+/>
+
+
+        <Button android:id="@+id/btn_show_leaderboard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/btn_show_leaderboard"
+                 />
+    </LinearLayout>
+
+
+    <!-- Signing in/out bars -->
+
+    <LinearLayout android:id="@+id/lay_sign_in"
+                  android:layout_height="120dp"
+                  android:layout_width="match_parent"
+                  android:background="#f0f0f0"
+                  android:layout_marginTop="30dp"
+                  android:orientation="horizontal"
+                  android:gravity="center"
+                  android:padding="10dp">
+
+        <!--<com.google.android.gms.common.SignInButton-->
+        <Button
+            android:id="@+id/btn_sign_in"
+            android:text="@string/sign_in"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onSignInButtonClicked"/>
+
+        <TextView android:layout_width="0dp"
+                  android:layout_weight="1"
+                  android:layout_height="wrap_content"
+                  android:text="@string/sign_in_why"
+                  android:layout_marginStart="10dp"
+                  android:layout_marginLeft="10dp"
+                  android:textColor="#808080" />
+    </LinearLayout>
+
+    <LinearLayout android:id="@+id/lay_sign_out"
+                  android:layout_height="120dp"
+                  android:layout_width="match_parent"
+                  android:background="#f0f0f0"
+                  android:layout_marginTop="30dp"
+                  android:orientation="horizontal"
+                  android:gravity="center|end"
+                  android:padding="10dp">
+
+        <TextView android:layout_width="0dp"
+                  android:layout_weight="1"
+                  android:layout_height="wrap_content"
+                  android:text="@string/you_are_signed_in"
+                  android:layout_marginEnd="10dp"
+                  android:layout_marginRight="10dp"
+                  android:textColor="#808080" />
+
+        <Button
+            android:id="@+id/btn_sign_out"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sign_out"
+            android:textSize="12sp"
+            android:onClick="onSignOutButtonClicked"
+            />
+    </LinearLayout>
+
+
+</LinearLayout>

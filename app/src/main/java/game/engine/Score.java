@@ -12,8 +12,9 @@ import game.engine.opengl.Program;
 import game.engine.opengl.Texture;
 import game.engine.opengl.matrices.Matrix;
 import game.engine.utils.primitives.Point;
-
 import static android.opengl.GLES20.*;
+
+import com.google.android.gms.games.leaderboard.*;
 
 public class Score {
 
