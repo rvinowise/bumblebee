@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -26,6 +27,8 @@ import com.google.android.gms.games.Player;
 
 import org.rvinowise.bumblebee_jumper.BumblebeeEngine;
 import org.rvinowise.bumblebee_jumper.R;
+
+import static com.google.android.gms.games.GamesActivityResultCodes.RESULT_SIGN_IN_FAILED;
 
 
 public class StartActivity extends FragmentActivity
@@ -153,7 +156,7 @@ implements GoogleApiClient.ConnectionCallbacks,
     }
     private void draw_disconnected_interface() {
         if (last_score > 0) {
-            lab_hello.setText(get_player_name()+getString(R.string.yout_score_is));
+            lab_hello.setText(getString(R.string.yout_score_is));
         } else {
             lab_hello.setText(getString(R.string.sign_in_why));
         }
@@ -251,8 +254,9 @@ implements GoogleApiClient.ConnectionCallbacks,
         resolving_connection_failure= false;
         if (resultCode == RESULT_OK) {
             googleApiClient.connect();
-        } else {
-
+        } else if (resultCode == RESULT_SIGN_IN_FAILED) {
+            //info_dialog(this, getString(R.string.sign_in_problem)).show();
+            Toast.makeText(this, getString(R.string.sign_in_problem), Toast.LENGTH_SHORT).show();
         }
     }
     private void fetch_result_score_from_game(int resultCode, Intent data) {
@@ -282,7 +286,7 @@ implements GoogleApiClient.ConnectionCallbacks,
                     Games.Leaderboards.getLeaderboardIntent(googleApiClient, getString(R.string.leaderboard));
             startActivityForResult(leaderboardIntent, RC_UNUSED);
         } else {
-            info_dialog(this, getString(R.string.leaderboards_not_available)).show();
+            //info_dialog(this, getString(R.string.leaderboards_not_available)).show();
         }
     }
     public static Dialog info_dialog(Activity activity, String text) {

@@ -12,8 +12,11 @@ import game.engine.utils.primitives.Point;
 public class Bumblebee extends Animated {
 
     private float rush_speed = 0.05f;
-    private float forward_acceleration = 0.01f;
+    private float forward_acceleration = 0.02f;
+    private float backward_acceleration = -0.02f;
+
     private Point optimal_vector = new Point(0.1f,0.5f);
+
 
     private boolean live = true;
 
@@ -46,12 +49,12 @@ public class Bumblebee extends Animated {
         correct_fast_upward_flying(vector);*/
 
         if (getVector().getX() < optimal_vector.getX()) {
-            //final float needed_acceleration = optimal_vector.getX()-getVector().getX();
-            //if (needed_acceleration > forward_acceleration) {
+            final float needed_acceleration = optimal_vector.getX()-getVector().getX();
+            if (needed_acceleration > forward_acceleration) {
                 setVector(getVector().plus(new Point(forward_acceleration,0)));
-            //} else {
-            //    setVector(getVector().plus(new Point(needed_acceleration,0)));
-            //}
+            } else {
+                setVector(getVector().plus(new Point(needed_acceleration,0)));
+            }
         }
 
     }

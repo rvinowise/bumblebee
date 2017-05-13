@@ -17,5 +17,6 @@
     <string name="player_anonimous">Anonimous</string>
     <string name="authorized_yout_score_is">, your score is:</string>
     <string name="yout_score_is">your score is:</string>
+    <string name="sign_in_problem">problem with singing in</string>
 
 </resources>

@@ -79,8 +79,8 @@ public class Sprite_loader {
 
 
             glBindTexture(GL_TEXTURE_2D, animation.getTexture().getHandle());
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
             GLUtils.texImage2D(GL_TEXTURE_2D, 0, bmp, 0);
             bmp.recycle();
 
