@@ -2,26 +2,24 @@ package game.engine.units.animation;
 
 
 import game.engine.Engine;
+import game.engine.Fps_counter;
 import game.engine.opengl.matrices.Matrix;
 import game.engine.units.Physical;
 import game.engine.utils.primitives.Point;
 
 public class Animated extends Physical {
-    private float current_frame;
-    private Animation current_animation;
+    protected float current_frame;
+    protected Animation current_animation;
     //private float animation_speed = 1;
     private int steps_for_next_frame = 1;
-    private int idle_steps = 0;
+    private float idle_steps = 0;
 
     private Point physical_size;
     private Point drowing_size;
 
 
-    private Matrix texture_matrix = new Matrix();
+    protected Matrix texture_matrix = new Matrix();
 
-
-
-    boolean marked_for_remove = false;
 
 
     public Animated() {
@@ -36,14 +34,14 @@ public class Animated extends Physical {
     }
 
     private void process_animation() {
-        idle_steps ++;
-        if(idle_steps == steps_for_next_frame) {
+        idle_steps = idle_steps + Fps_counter.getStep_multiplier();
+        if(idle_steps >= steps_for_next_frame) {
             idle_steps = 0;
             set_next_frame();
         }
     }
 
-    private void set_next_frame() {
+    protected void set_next_frame() {
         current_frame ++;
         if (current_frame >= current_animation.getFrames_qty()) {
             set_first_frame();
@@ -52,16 +50,16 @@ public class Animated extends Physical {
         }
     }
 
-    private void set_first_frame() {
+    protected void set_first_frame() {
         current_frame=0;
         current_animation.setMatrix_to_first_frame(texture_matrix);
     }
-    public boolean next_step_should_be_first() {
+    /*public boolean next_step_should_be_first() {
         return (
                 (current_frame == current_animation.getFrames_qty()-1) &&
                 (idle_steps == steps_for_next_frame-1)
         );
-    }
+    }*/
 
     public void startAnimation(Animation in_animation) {
         if (current_animation != null) {
@@ -120,10 +118,7 @@ public class Animated extends Physical {
         return physical_size;
     }
 
-    public void remove() {
-        this.marked_for_remove = true;
-    }
-    public boolean isMarked_for_remove() {
-        return marked_for_remove;
-    }
+
+
+
 }

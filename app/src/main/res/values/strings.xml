@@ -13,5 +13,9 @@
     <string name="sign_in">Sign in</string>
     <string name="sign_out">Sign out</string>
     <string name="signing_other_error">There was an issue with sign in. Please try again later.</string>
+    <string name="leaderboards_not_available">please sign in to view leaderboard</string>
+    <string name="player_anonimous">Anonimous</string>
+    <string name="authorized_yout_score_is">, your score is:</string>
+    <string name="yout_score_is">your score is:</string>
 
 </resources>

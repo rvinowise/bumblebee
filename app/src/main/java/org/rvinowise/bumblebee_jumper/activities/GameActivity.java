@@ -2,25 +2,35 @@ package org.rvinowise.bumblebee_jumper.activities;
 
 import android.app.Activity;
 //import android.support.v7.app.AppCompatActivity;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
 
 
 import org.rvinowise.bumblebee_jumper.BumblebeeEngine;
 
+import game.engine.Engine;
 import game.engine.ads.Ads;
 
 
-public class GameActivity extends Activity implements View.OnTouchListener {
+public class GameActivity extends Activity
+        implements
+        View.OnTouchListener,
+        Engine.System_listener
+
+{
 
     private GLSurfaceView glSurfaceView;
     private boolean renderer_set = false;
 
     private BumblebeeEngine engine;
     private Ads ads;
+
+    protected Handler handler_menu = new Handler();
 
 
     public GameActivity() {
@@ -34,6 +44,8 @@ public class GameActivity extends Activity implements View.OnTouchListener {
 
         engine = new BumblebeeEngine();
         engine.setContext(this);
+        engine.setSystem_listener(this);
+        engine.setHandler_menu(handler_menu);
 
         glSurfaceView = new GLSurfaceView(this);
         glSurfaceView.setEGLContextClientVersion(2);
@@ -73,6 +85,7 @@ public class GameActivity extends Activity implements View.OnTouchListener {
     {
         super.onDestroy();
         //ads.onDestroy();
+        //return_score_to_start_screen();
     }
 
     @Override
@@ -93,6 +106,17 @@ public class GameActivity extends Activity implements View.OnTouchListener {
         return engine.onTouch(v, event);
     }
 
+    @Override
+    public void return_score_to_start_screen() {
+        Intent returnIntent = new Intent();
+        returnIntent.putExtra("score", engine.getScore().get_current());
+        setResult(Activity.RESULT_OK, returnIntent);
+        finish();
+    }
 
+    @Override
+    public void onBackPressed() {
+        return_score_to_start_screen();
+    }
 
 }

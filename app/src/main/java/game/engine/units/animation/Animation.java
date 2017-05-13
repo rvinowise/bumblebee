@@ -21,7 +21,7 @@ public class Animation {
     private int frames_qty = 0;
     private Rectangle sprite_rect;
     private Point animation_texture_scale;
-    private Point essential_texture_scale;
+    protected Point essential_texture_scale;
     private Point center_offset;
     private int qty_in_row;
     private Point frame_offset;
@@ -33,6 +33,9 @@ public class Animation {
     public static Animation valueOf(int in_id) {
         return animation_types.get(in_id);
     }
+
+    public Animation() {}
+
 
     public Animation(Bitmap bmp, Rectangle in_rect, int frames_qty) {
         sprite_rect = in_rect;

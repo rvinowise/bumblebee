@@ -5,12 +5,10 @@ import static java.lang.Math.*;
 
 public class Point {
 
-    private float x;
-    private float y;
+    protected float x;
+    protected float y;
 
-
-
-    private float z;
+    protected float z;
 
     public Point() {
 

@@ -31,7 +31,8 @@ public class BumblebeeViewport {
         viewport.setWatched_rect(
                 new Rectangle(
                         viewport.getRect().getLeft() + (watched_object.getRadius() * 2),
-                        viewport.getRect().getLeft() + (watched_object.getRadius() * 2) + 6,
+                        viewport.getRect().getLeft() +
+                                viewport.getRect().getWidth()/4,
                         watch_up_to_bottom,
                         viewport.getRect().getTop() - (watched_object.getRadius())
                 ));

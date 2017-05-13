@@ -20,7 +20,7 @@ public class Strawberry extends Animated {
     public Strawberry() {
 
         setRadius(getStandardRadius());
-        startAnimation(Animation.valueOf(R.drawable.strawberry));
+        startAnimation(Animation.valueOf(R.drawable.strawberry_full));
     }
 
     public Matrix get_model_matrix() {
@@ -40,7 +40,7 @@ public class Strawberry extends Animated {
 
     private void leave_some_parts() {
         Animated collar = new Animated();
-        collar.startAnimation(Animation.valueOf(R.drawable.strawberry_collar));
+        collar.startAnimation(Animation.valueOf(R.drawable.strawberry_stalk));
         collar.setPosition(position);
     }
 

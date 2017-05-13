@@ -11,10 +11,15 @@ import android.opengl.GLUtils;
 import game.engine.opengl.Program;
 import game.engine.opengl.Texture;
 import game.engine.opengl.matrices.Matrix;
+import game.engine.units.animation.Animated;
+import game.engine.units.animation.Animation;
 import game.engine.utils.primitives.Point;
 import static android.opengl.GLES20.*;
 
 import com.google.android.gms.games.leaderboard.*;
+
+import java.util.Collection;
+import java.util.Vector;
 
 public class Score {
 
@@ -26,49 +31,55 @@ public class Score {
     Canvas canvas;
     int value = 0;
 
+
+
     public Score() {
         matrix.clear();
-        matrix.scale(new Point(1,1,1));
+        matrix.scale(new Point(2f,2f,1));
+        //matrix.translate(new Point(0.1f,-0.5f));
 
-        bitmap = Bitmap.createBitmap(256, 256, Bitmap.Config.ARGB_4444);
+        bitmap = Bitmap.createBitmap(128, 128, Bitmap.Config.ARGB_4444);
         canvas = new Canvas(bitmap);
         textPaint = new Paint();
 
-        textPaint.setTextSize(50);
+        textPaint.setTextSize(128);
         textPaint.setAntiAlias(true);
-        //textPaint.setARGB(0xff, 0x00, 0x00, 0x00);
+
     }
 
     public void init_opengl() {
         glGenTextures(1, texture.getHandleRef(), 0);
         glBindTexture(GL_TEXTURE_2D, texture.getHandle());
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        //glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        //glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     }
 
     public void prepare_text(String text) {
         texture.bind();
 
-        //textPaint.setARGB(0x00, 0xff, 0xff, 0xff);
-        //canvas.drawRect(0,0,256,256,textPaint);
         canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+        //canvas.drawColor(Color.BLUE);
 
-        textPaint.setARGB(0xff, 0x00, 0x00, 0x00);
-        canvas.drawText(text, 0,50, textPaint);
+        textPaint.setARGB(0xAA, 0x50, 0x50, 0x50);
+        textPaint.setTextAlign(Paint.Align.CENTER);
+        textPaint.setTextScaleX(0.6f);
+        canvas.drawText(text, bitmap.getWidth()/2,bitmap.getHeight()-20, textPaint); //bitmap.getWidth()/2
         GLUtils.texImage2D(GL_TEXTURE_2D, 0, bitmap, 0);
 
-        //bitmap.recycle();
     }
+
+
 
     public void draw(Program shader_program) {
         texture.bind();
 
         glUniformMatrix4fv(shader_program.get_uniform("u_matrix"), 1, false, matrix.data(), 0);
         glUniformMatrix4fv(shader_program.get_uniform("u_texture_matrix"), 1, false, Matrix.getClear().data(), 0);
+        glUniform2fv(shader_program.get_uniform("u_texture_scale"), 1, new float[]{1, 1,}, 0);
         glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
     }
 
@@ -80,4 +91,5 @@ public class Score {
         this.value += value;
         prepare_text(String.valueOf(this.value));
     }
+
 }

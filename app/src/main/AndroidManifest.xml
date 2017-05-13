@@ -17,29 +17,31 @@
         >
 
         <!--This meta-data tag is required to use Google Play services.-->
-        <meta-data android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
 
-        <meta-data android:name="roboguice.annotations.packages" android:value="org.rvinowise.bumblebee_jumper"/>
+        <meta-data android:name="com.google.android.gms.games.APP_ID"
+                   android:value="@string/app_id" />
+        <meta-data android:name="com.google.android.gms.version"
+                   android:value="@integer/google_play_services_version"/>
 
         <activity
-            android:name="org.rvinowise.bumblebee_jumper.activities.StartActivity">
+            android:name="org.rvinowise.bumblebee_jumper.activities.StartActivity"
+            android:screenOrientation="sensorLandscape"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <!--<activity
+        <activity
             android:name="org.rvinowise.bumblebee_jumper.activities.GameActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
+            android:theme="@style/AppTheme.FullScreen"
+            android:screenOrientation="sensorLandscape"
             >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>-->
+
+        </activity>
 
         <!--Include the AdActivity configChanges and theme. -->
         <activity android:name="com.google.android.gms.ads.AdActivity"

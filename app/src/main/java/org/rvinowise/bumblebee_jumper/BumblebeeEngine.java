@@ -5,13 +5,14 @@ import org.rvinowise.bumblebee_jumper.walls.Strawberry;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Random;
 import java.util.Set;
-import java.util.Vector;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.microedition.khronos.opengles.GL10;
 
 import game.engine.Engine;
+import game.engine.initialisation.Sprite_loader;
 import game.engine.pos_functions.pos_functions;
 import game.engine.units.animation.Animation;
 import game.engine.units.animation.Effect;
@@ -114,11 +115,13 @@ public class BumblebeeEngine extends Engine
 
     @Override
     public void step() {
-        player_control();
+
+        if (bumblebee.isLive()) {
+            player_control();
+        }
         process_player_physics();
         process_maybe_changing_viewport();
         process_elementary_physics();
-
 
         generator.step();
     }
@@ -148,19 +151,20 @@ public class BumblebeeEngine extends Engine
 
 
     private void process_player_physics() {
-        process_player_flying();
+        if (!is_collide_water(bumblebee)) {
+            process_player_falling();
+        } else {
+            process_player_water_sink();
+        }
         process_player_collisions();
-        process_player_water_sink();
+
     }
 
-    private void process_player_flying() {
+    private void process_player_falling() {
         final Point gravity_vector = new Point(0f,-0.001f);
         bumblebee.setVector(bumblebee.getVector().plus(gravity_vector));
 
-        final Point go_forward_vector = new Point(0.01f,0f);
-        if (bumblebee.getVector().getX() < 0.1) {
-            bumblebee.setVector(bumblebee.getVector().plus(go_forward_vector));
-        }
+        //bumblebee.cruise_fly();
     }
 
     private void process_player_collisions() {
@@ -168,22 +172,13 @@ public class BumblebeeEngine extends Engine
         player_jump_from_balloons(collided);
     }
 
-    private void process_player_water_sink() {
-    if (bumblebee.getPosition().getY()-bumblebee.getRadius() <= getWaterHeight()) {
-        Effect effect = Effect.create(Animation.valueOf(R.drawable.water_splash),
-                new Point(bumblebee.getPosition().getX(), getWaterHeight()), 0);
-        effect.setAnimation_speed(0.5f);
-        effect.setSize(new Point(bumblebee.getRadius()*6, Math.abs(bumblebee.getVector().getY())*6));
-        bumblebee.setVector(new Point(
-                bumblebee.getVector().getX(),
-                -bumblebee.getVector().getY()));
-    }
-}
     private void player_jump_from_balloons(Collection<Animated> collided) {
         for (Animated animated: collided) {
             if (animated instanceof Strawberry) {
                 Strawberry strawberry = (Strawberry)animated;
-                jump_from_strawberry(bumblebee, strawberry);
+                if (!is_collide_water(bumblebee)) {
+                    jump_from_strawberry(bumblebee, strawberry);
+                }
                 strawberry.explode(bumblebee);
                 score.add(1);
             }
@@ -201,9 +196,51 @@ public class BumblebeeEngine extends Engine
 
 
     private void player_control() {
-        if (getControl().isTouched()) {
+        if (
+                (bumblebee.isLive())&&
+                (getControl().isTouched())
+                ) {
             bumblebee.rush(90);
         }
+    }
+
+    private void process_player_water_sink() {
+        if (bumblebee.isLive()) {
+            Effect effect = Effect.create(Animation.valueOf(R.drawable.water_splash),
+                    new Point(bumblebee.getPosition().getX(), getWaterHeight()), 0);
+            effect.setAnimation_speed(0.5f);
+            effect.setSize(new Point(bumblebee.getRadius() * 6, Math.abs(bumblebee.getVector().getY()) * 6));
+            bumblebee.setVector(new Point(bumblebee.getVector().getX()/4, -0.02f));
+
+            getViewport().watch_object(null);
+            bumblebee_die_from_sinking();
+        }
+    }
+    private boolean is_collide_water(Animated animated) {
+        return (animated.getPosition().getY() - animated.getRadius() <= getWaterHeight());
+    }
+    private void bumblebee_die_from_sinking() {
+        bumblebee.die();
+        bumblebee.setAnimation_speed(0);
+        start_epilog_before_returning_to_menu();
+    }
+    private void start_epilog_before_returning_to_menu() {
+
+        Timer timer_to_menu = new Timer();
+        TimerTask start_menu = new TimerTask() {
+            @Override
+            public void run() {
+                handler_menu.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        system_listener.return_score_to_start_screen();
+                    }
+                });
+                //system_listener.return_score_to_start_screen();
+            }
+        };
+        final int epilog_duration = 2000;
+        timer_to_menu.schedule(start_menu, epilog_duration);
     }
 
     @Override
@@ -227,22 +264,27 @@ public class BumblebeeEngine extends Engine
 
 
     @Override
-    public Vector<Sprite_for_loading> getSprites_for_loading() {
-        Vector<Sprite_for_loading> result = new Vector<Sprite_for_loading>();
+    public Sprite_loader getSprite_loader() {
 
-        result.add(new Sprite_for_loading(R.drawable.grass, new Rectangle (512,512), 1));
+        Sprite_loader sprite_loader = new Sprite_loader();
 
-        result.add(new Sprite_for_loading(R.drawable.strawberry_stalk, new Rectangle(64,256), 1, 1, new Point(29,34)));
-        result.add(new Sprite_for_loading(R.drawable.strawberry_collar, new Rectangle(64,256), 1, 1, new Point(29,34)));
-        result.add(new Sprite_for_loading(R.drawable.strawberry, new Rectangle(128,128), 1));
-        result.add(new Sprite_for_loading(R.drawable.strawberry_explode, new Rectangle(100,150), 8, 2, new Point(47,32)));
+        //Vector<Sprite_for_loading> result = new Vector<Sprite_for_loading>();
 
-        result.add(new Sprite_for_loading(R.drawable.anim_bumblebee_fly, new Rectangle (160,220), 6, 2));
+        sprite_loader.start_background_registration();
+        sprite_loader.add(new Sprite_for_loading(R.drawable.grass, new Rectangle (512,512), 1));
 
-        result.add(new Sprite_for_loading(R.drawable.water, new Rectangle (256,35), 5, 1, new Point(0,4)));
-        result.add(new Sprite_for_loading(R.drawable.water_splash, new Rectangle(62,62), 10, 1, new Point(32, 50)));
+        sprite_loader.start_foreground_registration();
+        sprite_loader.add(new Sprite_for_loading(R.drawable.strawberry_stalk, new Rectangle(512,2048), 1, 4, new Point(175,160)));
+        sprite_loader.add(new Sprite_for_loading(R.drawable.strawberry_full, new Rectangle(512,2048), 1, 4, new Point(175,160)));
+        sprite_loader.add(new Sprite_for_loading(R.drawable.strawberry, new Rectangle(128,128), 1, 1, new Point(64,64)));
+        sprite_loader.add(new Sprite_for_loading(R.drawable.strawberry_explode, new Rectangle(100,150), 8, 2, new Point(47,32)));
 
-        return result;
+        sprite_loader.add(new Sprite_for_loading(R.drawable.anim_bumblebee_fly, new Rectangle (160,220), 6, 2));
+
+        sprite_loader.add(new Sprite_for_loading(R.drawable.water, new Rectangle (256,35), 5, 1, new Point(0,4)));
+        sprite_loader.add(new Sprite_for_loading(R.drawable.water_splash, new Rectangle(62,62), 10, 1, new Point(32, 50)));
+
+        return sprite_loader;
     }
 
     boolean scene_created = false;
