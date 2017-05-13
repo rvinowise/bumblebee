@@ -2,7 +2,6 @@
 cd /home/rv/program/bumblebee/
 git config --global username rvinowise
 #git config --global email rvinowise@gmail.com
-#git config --global password ASdsds12
 git add .
 git commit
 git push
