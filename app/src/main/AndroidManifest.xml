@@ -25,6 +25,7 @@
 
         <activity
             android:name="org.rvinowise.bumblebee_jumper.activities.StartActivity"
+            android:theme="@style/AppTheme.FullScreen"
             android:screenOrientation="sensorLandscape"
             >
             <intent-filter>
@@ -33,6 +34,7 @@
             </intent-filter>
         </activity>
 
+
         <activity
             android:name="org.rvinowise.bumblebee_jumper.activities.GameActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -40,13 +42,15 @@
             android:screenOrientation="sensorLandscape"
             >
 
-
         </activity>
+
 
         <!--Include the AdActivity configChanges and theme. -->
         <activity android:name="com.google.android.gms.ads.AdActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
-            android:theme="@android:style/Theme.Translucent" />
+            android:theme="@android:style/Theme.Translucent"
+            />
+
 
     </application>
 

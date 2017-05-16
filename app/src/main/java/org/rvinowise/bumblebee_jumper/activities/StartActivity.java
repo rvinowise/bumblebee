@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,6 +14,7 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,6 +27,7 @@ import com.google.android.gms.games.Game;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.Player;
 
+import org.rvinowise.bumblebee_jumper.BuildConfig;
 import org.rvinowise.bumblebee_jumper.BumblebeeEngine;
 import org.rvinowise.bumblebee_jumper.R;
 
@@ -47,18 +50,26 @@ implements GoogleApiClient.ConnectionCallbacks,
 
     final String TAG = "StartActivity";
 
-
+    ImageView img_tutorial;
     TextView lab_hello;
     TextView lab_score;
-    SignInButton btn_sign_in;
+    Button btn_sign_in;
     Button btn_sign_out;
     Button btn_show_leaderboard;
     LinearLayout lay_sign_in;
     LinearLayout lay_sign_out;
 
+    enum Special_launch {
+        first_launch,
+        first_updated_launch,
+        routine_launch
+    }
+    private Special_launch special_launch;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        check_first_run();
         // Create the Google API Client with access to Games
         googleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -71,10 +82,18 @@ implements GoogleApiClient.ConnectionCallbacks,
 
     private void init_layout() {
         setContentView(R.layout.activity_start);
+
+        img_tutorial = (ImageView) findViewById(R.id.img_tutorial);
+        if (getSpecial_launch() == Special_launch.first_launch) {
+            img_tutorial.setVisibility(View.VISIBLE);
+        } else {
+            img_tutorial.setVisibility(View.GONE);
+        }
+
         lab_hello = (TextView) findViewById(R.id.lab_hello);
         lab_score = (TextView) findViewById(R.id.lab_score);
         lab_score.setVisibility(View.GONE);
-        btn_sign_in = (SignInButton) findViewById(R.id.btn_sign_in);
+        btn_sign_in = (Button) findViewById(R.id.btn_sign_in);
         btn_sign_in.setOnClickListener(this);
         btn_sign_out = (Button) findViewById(R.id.btn_sign_out);
         btn_show_leaderboard = (Button) findViewById(R.id.btn_show_leaderboard);
@@ -82,6 +101,7 @@ implements GoogleApiClient.ConnectionCallbacks,
 
         draw_disconnected_interface();
     }
+
 
     @Override
     protected void onStart() {
@@ -131,9 +151,6 @@ implements GoogleApiClient.ConnectionCallbacks,
 
 
 
-    private void draw_connected_interface() {
-        draw_connected_interface(get_player_name());
-    }
     private String get_player_name() {
         Player player = Games.Players.getCurrentPlayer(googleApiClient);
         if (player == null) {
@@ -144,11 +161,11 @@ implements GoogleApiClient.ConnectionCallbacks,
         }
     }
 
-    private void draw_connected_interface(String displayName) {
+    private void draw_connected_interface() {
         if (last_score > 0) {
-            lab_hello.setText(get_player_name()+getString(R.string.authorized_yout_score_is));
+            lab_hello.setText(getString(R.string.authorized_yout_score_is, get_player_name()));
         } else {
-            lab_hello.setText(getString(R.string.lab_hello) + displayName);
+            lab_hello.setText(getString(R.string.lab_hello, get_player_name()));
         }
         btn_sign_in.setVisibility(View.GONE);
         btn_sign_out.setVisibility(View.VISIBLE);
@@ -247,6 +264,7 @@ implements GoogleApiClient.ConnectionCallbacks,
                 break;
             case GAME_REQUEST:
                 fetch_result_score_from_game(resultCode, data);
+                img_tutorial.setVisibility(View.GONE);
                 break;
         }
     }
@@ -265,8 +283,12 @@ implements GoogleApiClient.ConnectionCallbacks,
                 case RESULT_OK:
                 case RESULT_CANCELED:
                     last_score = data.getIntExtra("score", 0);
-                    lab_score.setVisibility(View.VISIBLE);
-                    lab_score.setText(String.valueOf(last_score));
+                    if (last_score > 0) {
+                        lab_score.setVisibility(View.VISIBLE);
+                        lab_score.setText(String.valueOf(last_score));
+                    } else {
+                        lab_score.setVisibility(View.GONE);
+                    }
                     // сохранить очки в облаке можно только после Коннекшена Гугл-айпи, а это НЕ сразу после возврата
                     // результата Активити игры
             }
@@ -294,5 +316,31 @@ implements GoogleApiClient.ConnectionCallbacks,
                 .setNeutralButton(android.R.string.ok, null).create();
     }
 
+    private Special_launch getSpecial_launch() {
+        return special_launch;
+    }
 
+    private void check_first_run() {
+
+        final String PREFS_NAME = "prefs";
+        final String PREF_VERSION_CODE_KEY = "version_code";
+        final int DOESNT_EXIST = -1;
+
+        // Get current version code
+        int currentVersionCode = BuildConfig.VERSION_CODE;
+
+        // Get saved version code
+        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        int savedVersionCode = prefs.getInt(PREF_VERSION_CODE_KEY, DOESNT_EXIST);
+
+        // Check for first run or upgrade
+        if (currentVersionCode == savedVersionCode) {
+            special_launch = Special_launch.routine_launch;
+        } else if (savedVersionCode == DOESNT_EXIST) {
+            special_launch = Special_launch.first_launch;
+        } else if (currentVersionCode > savedVersionCode) {
+            special_launch = Special_launch.first_updated_launch;
+        }
+        prefs.edit().putInt(PREF_VERSION_CODE_KEY, currentVersionCode).apply();
+    }
 }

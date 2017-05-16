@@ -60,12 +60,6 @@ public class BumblebeeEngine extends Engine
         bumblebee.startAnimation(Animation.valueOf(R.drawable.anim_bumblebee_fly));
         bumblebee.setPosition(new Point(0, (float) 0.1));
 
-        //test
-        /*bumblebee.setVector(new Point(-0.01f,0.4f));
-        Animated strawberry = add_strawberry();
-        strawberry.setPosition(bumblebee.getPosition().plus(new Point(0, 5)));*/
-        // end_test
-
         Animated strawberry = add_strawberry(bumblebee.getPosition().plus(new Point(4, -2)));
         strawberry = add_strawberry(bumblebee.getPosition().plus(new Point(7, -3)));
 
@@ -90,17 +84,6 @@ public class BumblebeeEngine extends Engine
         Strawberry strawberry = new Strawberry();
         strawberry.setPosition(position);
         strawberries.add(strawberry);
-
-        /*Animated collar = new Animated();
-        collar.startAnimation(Animation.valueOf(R.drawable.strawberry_collar));
-        collar.setPosition(position);
-
-        Animated stalk = new Animated();
-        stalk.startAnimation(Animation.valueOf(R.drawable.strawberry_stalk));
-        stalk.setPosition(position);
-        //stalk.setDirection(new Random().nextInt(90)-45);
-        stalk.setDirection(0);*/
-
 
         return strawberry;
     }
@@ -190,18 +173,28 @@ public class BumblebeeEngine extends Engine
         final float dir_to_balloon = pos_functions.poidir(prev_position, from.getPosition());
         float corner =pos_functions.corner(jumper.getVectorDirection(), dir_to_balloon);
         float bounce_dir = (dir_to_balloon) + corner-180;
-        float bounce_speed = jumper.getVectorLength();
+        final float jump_slowing_factor = 1.5f;
+        float bounce_speed = jumper.getVectorLength()/jump_slowing_factor;
         jumper.setVector(pos_functions.lendir(bounce_speed, bounce_dir));
     }
 
 
     private void player_control() {
         if (
-                (bumblebee.isLive())&&
-                (getControl().isTouched())
-                ) {
-            bumblebee.rush(90);
+                (getControl().isTouched()&&
+                (!bumblebee.isSwooping()))
+           )
+        {
+            bumblebee.start_swooping();
+        } else if (
+                (!getControl().isTouched()&&
+                        (bumblebee.isSwooping()))
+                )
+
+        {
+            bumblebee.stop_swooping();
         }
+
     }
 
     private void process_player_water_sink() {
@@ -253,10 +246,12 @@ public class BumblebeeEngine extends Engine
 
     private boolean is_left_map(Animated animated) {
 
-        if (
-                (animated.getPosition().getX()+
-                        animated.getSize().getX()/2) <
-            super.getViewport().getRect().getLeft()) {
+        final float possible_player_move_back = getViewport().getRect().getWidth()/2;
+        final float x_when_allready_not_visible =
+                getViewport().getRect().getLeft()-
+                animated.getSize().getX()/2;
+        final float x_when_not_reacheble = x_when_allready_not_visible-possible_player_move_back;
+        if (animated.getPosition().getX() < x_when_not_reacheble) {
             return true;
         }
         return false;

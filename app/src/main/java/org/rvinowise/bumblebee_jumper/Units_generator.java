@@ -22,8 +22,10 @@ public class Units_generator {
     }
 
     public void init_scene() {
-        water_flow.init(engine.getViewport(), Animation.valueOf(R.drawable.water), new Point(5,1),
+        water_flow.init(engine.getViewport(), Animation.valueOf(R.drawable.water), new Point(1,1),
                 (Collection)engine.getAnimateds());
+        water_flow.setAnimation_speed(0.6f);
+
         grass_flow.init(engine.getViewport(), Animation.valueOf(R.drawable.grass), new Point(12,12),
                 (Collection)engine.getAnimateds());
 
@@ -60,7 +62,7 @@ public class Units_generator {
     private void create_strawberry_ahead() {
         float line_ahead = engine.getViewport().getRect().getRight()+ Strawberry.getStandardRadius();
         float random_height = engine.getViewport().getRect().getBottom()+
-                random.nextInt((int) (engine.getViewport().getRect().getHeight()+1 - Strawberry.getStandardRadius()*2));
+                random.nextFloat()*engine.getViewport().getRect().getHeight() - Strawberry.getStandardRadius();
         Strawberry strawberry = engine.add_strawberry(new Point(line_ahead, random_height));
         //strawberry.setPosition(new Point(line_ahead, random_height));
     }

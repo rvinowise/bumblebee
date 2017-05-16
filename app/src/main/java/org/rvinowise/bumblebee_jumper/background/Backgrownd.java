@@ -19,6 +19,7 @@ public class Backgrownd {
 
     protected Animation animation;
     protected Point size;
+    protected float animation_speed = 1;
     protected Collection<Animated> engine_animated;
 
 
@@ -32,6 +33,10 @@ public class Backgrownd {
         engine_animated = in_engine_animated;
         size = in_size;
         //create_first_instances();
+    }
+
+    public void setAnimation_speed(float speed) {
+        animation_speed = speed;
     }
 
     public  void create_first_instances(float in_y) {
@@ -54,7 +59,7 @@ public class Backgrownd {
     }
 
     public float getWidth() {
-        return size.getX();
+        return size.getX()*animation.getEssential_texture_scale().getX();
     }
     public float getHeight() {
         return size.getY();
@@ -98,7 +103,7 @@ public class Backgrownd {
         instances.addLast(new_instance);
         new_instance.startAnimation(animation);
         new_instance.setSize(size);
-        new_instance.setAnimation_speed(0.02f);
+        new_instance.setAnimation_speed(animation_speed);
         return new_instance;
     }
 

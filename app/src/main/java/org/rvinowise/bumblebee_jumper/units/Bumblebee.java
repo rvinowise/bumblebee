@@ -1,6 +1,8 @@
 package org.rvinowise.bumblebee_jumper.units;
 
 
+import android.util.Log;
+
 import org.rvinowise.bumblebee_jumper.R;
 import java.util.Vector;
 import game.engine.units.animation.Animated;
@@ -11,9 +13,12 @@ import game.engine.utils.primitives.Point;
 
 public class Bumblebee extends Animated {
 
-    private float rush_speed = 0.05f;
-    private float forward_acceleration = 0.02f;
-    private float backward_acceleration = -0.02f;
+    private float swoop_acceleration = 0.008f;
+    private float swoop_max_speed = 0.25f;
+    private boolean swooping = false;
+
+    private float forward_acceleration = 0.01f;
+    private float backward_acceleration = -0.0010f;//-forward_acceleration;
 
     private Point optimal_vector = new Point(0.1f,0.5f);
 
@@ -37,7 +42,11 @@ public class Bumblebee extends Animated {
     public void step() {
         super.step();
         if (live) {
-            cruise_fly();
+            if (isSwooping()) {
+                swoop(90);
+            } else {
+                cruise_fly();
+            }
         }
     }
 
@@ -79,8 +88,21 @@ public class Bumblebee extends Animated {
     }
 
 
-    public void rush(float direction) {
-        vector = vector.plus(pos_functions.lendir(rush_speed, direction));
+    public void swoop(float direction) {
+        //vector = vector.plus(pos_functions.lendir(swoop_acceleration, direction));
+        vector.accelerate_y_speed(-swoop_acceleration, -swoop_max_speed);
+        vector.brake_x_speed(backward_acceleration, forward_acceleration);
+        Log.d("BUMBLE", String.valueOf(vector.getX()));
+    }
+
+    public void start_swooping() {
+        swooping = true;
+    }
+    public void stop_swooping() {
+        swooping = false;
+    }
+    public boolean isSwooping() {
+        return swooping;
     }
 
 

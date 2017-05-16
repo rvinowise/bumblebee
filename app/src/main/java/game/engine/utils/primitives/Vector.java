@@ -37,4 +37,30 @@ public class Vector extends Point {
         return result;
     }
 
+    public void brake_x_speed(float acceleration_left, float acceleration_right) {
+        if (x > 0) {
+            if (x > acceleration_left) {
+                x = x + acceleration_left;
+            } else {
+                x = 0;
+            }
+        } else if (x < 0) {
+            if (x < acceleration_right) {
+                x = x + acceleration_right;
+            } else {
+                x = 0;
+            }
+        }
+    }
+
+
+    public void accelerate_y_speed(float acceleration, float max_speed) {
+        if (acceleration < 0) {
+            if (Math.abs(y) < Math.abs(max_speed - acceleration)) {
+                y += acceleration;
+            } else {
+                y = max_speed;
+            }
+        }
+    }
 }

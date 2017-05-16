@@ -91,7 +91,7 @@ public abstract class Engine
     private void init_score() {
 
         score.init_opengl();
-        score.prepare_text("9999");
+        score.prepare_text("0");
     }
 
 
