@@ -46,8 +46,6 @@ public abstract class Engine
     final private Viewport viewport = new Viewport();
     final private Human_control control = new Human_control();
 
-    private boolean initialized = false;
-
     protected Score score;
 
     static Engine instance;
@@ -110,8 +108,6 @@ public abstract class Engine
             }
         }
         viewport.adjust_to_watched(animateds);
-        //value.prepare_text();
-
     }
 
     protected boolean no_need_more(Animated animated) {
@@ -140,16 +136,10 @@ public abstract class Engine
 
     private void prepare_graphic_settings() {
         glClearColor(0.7f, 0.8f, 1f, 1f);
-        //glClearDepthf(1.0f);
         glEnable(GL_CULL_FACE);
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-        //glEnable( GL_DEPTH_TEST );
-        //glDepthFunc( GL_LEQUAL );
-        //glDepthMask( true );
-
     }
 
     private void load_shaders(Context context) {
@@ -196,23 +186,18 @@ public abstract class Engine
 
 
 
-
-    private Fps_counter fps_counter;
-
     public void register_first_step_as_done() {
-        fps_counter.register_first_step_as_done();
+        Fps_counter.register_first_step_as_done();
     }
 
     @Override
     public void onDrawFrame(GL10 glUnused)
     {
 
-        fps_counter.drawing_step();
+        Fps_counter.drawing_step();
 
-        //final float fastest_framerate = 0.033f;
-
-        if (fps_counter.its_time_for_next_step()) {
-            fps_counter.physics_step();
+        if (Fps_counter.its_time_for_next_step()) {
+            Fps_counter.physics_step();
             step();
         }
         draw();
@@ -228,21 +213,17 @@ public abstract class Engine
         last_delay = in_delay;
     }*/
 
-    public void draw() {
+    private void draw() {
         glClear(GL_COLOR_BUFFER_BIT);
-
         prepare_to_draw_sprites();
-        for (Animation animation : backgrownd_animations) {
-            animation.prepare_to_draw_instances(shader_program);
 
-            for (Animated animated: animation.getInstances()) {
-                prepare_to_draw_instance(animated);
-
-                glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
-            }
-        }
+        draw_animated_units(backgrownd_animations);
         score.draw(shader_program);
-        for (Animation animation : foregrownd_animations) {
+        draw_animated_units(foregrownd_animations);
+
+    }
+    private void draw_animated_units(Collection<Animation> animations) {
+        for (Animation animation : animations) {
             animation.prepare_to_draw_instances(shader_program);
 
             for (Animated animated: animation.getInstances()) {

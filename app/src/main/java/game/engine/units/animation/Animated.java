@@ -8,9 +8,8 @@ import game.engine.units.Physical;
 import game.engine.utils.primitives.Point;
 
 public class Animated extends Physical {
-    protected float current_frame;
-    protected Animation current_animation;
-    //private float animation_speed = 1;
+    float current_frame;
+    Animation current_animation;
     private int steps_for_next_frame = 1;
     private float idle_steps = 0;
 
@@ -25,7 +24,6 @@ public class Animated extends Physical {
     public Animated() {
         Engine.getInstance().add_animated(this);
         physical_size = new Point(1,1);
-        //set_first_frame();
     }
 
     public void step() {
@@ -50,16 +48,10 @@ public class Animated extends Physical {
         }
     }
 
-    protected void set_first_frame() {
+    private void set_first_frame() {
         current_frame=0;
         current_animation.setMatrix_to_first_frame(texture_matrix);
     }
-    /*public boolean next_step_should_be_first() {
-        return (
-                (current_frame == current_animation.getFrames_qty()-1) &&
-                (idle_steps == steps_for_next_frame-1)
-        );
-    }*/
 
     public void startAnimation(Animation in_animation) {
         if (current_animation != null) {
@@ -107,6 +99,11 @@ public class Animated extends Physical {
         physical_size = in_size;
         update_size();
     }
+    public void setSize(float in_size) {
+        physical_size = new Point(in_size, in_size);
+        update_size();
+    }
+
     private void update_size() {
         drowing_size = physical_size.multiply(getCurrent_animation().getEssential_texture_scale());
     }

@@ -58,12 +58,9 @@ abstract public class Physical {
         this.vector = vector;
     }
 
-    /*public void step() {
-        position = position.plus(vector);
-    }*/
+
     public void step() {
         position = position.plus(vector.getStep_value());
-        //position = position.plus(vector);
     }
 
     public float getVectorDirection() {

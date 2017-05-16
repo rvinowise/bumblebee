@@ -13,21 +13,19 @@ import game.engine.utils.primitives.Point;
 public class Units_generator {
 
     private final BumblebeeEngine engine;
-    final Random random = new Random(0);
+    private final Random random = new Random(0);
     private Backgrownd water_flow = new Backgrownd();
     private Backgrownd grass_flow = new Backgrownd();
 
-    public Units_generator(BumblebeeEngine in_engine) {
+    Units_generator(BumblebeeEngine in_engine) {
         engine = in_engine;
     }
 
-    public void init_scene() {
-        water_flow.init(engine.getViewport(), Animation.valueOf(R.drawable.water), new Point(1,1),
-                (Collection)engine.getAnimateds());
+    void init_scene() {
+        water_flow.init(engine.getViewport(), Animation.valueOf(R.drawable.water), new Point(1,1));
         water_flow.setAnimation_speed(0.6f);
 
-        grass_flow.init(engine.getViewport(), Animation.valueOf(R.drawable.grass), new Point(12,12),
-                (Collection)engine.getAnimateds());
+        grass_flow.init(engine.getViewport(), Animation.valueOf(R.drawable.grass), new Point(12,12));
 
         water_flow.create_first_instances(-4);
         grass_flow.create_first_instances(water_flow.getLast_instance().getPosition().getY()+
@@ -36,7 +34,7 @@ public class Units_generator {
     }
 
 
-    public void step() {
+    void step() {
         if (too_few_strawberries()) {
             create_strawberry_ahead();
         }
@@ -60,15 +58,22 @@ public class Units_generator {
     }
 
     private void create_strawberry_ahead() {
-        float line_ahead = engine.getViewport().getRect().getRight()+ Strawberry.getStandardRadius();
+        float radius = (float) (Strawberry.getStandardRadius()-0.4+random.nextFloat()*2);
+
+
+        float line_ahead = engine.getViewport().getRect().getRight()+ radius;
         float random_height = engine.getViewport().getRect().getBottom()+
                 random.nextFloat()*engine.getViewport().getRect().getHeight() - Strawberry.getStandardRadius();
         Strawberry strawberry = engine.add_strawberry(new Point(line_ahead, random_height));
+
+        strawberry.setRadius(radius);
+        strawberry.setSize(radius*2);
+
         //strawberry.setPosition(new Point(line_ahead, random_height));
     }
 
 
-    public float getWater_y() {
+    float getWater_y() {
         return water_flow.getLast_instance().getPosition().getY();
     }
 }

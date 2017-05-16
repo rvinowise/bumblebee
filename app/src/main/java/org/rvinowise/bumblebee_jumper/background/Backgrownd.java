@@ -14,25 +14,21 @@ import game.engine.utils.primitives.Point;
 public class Backgrownd {
 
 
-    protected Deque<Animated> instances = new ArrayDeque<Animated>();
-    protected Viewport viewport;
+    private Deque<Animated> instances = new ArrayDeque<Animated>();
+    private Viewport viewport;
 
-    protected Animation animation;
-    protected Point size;
-    protected float animation_speed = 1;
-    protected Collection<Animated> engine_animated;
+    private Animation animation;
+    private Point size;
+    private float animation_speed = 1;
 
 
     public Animation getAnimation() {
         return animation;
     }
-    public void init(Viewport in_viewport, Animation in_animation, Point in_size,
-                            Collection<Animated> in_engine_animated) {
+    public void init(Viewport in_viewport, Animation in_animation, Point in_size) {
         viewport = in_viewport;
         animation = in_animation;
-        engine_animated = in_engine_animated;
         size = in_size;
-        //create_first_instances();
     }
 
     public void setAnimation_speed(float speed) {

@@ -20,6 +20,7 @@ import game.engine.units.animation.Sprite_for_loading;
 import game.engine.units.animation.Animated;
 import game.engine.utils.primitives.Point;
 import game.engine.utils.primitives.Rectangle;
+import game.engine.utils.primitives.Vector;
 
 
 public class BumblebeeEngine extends Engine
@@ -144,7 +145,7 @@ public class BumblebeeEngine extends Engine
     }
 
     private void process_player_falling() {
-        final Point gravity_vector = new Point(0f,-0.001f);
+        final Point gravity_vector = new Vector(0f,-0.001f).getStep_value();
         bumblebee.setVector(bumblebee.getVector().plus(gravity_vector));
 
         //bumblebee.cruise_fly();
@@ -229,7 +230,6 @@ public class BumblebeeEngine extends Engine
                         system_listener.return_score_to_start_screen();
                     }
                 });
-                //system_listener.return_score_to_start_screen();
             }
         };
         final int epilog_duration = 2000;
@@ -263,8 +263,6 @@ public class BumblebeeEngine extends Engine
 
         Sprite_loader sprite_loader = new Sprite_loader();
 
-        //Vector<Sprite_for_loading> result = new Vector<Sprite_for_loading>();
-
         sprite_loader.start_background_registration();
         sprite_loader.add(new Sprite_for_loading(R.drawable.grass, new Rectangle (512,512), 1));
 
@@ -274,7 +272,7 @@ public class BumblebeeEngine extends Engine
         sprite_loader.add(new Sprite_for_loading(R.drawable.strawberry, new Rectangle(128,128), 1, 1, new Point(64,64)));
         sprite_loader.add(new Sprite_for_loading(R.drawable.strawberry_explode, new Rectangle(100,150), 8, 2, new Point(47,32)));
 
-        sprite_loader.add(new Sprite_for_loading(R.drawable.anim_bumblebee_fly, new Rectangle (160,220), 6, 2));
+        sprite_loader.add(new Sprite_for_loading(R.drawable.anim_bumblebee_fly, new Rectangle (160,220), 6, 1.5f));
 
         sprite_loader.add(new Sprite_for_loading(R.drawable.water, new Rectangle (256,35), 5, 1, new Point(0,4)));
         sprite_loader.add(new Sprite_for_loading(R.drawable.water_splash, new Rectangle(62,62), 10, 1, new Point(32, 50)));

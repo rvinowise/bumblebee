@@ -7,6 +7,7 @@ import android.view.View;
 import static android.view.MotionEvent.ACTION_DOWN;
 import static android.view.MotionEvent.ACTION_UP;
 
+
 public class Human_control {
 
     private boolean touched = false;

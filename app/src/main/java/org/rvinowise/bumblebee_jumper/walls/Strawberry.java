@@ -14,7 +14,7 @@ import game.engine.utils.primitives.Point;
 public class Strawberry extends Animated {
 
      static public float getStandardRadius() {
-        return 0.4f;
+        return 0.5f;
     }
 
     public Strawberry() {
@@ -34,14 +34,13 @@ public class Strawberry extends Animated {
 
         Effect.create(Animation.valueOf(R.drawable.strawberry_explode), this.getPosition(),
                 pos_functions.poidir(exploder.getPosition(), getPosition())-90);
-        //);)
         leave_some_parts();
     }
 
     private void leave_some_parts() {
-        Animated collar = new Animated();
-        collar.startAnimation(Animation.valueOf(R.drawable.strawberry_stalk));
-        collar.setPosition(position);
+        Animated stalk = new Animated();
+        stalk.startAnimation(Animation.valueOf(R.drawable.strawberry_stalk));
+        stalk.setPosition(position);
     }
 
 }
