@@ -106,8 +106,6 @@ implements GoogleApiClient.ConnectionCallbacks,
     @Override
     protected void onStart() {
         super.onStart();
-        Log.d(TAG, "onStart(): connecting");
-        googleApiClient.connect();
     }
     @Override
     protected void onStop() {

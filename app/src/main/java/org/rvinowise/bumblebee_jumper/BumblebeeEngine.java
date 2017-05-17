@@ -174,7 +174,7 @@ public class BumblebeeEngine extends Engine
         final float dir_to_balloon = pos_functions.poidir(prev_position, from.getPosition());
         float corner =pos_functions.corner(jumper.getVectorDirection(), dir_to_balloon);
         float bounce_dir = (dir_to_balloon) + corner-180;
-        final float jump_slowing_factor = 1.5f;
+        final float jump_slowing_factor = 1.9f;
         float bounce_speed = jumper.getVectorLength()/jump_slowing_factor;
         jumper.setVector(pos_functions.lendir(bounce_speed, bounce_dir));
     }
@@ -249,7 +249,7 @@ public class BumblebeeEngine extends Engine
         final float possible_player_move_back = getViewport().getRect().getWidth()/2;
         final float x_when_allready_not_visible =
                 getViewport().getRect().getLeft()-
-                animated.getSize().getX()/2;
+                animated.getRadius();
         final float x_when_not_reacheble = x_when_allready_not_visible-possible_player_move_back;
         if (animated.getPosition().getX() < x_when_not_reacheble) {
             return true;
@@ -267,12 +267,12 @@ public class BumblebeeEngine extends Engine
         sprite_loader.add(new Sprite_for_loading(R.drawable.grass, new Rectangle (512,512), 1));
 
         sprite_loader.start_foreground_registration();
-        sprite_loader.add(new Sprite_for_loading(R.drawable.strawberry_stalk, new Rectangle(512,2048), 1, 4, new Point(175,160)));
-        sprite_loader.add(new Sprite_for_loading(R.drawable.strawberry_full, new Rectangle(512,2048), 1, 4, new Point(175,160)));
+        sprite_loader.add(new Sprite_for_loading(R.drawable.strawberry_stalk, new Rectangle(512,2048), 1, 4.26f, new Point(175,160)));
+        sprite_loader.add(new Sprite_for_loading(R.drawable.strawberry_full, new Rectangle(512,2048), 1, 4.26f, new Point(175,160)));
         sprite_loader.add(new Sprite_for_loading(R.drawable.strawberry, new Rectangle(128,128), 1, 1, new Point(64,64)));
         sprite_loader.add(new Sprite_for_loading(R.drawable.strawberry_explode, new Rectangle(100,150), 8, 2, new Point(47,32)));
 
-        sprite_loader.add(new Sprite_for_loading(R.drawable.anim_bumblebee_fly, new Rectangle (160,220), 6, 1.5f));
+        sprite_loader.add(new Sprite_for_loading(R.drawable.anim_bumblebee_fly, new Rectangle (160,220), 6, 2.16f, new Point(78,108)));
 
         sprite_loader.add(new Sprite_for_loading(R.drawable.water, new Rectangle (256,35), 5, 1, new Point(0,4)));
         sprite_loader.add(new Sprite_for_loading(R.drawable.water_splash, new Rectangle(62,62), 10, 1, new Point(32, 50)));

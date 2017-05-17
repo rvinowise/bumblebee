@@ -4,8 +4,8 @@ package game.engine;
 public enum Fps_counter {
     ;
 
-    //private static final float etalon_framerate = 0.033f;
-    private static final float etalon_framerate = 0.066f;
+    private static final float etalon_framerate = 0.033f;
+    //private static final float etalon_framerate = 0.088f;
 
     static final float fastest_framerate = 0.005f;
 

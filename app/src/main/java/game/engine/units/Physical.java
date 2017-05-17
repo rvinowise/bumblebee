@@ -11,7 +11,7 @@ abstract public class Physical {
     protected Point position = new Point(0,0);
     protected float direction;
 
-    protected float radius;
+    protected float radius=0.5f;
     protected Vector vector = new Vector(0,0);
     
     boolean marked_for_remove = false;
@@ -41,6 +41,9 @@ abstract public class Physical {
 
     public float getRadius() {
         return radius;
+    }
+    public float getDiameter() {
+        return radius*2;
     }
 
     public void transpose(Point in_position) {

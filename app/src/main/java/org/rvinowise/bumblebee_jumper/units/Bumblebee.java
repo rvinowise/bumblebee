@@ -13,12 +13,12 @@ import game.engine.utils.primitives.Point;
 
 public class Bumblebee extends Animated {
 
-    private float swoop_acceleration = 0.008f;
+    private float swoop_acceleration = 0.005f;
     private float swoop_max_speed = 0.25f;
     private boolean swooping = false;
 
     private float forward_acceleration = 0.01f;
-    private float backward_acceleration = -0.0010f;
+    private float backward_acceleration = -0.0002f;
 
     private Point optimal_vector = new Point(0.1f,0.5f);
 

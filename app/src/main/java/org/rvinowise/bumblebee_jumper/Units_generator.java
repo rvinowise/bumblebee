@@ -1,9 +1,12 @@
 package org.rvinowise.bumblebee_jumper;
 
 
+import android.util.Log;
+
 import org.rvinowise.bumblebee_jumper.background.Backgrownd;
 import org.rvinowise.bumblebee_jumper.walls.Strawberry;
 
+import java.sql.Time;
 import java.util.Collection;
 import java.util.Random;
 
@@ -13,12 +16,16 @@ import game.engine.utils.primitives.Point;
 public class Units_generator {
 
     private final BumblebeeEngine engine;
-    private final Random random = new Random(0);
+    private final Random random;
     private Backgrownd water_flow = new Backgrownd();
     private Backgrownd grass_flow = new Backgrownd();
 
     Units_generator(BumblebeeEngine in_engine) {
         engine = in_engine;
+
+        long random_seed = System.currentTimeMillis();
+        random = new Random(random_seed);
+        Log.d("Units_generator", "random_seed = "+random_seed);
     }
 
     void init_scene() {
@@ -58,8 +65,9 @@ public class Units_generator {
     }
 
     private void create_strawberry_ahead() {
-        float radius = (float) (Strawberry.getStandardRadius()-0.4+random.nextFloat()*2);
 
+        float radius = Strawberry.get_random_radius(random);
+        //float radius = 0.5f;
 
         float line_ahead = engine.getViewport().getRect().getRight()+ radius;
         float random_height = engine.getViewport().getRect().getBottom()+
@@ -67,7 +75,6 @@ public class Units_generator {
         Strawberry strawberry = engine.add_strawberry(new Point(line_ahead, random_height));
 
         strawberry.setRadius(radius);
-        strawberry.setSize(radius*2);
 
         //strawberry.setPosition(new Point(line_ahead, random_height));
     }

@@ -95,27 +95,25 @@ public class Animated extends Physical {
         this.steps_for_next_frame = Math.round(1/animation_speed);
     }
 
-    public void setSize(Point in_size) {
-        physical_size = in_size;
-        update_size();
-    }
-    public void setSize(float in_size) {
-        physical_size = new Point(in_size, in_size);
+    public void setRadius(float radius) {
+        super.setRadius(radius);
         update_size();
     }
 
+
     private void update_size() {
-        drowing_size = physical_size.multiply(getCurrent_animation().getEssential_texture_scale());
+        if (getCurrent_animation() != null) {
+            drowing_size = physical_size.multiply(getCurrent_animation().getEssential_texture_scale().multiply(getDiameter()));
+        }
     }
 
     private Point getDrowing_size() {
         return drowing_size;
     }
-    public Point getSize() {
-        return physical_size;
+
+
+    public void setSize(Point point) {
+        physical_size = point;
+        update_size();
     }
-
-
-
-
 }
