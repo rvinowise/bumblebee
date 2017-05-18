@@ -103,11 +103,12 @@ public class Animated extends Physical {
 
     private void update_size() {
         if (getCurrent_animation() != null) {
-            drowing_size = physical_size.multiply(getCurrent_animation().getEssential_texture_scale().multiply(getDiameter()));
+            drowing_size = physical_size.multiply(
+                    getCurrent_animation().getEssential_texture_scale().multiply(getDiameter()));
         }
     }
 
-    private Point getDrowing_size() {
+    public Point getDrowing_size() {
         return drowing_size;
     }
 

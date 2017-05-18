@@ -124,20 +124,20 @@ public class pos_functions {
 
 	/*static public float rotate(float *inDir, float inNeedDir, float inChDir) {
 		float dirCorner = corner(*inDir, inNeedDir);
-		int vector = 0;
+		int moving_vector = 0;
 		if (abs(dirCorner) < inChDir) {
 			*inDir = inNeedDir;
 		} else if (dirCorner > 0) {
 			*inDir += inChDir;
-			vector = 1;
+			moving_vector = 1;
 		} else {
 			*inDir -= inChDir;
-			vector = -1;
+			moving_vector = -1;
 		}
 
 		normalizeDirection(inDir);
 
-		return vector;
+		return moving_vector;
 	}*/
 
 

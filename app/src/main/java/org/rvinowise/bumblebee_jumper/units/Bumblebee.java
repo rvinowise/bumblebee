@@ -7,13 +7,12 @@ import org.rvinowise.bumblebee_jumper.R;
 import java.util.Vector;
 import game.engine.units.animation.Animated;
 
-import game.engine.pos_functions.*;
 import game.engine.utils.primitives.Point;
 
 
 public class Bumblebee extends Animated {
 
-    private float swoop_acceleration = 0.005f;
+    private float swoop_acceleration = 0.008f;
     private float swoop_max_speed = 0.25f;
     private boolean swooping = false;
 
@@ -28,7 +27,7 @@ public class Bumblebee extends Animated {
     public Bumblebee() {
         setRadius(0.5f);
         //startAnimation();
-        //vector.setX(0.02f);
+        //moving_vector.setX(0.02f);
     }
 
     public static Vector<Integer> getAnimationNames() {
@@ -51,15 +50,15 @@ public class Bumblebee extends Animated {
     }
 
     private void cruise_fly() {
-        Point vector = getVector();
+        Point vector = getMoving_vector();
 
 
-        if (getVector().getX() < optimal_vector.getX()) {
-            final float needed_acceleration = optimal_vector.getX()-getVector().getX();
+        if (getMoving_vector().getX() < optimal_vector.getX()) {
+            final float needed_acceleration = optimal_vector.getX()- getMoving_vector().getX();
             if (needed_acceleration > forward_acceleration) {
-                setVector(getVector().plus(new Point(forward_acceleration,0)));
+                setMoving_vector(getMoving_vector().plus(new Point(forward_acceleration,0)));
             } else {
-                setVector(getVector().plus(new Point(needed_acceleration,0)));
+                setMoving_vector(getMoving_vector().plus(new Point(needed_acceleration,0)));
             }
         }
 
@@ -68,9 +67,9 @@ public class Bumblebee extends Animated {
 
 
     public void swoop(float direction) {
-        vector.accelerate_y_speed(-swoop_acceleration, -swoop_max_speed);
-        vector.brake_x_speed(backward_acceleration, forward_acceleration);
-        Log.d("BUMBLE", String.valueOf(vector.getX()));
+        moving_vector.accelerate_y_speed(-swoop_acceleration, -swoop_max_speed);
+        moving_vector.brake_x_speed(backward_acceleration, forward_acceleration);
+        Log.d("BUMBLE", String.valueOf(moving_vector.getX()));
     }
 
     public void start_swooping() {

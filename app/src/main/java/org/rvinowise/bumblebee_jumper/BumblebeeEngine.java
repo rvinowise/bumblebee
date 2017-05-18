@@ -12,6 +12,7 @@ import java.util.TimerTask;
 import javax.microedition.khronos.opengles.GL10;
 
 import game.engine.Engine;
+import game.engine.Fps_counter;
 import game.engine.initialisation.Sprite_loader;
 import game.engine.pos_functions.pos_functions;
 import game.engine.units.animation.Animation;
@@ -20,7 +21,7 @@ import game.engine.units.animation.Sprite_for_loading;
 import game.engine.units.animation.Animated;
 import game.engine.utils.primitives.Point;
 import game.engine.utils.primitives.Rectangle;
-import game.engine.utils.primitives.Vector;
+import game.engine.utils.primitives.Moving_vector;
 
 
 public class BumblebeeEngine extends Engine
@@ -30,6 +31,10 @@ public class BumblebeeEngine extends Engine
     private Bumblebee bumblebee;
 
     private Units_generator generator = new Units_generator(this);
+
+    public Bumblebee getBumblebee() {
+        return bumblebee;
+    }
 
     public Collection<Strawberry> getStrawberries() {
         return strawberries;
@@ -59,7 +64,7 @@ public class BumblebeeEngine extends Engine
         init_viewport(bumblebee); //RV тут создается bumblebeeViewport который нужен при onSurfaceChanged
 
         bumblebee.startAnimation(Animation.valueOf(R.drawable.anim_bumblebee_fly));
-        bumblebee.setPosition(new Point(0, (float) 0.1));
+        bumblebee.setPosition(new Point(0, (float) 2));
 
         Animated strawberry = add_strawberry(bumblebee.getPosition().plus(new Point(4, -2)));
         strawberry = add_strawberry(bumblebee.getPosition().plus(new Point(7, -3)));
@@ -81,11 +86,14 @@ public class BumblebeeEngine extends Engine
         return (getViewport().getRect() != null);
     }
 
-    public Strawberry add_strawberry(Point position) {
+    public Strawberry add_strawberry() {
         Strawberry strawberry = new Strawberry();
-        strawberry.setPosition(position);
         strawberries.add(strawberry);
-
+        return strawberry;
+    }
+    public Strawberry add_strawberry(Point position) {
+        Strawberry strawberry = add_strawberry();
+        strawberry.setPosition(position);
         return strawberry;
     }
     protected void remove(int i_physical) {
@@ -145,8 +153,8 @@ public class BumblebeeEngine extends Engine
     }
 
     private void process_player_falling() {
-        final Point gravity_vector = new Vector(0f,-0.001f).getStep_value();
-        bumblebee.setVector(bumblebee.getVector().plus(gravity_vector));
+        final Point gravity_vector = new Moving_vector(0f,-0.001f).getStep_value();
+        bumblebee.setMoving_vector(bumblebee.getMoving_vector().plus(gravity_vector));
 
         //bumblebee.cruise_fly();
     }
@@ -170,13 +178,13 @@ public class BumblebeeEngine extends Engine
     }
 
     private void jump_from_strawberry(Animated jumper, Strawberry from) {
-        final Point prev_position = jumper.getPosition()/*.minus(jumper.getVector())*/;
+        final Point prev_position = jumper.getPosition()/*.minus(jumper.getMoving_vector())*/;
         final float dir_to_balloon = pos_functions.poidir(prev_position, from.getPosition());
         float corner =pos_functions.corner(jumper.getVectorDirection(), dir_to_balloon);
         float bounce_dir = (dir_to_balloon) + corner-180;
-        final float jump_slowing_factor = 1.9f;
+        final float jump_slowing_factor = 1.8f;
         float bounce_speed = jumper.getVectorLength()/jump_slowing_factor;
-        jumper.setVector(pos_functions.lendir(bounce_speed, bounce_dir));
+        jumper.setMoving_vector(pos_functions.lendir(bounce_speed, bounce_dir));
     }
 
 
@@ -203,8 +211,8 @@ public class BumblebeeEngine extends Engine
             Effect effect = Effect.create(Animation.valueOf(R.drawable.water_splash),
                     new Point(bumblebee.getPosition().getX(), getWaterHeight()), 0);
             effect.setAnimation_speed(0.5f);
-            effect.setSize(new Point(bumblebee.getRadius() * 6, Math.abs(bumblebee.getVector().getY()) * 6));
-            bumblebee.setVector(new Point(bumblebee.getVector().getX()/4, -0.02f));
+            effect.setSize(new Point(bumblebee.getRadius() * 6, Math.abs(bumblebee.getMoving_vector().getY()) * 6));
+            bumblebee.setMoving_vector(new Point(bumblebee.getMoving_vector().getX()/4, -0.02f));
 
             getViewport().watch_object(null);
             bumblebee_die_from_sinking();
@@ -236,20 +244,14 @@ public class BumblebeeEngine extends Engine
         timer_to_menu.schedule(start_menu, epilog_duration);
     }
 
-    @Override
-    protected boolean no_need_more(Animated animted) {
-        if (super.no_need_more(animted)) {
-            return true;
-        }
-        return is_left_map(animted);
-    }
 
-    private boolean is_left_map(Animated animated) {
 
-        final float possible_player_move_back = getViewport().getRect().getWidth()/2;
+    protected boolean is_left_map(Animated animated) {
+
+        final float possible_player_move_back = getViewport().getRect().getWidth()/6;
         final float x_when_allready_not_visible =
                 getViewport().getRect().getLeft()-
-                animated.getRadius();
+                animated.getDrowing_size().getX();
         final float x_when_not_reacheble = x_when_allready_not_visible-possible_player_move_back;
         if (animated.getPosition().getX() < x_when_not_reacheble) {
             return true;

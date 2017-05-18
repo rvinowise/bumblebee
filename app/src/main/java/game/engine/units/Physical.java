@@ -1,8 +1,8 @@
 package game.engine.units;
 
 import game.engine.pos_functions.pos_functions;
+import game.engine.utils.primitives.Moving_vector;
 import game.engine.utils.primitives.Point;
-import game.engine.utils.primitives.Vector;
 
 
 abstract public class Physical {
@@ -12,7 +12,7 @@ abstract public class Physical {
     protected float direction;
 
     protected float radius=0.5f;
-    protected Vector vector = new Vector(0,0);
+    protected Moving_vector moving_vector = new Moving_vector(0,0);
     
     boolean marked_for_remove = false;
 
@@ -50,28 +50,28 @@ abstract public class Physical {
         this.position = this.position.plus(in_position);
     }
 
-    public Point getVector() {
-        return vector;
+    public Point getMoving_vector() {
+        return moving_vector;
     }
 
-    public void setVector(Point point) {
-        this.vector = new Vector(point);
+    public void setMoving_vector(Point point) {
+        this.moving_vector = new Moving_vector(point);
     }
-    public void setVector(Vector vector) {
-        this.vector = vector;
+    public void setVector(Moving_vector moving_vector) {
+        this.moving_vector = moving_vector;
     }
 
 
     public void step() {
-        position = position.plus(vector.getStep_value());
+        position = position.plus(moving_vector.getStep_value());
     }
 
     public float getVectorDirection() {
-        return pos_functions.poidir(new Point(0,0), getVector());
+        return pos_functions.poidir(new Point(0,0), getMoving_vector());
     }
 
     public float getVectorLength() {
-        return pos_functions.poidis(new Point(0,0), getVector());
+        return pos_functions.poidis(new Point(0,0), getMoving_vector());
     }
 
     public void remove() {

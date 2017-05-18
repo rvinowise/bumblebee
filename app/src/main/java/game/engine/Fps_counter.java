@@ -4,16 +4,18 @@ package game.engine;
 public enum Fps_counter {
     ;
 
-    private static final float etalon_framerate = 0.033f;
-    //private static final float etalon_framerate = 0.088f;
+    //private static final float etalon_framerate = 0.033f;
+    private static final float etalon_framerate = 0.028f;
 
     static final float fastest_framerate = 0.005f;
 
-    static float last_physics_step_moment;
-    static float last_delay = 0;
+
+
+    static long last_physics_step_moment;
+    static long last_delay = 0;
     static float time_since_last_step = 0;
     static float step_multiplier = 1;
-    static float last_drawing_step_moment;
+    static long last_drawing_step_moment;
     static boolean next_step_needed = false;
 
 
@@ -42,5 +44,9 @@ public enum Fps_counter {
 
     static public void register_first_step_as_done() {
         last_physics_step_moment = System.nanoTime();
+    }
+
+    public static long getLast_physics_step_moment() {
+        return last_physics_step_moment;
     }
 }
