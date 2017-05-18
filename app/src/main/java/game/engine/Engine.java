@@ -48,8 +48,8 @@ public abstract class Engine
     static Engine instance;
     protected Handler handler_menu;
 
-    private long last_check_outside;
-    private float time_before_check_outside = 0.01f;
+    private long last_cleaning_outside;
+    private float time_before_cleaning_outside = 0.01f;
 
     public interface System_listener {
         void return_score_to_start_screen();
@@ -115,18 +115,18 @@ public abstract class Engine
     }
 
     private void remove_outside_animateds() {
-        last_check_outside = Fps_counter.getLast_physics_step_moment();
+        last_cleaning_outside = Fps_counter.getLast_physics_step_moment();
         for(int i_physical = 0; i_physical < animateds.size(); i_physical++) {
             Animated animated = animateds.get(i_physical);
-            if (is_left_map(animated)) {
+            if (is_outside(animated)) {
                 remove(i_physical);
             }
         }
     }
 
     private boolean is_time_to_check_outside() {
-        return false;//(Fps_counter.getLast_physics_step_moment() - last_check_outside)/ 1000000000f
-                //> time_before_check_outside;
+        return (Fps_counter.getLast_physics_step_moment() - last_cleaning_outside)/ 1000000000f
+                > time_before_cleaning_outside;
     }
 
     protected boolean no_need_more(Animated animated) {
@@ -135,7 +135,7 @@ public abstract class Engine
         }
         return false;
     }
-    abstract protected boolean is_left_map(Animated animated);
+    abstract protected boolean is_outside(Animated animated);
 
     protected void remove(int i_physical) {
         Physical physical = animateds.get(i_physical);
@@ -220,8 +220,8 @@ public abstract class Engine
             Fps_counter.physics_step();
             step();
         }
-        draw();
 
+        draw();
     }
 
 

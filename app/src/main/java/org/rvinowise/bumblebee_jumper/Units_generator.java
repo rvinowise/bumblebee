@@ -8,22 +8,19 @@ import org.rvinowise.bumblebee_jumper.walls.Strawberry;
 
 import java.util.Collection;
 import java.util.Random;
-import java.util.Vector;
 
-import game.engine.Viewport;
 import game.engine.units.animation.Animated;
 import game.engine.units.animation.Animation;
-import game.engine.utils.primitives.Moving_vector;
 import game.engine.utils.primitives.Point;
 
-public class Units_generator {
+class Units_generator {
 
     private final BumblebeeEngine engine;
     private final Random random;
     private Backgrownd water_flow = new Backgrownd();
     private Backgrownd grass_flow = new Backgrownd();
-    //private int min_strawberries_qty = 7;
-    private int min_strawberries_qty = 20;
+    private int min_strawberries_qty = 4;
+    //private int min_strawberries_qty = 20;
 
     Units_generator(BumblebeeEngine in_engine) {
         engine = in_engine;
@@ -75,10 +72,10 @@ public class Units_generator {
         Strawberry first_strawberry = engine.add_strawberry();
         first_strawberry.setPosition(
                 engine.getBumblebee().getPosition().plus(new Point(
-                        1, -1
+                        3, -3
                 ))
         );
-        first_strawberry.setRadius(2f);
+        first_strawberry.setSize(1.5f);
         Strawberry last_strawberry = first_strawberry;
         for (int i_strawberry = 0; i_strawberry < min_strawberries_qty-1; i_strawberry++) {
             final float x_spread = 4;
@@ -101,7 +98,7 @@ public class Units_generator {
 
         float radius = Strawberry.get_random_radius(random);
 
-        float line_ahead = engine.getViewport().getRect().getRight()+ radius;
+        float line_ahead = engine.getViewport().getRect().getRight()- radius;
         float random_height = get_random_possible_height_for_strawberry();
 
 

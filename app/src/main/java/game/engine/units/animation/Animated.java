@@ -117,4 +117,8 @@ public class Animated extends Physical {
         physical_size = point;
         update_size();
     }
+    public void setSize(float diameter) {
+        super.setRadius(diameter/2);
+        update_size();
+    }
 }

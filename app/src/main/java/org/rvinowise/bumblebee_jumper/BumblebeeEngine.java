@@ -66,10 +66,6 @@ public class BumblebeeEngine extends Engine
         bumblebee.startAnimation(Animation.valueOf(R.drawable.anim_bumblebee_fly));
         bumblebee.setPosition(new Point(0, (float) 2));
 
-        Animated strawberry = add_strawberry(bumblebee.getPosition().plus(new Point(4, -2)));
-        strawberry = add_strawberry(bumblebee.getPosition().plus(new Point(7, -3)));
-
-
         generator.init_scene();
 
         super.register_first_step_as_done();
@@ -246,12 +242,13 @@ public class BumblebeeEngine extends Engine
 
 
 
-    protected boolean is_left_map(Animated animated) {
+    protected boolean is_outside(Animated animated) {
 
-        final float possible_player_move_back = getViewport().getRect().getWidth()/6;
+        final float possible_player_move_back = 0;//getViewport().getRect().getWidth()/6;
         final float x_when_allready_not_visible =
-                getViewport().getRect().getLeft()-
-                animated.getDrowing_size().getX();
+                getViewport().getRect().getLeft()+
+                //animated.getDrowing_size().getX();
+                animated.getRadius();
         final float x_when_not_reacheble = x_when_allready_not_visible-possible_player_move_back;
         if (animated.getPosition().getX() < x_when_not_reacheble) {
             return true;
