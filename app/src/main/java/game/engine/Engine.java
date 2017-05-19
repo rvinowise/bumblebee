@@ -49,7 +49,7 @@ public abstract class Engine
     protected Handler handler_menu;
 
     private long last_cleaning_outside;
-    private float time_before_cleaning_outside = 0.01f;
+    private float time_before_cleaning_outside = 1f;
 
     public interface System_listener {
         void return_score_to_start_screen();
@@ -338,6 +338,22 @@ public abstract class Engine
             final float collision_distance = in_physical.getRadius() + physical.getRadius();
             final float real_distance = pos_functions.poidis(in_physical.getPosition(), physical.getPosition());
             if (real_distance <= collision_distance) {
+                result.add(physical);
+            }
+        }
+        return result;
+    }
+    public Collection<Animated> getCollided_rect(Animated in_physical) {
+        Vector<Animated> result = new Vector<Animated>();
+        for (Animated physical: animateds) {
+            final float collision_distance = in_physical.getRadius() + physical.getRadius();
+            final float diff_x = in_physical.getPosition().getX() - physical.getPosition().getX();
+            final float diff_y = in_physical.getPosition().getY() - physical.getPosition().getY();
+            if (
+                    (Math.abs(diff_x) <= collision_distance)||
+                    (Math.abs(diff_y) <= collision_distance)
+                    )
+            {
                 result.add(physical);
             }
         }

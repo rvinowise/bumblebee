@@ -19,7 +19,8 @@ class Units_generator {
     private final Random random;
     private Backgrownd water_flow = new Backgrownd();
     private Backgrownd grass_flow = new Backgrownd();
-    private int min_strawberries_qty = 4;
+    private int min_strawberries_qty = 40;
+    private Animated last_animated;
     //private int min_strawberries_qty = 20;
 
     Units_generator(BumblebeeEngine in_engine) {
@@ -71,7 +72,7 @@ class Units_generator {
     private void fill_scene_with_strawberries() {
         Strawberry first_strawberry = engine.add_strawberry();
         first_strawberry.setPosition(
-                engine.getBumblebee().getPosition().plus(new Point(
+                engine.getBumblebee().getPosition().new_plus(new Point(
                         3, -3
                 ))
         );
@@ -82,12 +83,12 @@ class Units_generator {
             //final float y_spread = 5;
             Strawberry strawberry = engine.add_strawberry();
             strawberry.setPosition(
-                    last_strawberry.getPosition().plus(new Point(
-                            strawberry.getRadius()+last_strawberry.getRadius()+0.2f
-                                    /*+random.nextFloat()*x_spread,*/,0
-                            //get_random_possible_height_for_strawberry()
+                    last_strawberry.getPosition().new_plus(new Point(
+                            strawberry.getRadius()+last_strawberry.getRadius()
+                                    +random.nextFloat()*x_spread,
+                            get_random_possible_height_for_strawberry()
                     ))
-                    //last_strawberry.getPosition().plus(new Point(1,0))
+                    //last_strawberry.getPosition().new_plus(new Point(1,0))
             );
 
             last_strawberry = strawberry;
@@ -98,7 +99,14 @@ class Units_generator {
 
         float radius = Strawberry.get_random_radius(random);
 
-        float line_ahead = engine.getViewport().getRect().getRight()- radius;
+        float line_ahead;
+        if (
+                is_outside_scene_forward(last_animated)
+                ) {
+            line_ahead = last_animated.getPosition().getX();
+        } else {
+            line_ahead = engine.getViewport().getRect().getRight() + radius;
+        }
         float random_height = get_random_possible_height_for_strawberry();
 
 
@@ -106,9 +114,16 @@ class Units_generator {
         strawberry.setRadius(radius);
 
         strawberry.setPosition(new Point(line_ahead, random_height));
-        //place_to_free_position(strawberry);
+        place_to_free_position(strawberry);
 
 
+    }
+
+    private boolean is_outside_scene_forward(Animated animated) {
+        return (
+                (animated!=null)&&
+                (animated.getPosition().getX()+animated.getRadius() > engine.getViewport().getRect().getRight())
+        );
     }
 
     private float get_random_possible_height_for_strawberry() {
@@ -117,12 +132,12 @@ class Units_generator {
     }
 
     private void place_to_free_position(Animated animated) {
-        Collection<Animated> collided = engine.getCollided_circle(animated);
+        Collection<Animated> collided = engine.getCollided_rect(animated);
         if (!collided.isEmpty()) {
-            animated.setPosition(
-                    animated.getPosition().plus(
-                            new Point(animated.getRadius()*2, 0)));
+                animated.getPosition().plus(
+                        new Point(animated.getRadius()+Strawberry.get_max_radius(), 0));
         }
+        last_animated = animated;
     }
 
 

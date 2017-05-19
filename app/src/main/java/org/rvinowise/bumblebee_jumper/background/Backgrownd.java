@@ -36,13 +36,13 @@ public class Backgrownd {
     }
 
     public  void create_first_instances(float in_y) {
-        Point position = new Point(viewport.getRect().getLeft(), in_y);
+        Point current_position = new Point(viewport.getRect().getLeft(), in_y);
         Point offset = new Point(getWidth(), 0);
         int qty_needed = (int)Math.ceil(viewport.getRect().getWidth() / getWidth());
         for (int i_instance = 0; i_instance < qty_needed; i_instance++) {
             Animated new_animated = create_instance();
-            new_animated.setPosition(position);
-            position = position.plus(offset);
+            new_animated.setPosition(new Point(current_position));
+            current_position.plus(offset);
         }
 
     }

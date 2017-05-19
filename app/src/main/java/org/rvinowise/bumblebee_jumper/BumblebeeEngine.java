@@ -12,7 +12,6 @@ import java.util.TimerTask;
 import javax.microedition.khronos.opengles.GL10;
 
 import game.engine.Engine;
-import game.engine.Fps_counter;
 import game.engine.initialisation.Sprite_loader;
 import game.engine.pos_functions.pos_functions;
 import game.engine.units.animation.Animation;
@@ -150,7 +149,7 @@ public class BumblebeeEngine extends Engine
 
     private void process_player_falling() {
         final Point gravity_vector = new Moving_vector(0f,-0.001f).getStep_value();
-        bumblebee.setMoving_vector(bumblebee.getMoving_vector().plus(gravity_vector));
+        bumblebee.getMoving_vector().plus(gravity_vector);
 
         //bumblebee.cruise_fly();
     }
@@ -207,7 +206,7 @@ public class BumblebeeEngine extends Engine
             Effect effect = Effect.create(Animation.valueOf(R.drawable.water_splash),
                     new Point(bumblebee.getPosition().getX(), getWaterHeight()), 0);
             effect.setAnimation_speed(0.5f);
-            effect.setSize(new Point(bumblebee.getRadius() * 6, Math.abs(bumblebee.getMoving_vector().getY()) * 6));
+            effect.setSize(new Point(bumblebee.getRadius() * 10, Math.abs(bumblebee.getMoving_vector().getY()) * 20));
             bumblebee.setMoving_vector(new Point(bumblebee.getMoving_vector().getX()/4, -0.02f));
 
             getViewport().watch_object(null);
@@ -246,11 +245,14 @@ public class BumblebeeEngine extends Engine
 
         final float possible_player_move_back = 0;//getViewport().getRect().getWidth()/6;
         final float x_when_allready_not_visible =
-                getViewport().getRect().getLeft()+
-                //animated.getDrowing_size().getX();
-                animated.getRadius();
+                getViewport().getRect().getLeft()-
+                animated.getDrowing_size().getX()/2;
+                //animated.getRight();
         final float x_when_not_reacheble = x_when_allready_not_visible-possible_player_move_back;
-        if (animated.getPosition().getX() < x_when_not_reacheble) {
+        /*if (animated.getPosition().getX() < x_when_not_reacheble) {
+            return true;
+        }*/
+        if (animated.getRight() <= getViewport().getRect().getLeft()) {
             return true;
         }
         return false;

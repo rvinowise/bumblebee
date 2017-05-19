@@ -44,7 +44,7 @@ public class Strawberry extends Animated {
     public void explode(Animated exploder) {
         this.remove();
 
-        Effect explode = Effect.create(Animation.valueOf(R.drawable.strawberry_explode), this.getPosition(),
+        Effect explode = Effect.create(Animation.valueOf(R.drawable.strawberry_explode), new Point(this.getPosition()),
                 pos_functions.poidir(exploder.getPosition(), getPosition())-90);
         explode.setRadius(getRadius());
         leave_some_parts();

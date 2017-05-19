@@ -1,6 +1,10 @@
 package game.engine.units.animation;
 
 
+import android.util.Log;
+
+import org.rvinowise.bumblebee_jumper.background.Backgrownd;
+
 import game.engine.Engine;
 import game.engine.Fps_counter;
 import game.engine.opengl.matrices.Matrix;
@@ -113,6 +117,9 @@ public class Animated extends Physical {
     }
 
 
+    public Point getSize() {
+        return physical_size;
+    }
     public void setSize(Point point) {
         physical_size = point;
         update_size();
@@ -120,5 +127,12 @@ public class Animated extends Physical {
     public void setSize(float diameter) {
         super.setRadius(diameter/2);
         update_size();
+    }
+
+    public float getRight() {
+        if (this.getSize().getX()==12) {
+            Log.d("test","ok");
+        }
+        return position.getX()+getDrowing_size().getX()/2+getCurrent_animation().getCenter_offset().getX()*getDrowing_size().getX();
     }
 }

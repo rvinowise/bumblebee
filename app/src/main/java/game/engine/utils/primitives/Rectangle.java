@@ -76,16 +76,16 @@ public class Rectangle {
     }
 
     public void transpose(Point point) {
-        top_left = top_left.plus(point);
-        bottom_right = bottom_right.plus(point);
+        top_left.plus(point);
+        bottom_right.plus(point);
     }
 
     public void setCenterPosition(Point new_center) {
-        Point old_center = top_left.plus(bottom_right).divide(2);
+        Point old_center = top_left.new_plus(bottom_right).divide(2);
         Point top_left_offset = top_left.minus(old_center);
         Point bottom_right_offset = bottom_right.minus(old_center);
-        top_left = new_center.plus(top_left_offset);
-        bottom_right = new_center.plus(bottom_right_offset);
+        top_left = new_center.new_plus(top_left_offset);
+        bottom_right = new_center.new_plus(bottom_right_offset);
     }
 
     public float getRatio_y_to_x() {

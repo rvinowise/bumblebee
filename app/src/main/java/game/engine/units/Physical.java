@@ -47,7 +47,7 @@ abstract public class Physical {
     }
 
     public void transpose(Point in_position) {
-        this.position = this.position.plus(in_position);
+        this.position.plus(in_position);
     }
 
     public Point getMoving_vector() {
@@ -63,7 +63,7 @@ abstract public class Physical {
 
 
     public void step() {
-        position = position.plus(moving_vector.getStep_value());
+        position.plus(moving_vector.getStep_value());
     }
 
     public float getVectorDirection() {

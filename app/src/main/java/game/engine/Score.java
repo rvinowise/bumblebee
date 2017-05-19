@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.opengl.GLUtils;
+import android.util.Log;
 
 import game.engine.opengl.Program;
 import game.engine.opengl.Texture;
@@ -36,13 +37,13 @@ public class Score {
     public Score() {
         matrix.clear();
         matrix.scale(new Point(2f,2f,1));
-        //matrix.translate(new Point(0.1f,-0.5f));
 
         bitmap = Bitmap.createBitmap(128, 128, Bitmap.Config.ARGB_4444);
         canvas = new Canvas(bitmap);
         textPaint = new Paint();
 
-        textPaint.setTextSize(128);
+        //textPaint.setTextSize(128);
+        textPaint.setTextSize(20);
         textPaint.setAntiAlias(true);
 
     }
@@ -54,17 +55,15 @@ public class Score {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-        //glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        //glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     }
 
     public void prepare_text(String text) {
         texture.bind();
 
         canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-        //canvas.drawColor(Color.BLUE);
 
-        textPaint.setARGB(0xAA, 0x50, 0x50, 0x50);
+        //textPaint.setARGB(0xAA, 0x50, 0x50, 0x50);
+        textPaint.setARGB(0xFF, 0x00, 0x00, 0x00);
         textPaint.setTextAlign(Paint.Align.CENTER);
         textPaint.setTextScaleX(0.6f);
         canvas.drawText(text, bitmap.getWidth()/2,bitmap.getHeight()-20, textPaint); //bitmap.getWidth()/2
@@ -89,7 +88,9 @@ public class Score {
 
     public void add(int value) {
         this.value += value;
-        prepare_text(String.valueOf(this.value));
+        //prepare_text(String.valueOf(this.value));
+        prepare_text(String.valueOf(Fps_counter.getCurrent_fps()));
+        Log.d("FPS",String.valueOf(Fps_counter.getCurrent_fps()));
     }
 
 }

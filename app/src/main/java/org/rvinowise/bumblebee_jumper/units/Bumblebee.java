@@ -56,9 +56,9 @@ public class Bumblebee extends Animated {
         if (getMoving_vector().getX() < optimal_vector.getX()) {
             final float needed_acceleration = optimal_vector.getX()- getMoving_vector().getX();
             if (needed_acceleration > forward_acceleration) {
-                setMoving_vector(getMoving_vector().plus(new Point(forward_acceleration,0)));
+                getMoving_vector().plus(forward_acceleration,0);
             } else {
-                setMoving_vector(getMoving_vector().plus(new Point(needed_acceleration,0)));
+                getMoving_vector().plus(needed_acceleration,0);
             }
         }
 

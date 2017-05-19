@@ -15,8 +15,10 @@ public enum Fps_counter {
     static long last_delay = 0;
     static float time_since_last_step = 0;
     static float step_multiplier = 1;
+    static float max_step_multiplier = 10;
     static long last_drawing_step_moment;
     static boolean next_step_needed = false;
+    static float fps;
 
 
 
@@ -40,6 +42,10 @@ public enum Fps_counter {
         next_step_needed = false;
         last_physics_step_moment = last_drawing_step_moment;
         step_multiplier = time_since_last_step / etalon_framerate;
+        if (step_multiplier > max_step_multiplier) {
+            step_multiplier = max_step_multiplier;
+        }
+        fps = 1/time_since_last_step;
     }
 
     static public void register_first_step_as_done() {
@@ -48,5 +54,9 @@ public enum Fps_counter {
 
     public static long getLast_physics_step_moment() {
         return last_physics_step_moment;
+    }
+
+    public static float getCurrent_fps() {
+        return fps;
     }
 }

@@ -20,7 +20,7 @@ public class Moving_vector extends Point {
         return result;
     }
 
-    public Moving_vector plus(Point in_point) {
+    public Moving_vector new_plus(Point in_point) {
         Moving_vector result = new Moving_vector(
                 in_point.x + this.x,
                 in_point.y + this.y,
@@ -28,6 +28,12 @@ public class Moving_vector extends Point {
         );
         return result;
     }
+    public Moving_vector new_plus(float x, float y) {
+        this.x += x;
+        this.y += y;
+        return this;
+    }
+
     public Moving_vector multiply(float arg) {
         Moving_vector result = new Moving_vector(
                 this.x * arg,
@@ -35,6 +41,11 @@ public class Moving_vector extends Point {
                 0
         );
         return result;
+    }
+    public Moving_vector multiply(float x, float y) {
+        this.x *= x;
+        this.y *= y;
+        return this;
     }
 
     public void brake_x_speed(float acceleration_left, float acceleration_right) {

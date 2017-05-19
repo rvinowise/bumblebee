@@ -23,8 +23,12 @@ public class Point {
         y = in_y;
         z = in_z;
     }
+    public Point(Point other) {
+        x = other.x;
+        y = other.y;
+    }
 
-    public Point plus(Point in_point) {
+    public Point new_plus(Point in_point) {
         Point res_point = new Point(
                 in_point.x + this.x,
                 in_point.y + this.y,
@@ -32,6 +36,17 @@ public class Point {
                 );
         return res_point;
     }
+    public Point plus(float x, float y) {
+        this.x += x;
+        this.y += y;
+        return this;
+    }
+    public Point plus(Point in_point) {
+        this.x += in_point.x;
+        this.y += in_point.y;
+        return this;
+    }
+
     public Point minus(Point in_point) {
         Point res_point = new Point(
                 this.x - in_point.x,
@@ -105,6 +120,11 @@ public class Point {
                 0
         );
         return res_point;
+    }
+    public Point multiply(float x, float y) {
+        this.x *= x;
+        this.y *= y;
+        return this;
     }
 
     public Point reverse() {
