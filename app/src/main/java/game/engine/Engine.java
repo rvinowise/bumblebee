@@ -4,6 +4,8 @@ package game.engine;
 import android.content.Context;
 //import android.opengl.GLES32;
 import static android.opengl.GLES20.*;
+
+import android.graphics.Color;
 import android.opengl.GLSurfaceView;
 //import android.opengl.Matrix;
 import android.os.Handler;
@@ -50,6 +52,17 @@ public abstract class Engine
 
     private long last_cleaning_outside;
     private float time_before_cleaning_outside = 1f;
+    private boolean epilog;
+
+    public boolean isEpilog() {
+        return epilog;
+    }
+    public void start_epilog() {
+        epilog = true;
+        final int epilog_score_color = Color.argb(0xDD, 0xFF, 0x33, 0x00);
+        Color.rgb(0xFF, 0x99, 0x55);
+        score.setColor(epilog_score_color);
+    }
 
     public interface System_listener {
         void return_score_to_start_screen();
@@ -237,11 +250,23 @@ public abstract class Engine
         glClear(GL_COLOR_BUFFER_BIT);
         prepare_to_draw_sprites();
 
+        if (isEpilog()) {
+            draw_epilog();
+        } else {
+            draw_game_objects();
+        }
+    }
+    private void draw_game_objects() {
         draw_animated_units(backgrownd_animations);
         score.draw(shader_program);
         draw_animated_units(foregrownd_animations);
-
     }
+    private void draw_epilog() {
+        draw_animated_units(backgrownd_animations);
+        draw_animated_units(foregrownd_animations);
+        score.draw(shader_program);
+    }
+
     private void draw_animated_units(Collection<Animation> animations) {
         for (Animation animation : animations) {
             animation.prepare_to_draw_instances(shader_program);
@@ -350,7 +375,7 @@ public abstract class Engine
             final float diff_x = in_physical.getPosition().getX() - physical.getPosition().getX();
             final float diff_y = in_physical.getPosition().getY() - physical.getPosition().getY();
             if (
-                    (Math.abs(diff_x) <= collision_distance)||
+                    (Math.abs(diff_x) <= collision_distance)&&
                     (Math.abs(diff_y) <= collision_distance)
                     )
             {

@@ -42,10 +42,12 @@ public class Score {
         canvas = new Canvas(bitmap);
         textPaint = new Paint();
 
-        //textPaint.setTextSize(128);
-        textPaint.setTextSize(20);
+        textPaint.setTextSize(128);
+        //textPaint.setTextSize(20);
         textPaint.setAntiAlias(true);
-
+        textPaint.setColor(Color.argb(0xAA, 0x50, 0x50, 0x50));
+        textPaint.setTextAlign(Paint.Align.CENTER);
+        textPaint.setTextScaleX(0.6f);
     }
 
     public void init_opengl() {
@@ -62,10 +64,6 @@ public class Score {
 
         canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 
-        //textPaint.setARGB(0xAA, 0x50, 0x50, 0x50);
-        textPaint.setARGB(0xFF, 0x00, 0x00, 0x00);
-        textPaint.setTextAlign(Paint.Align.CENTER);
-        textPaint.setTextScaleX(0.6f);
         canvas.drawText(text, bitmap.getWidth()/2,bitmap.getHeight()-20, textPaint); //bitmap.getWidth()/2
         GLUtils.texImage2D(GL_TEXTURE_2D, 0, bitmap, 0);
 
@@ -88,9 +86,14 @@ public class Score {
 
     public void add(int value) {
         this.value += value;
-        //prepare_text(String.valueOf(this.value));
-        prepare_text(String.valueOf(Fps_counter.getCurrent_fps()));
-        Log.d("FPS",String.valueOf(Fps_counter.getCurrent_fps()));
+        prepare_text(String.valueOf(this.value));
+        //prepare_text(String.valueOf(Fps_counter.getCurrent_fps()));
+        //Log.d("FPS",String.valueOf(Fps_counter.getCurrent_fps()));
+    }
+
+    public void setColor(int color) {
+        textPaint.setColor(color);
+        this.prepare_text(String.valueOf(get_current()));
     }
 
 }

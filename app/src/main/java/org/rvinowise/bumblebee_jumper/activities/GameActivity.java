@@ -28,7 +28,7 @@ public class GameActivity extends Activity
     private boolean renderer_set = false;
 
     private BumblebeeEngine engine;
-    private Ads ads;
+    //private Ads ads;
 
     protected Handler handler_menu = new Handler();
 

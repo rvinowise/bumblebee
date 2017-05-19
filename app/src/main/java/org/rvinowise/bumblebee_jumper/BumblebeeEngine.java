@@ -222,7 +222,7 @@ public class BumblebeeEngine extends Engine
         start_epilog_before_returning_to_menu();
     }
     private void start_epilog_before_returning_to_menu() {
-
+        super.start_epilog();
         Timer timer_to_menu = new Timer();
         TimerTask start_menu = new TimerTask() {
             @Override

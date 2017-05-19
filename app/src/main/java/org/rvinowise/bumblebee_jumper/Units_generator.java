@@ -135,7 +135,8 @@ class Units_generator {
         Collection<Animated> collided = engine.getCollided_rect(animated);
         if (!collided.isEmpty()) {
                 animated.getPosition().plus(
-                        new Point(animated.getRadius()+Strawberry.get_max_radius(), 0));
+                        animated.getRadius()+Strawberry.get_max_radius(),
+                        0);
         }
         last_animated = animated;
     }

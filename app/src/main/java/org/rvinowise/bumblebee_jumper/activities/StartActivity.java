@@ -31,6 +31,8 @@ import org.rvinowise.bumblebee_jumper.BuildConfig;
 import org.rvinowise.bumblebee_jumper.BumblebeeEngine;
 import org.rvinowise.bumblebee_jumper.R;
 
+import game.engine.ads.Ads;
+
 import static com.google.android.gms.games.GamesActivityResultCodes.RESULT_SIGN_IN_FAILED;
 
 
@@ -66,6 +68,9 @@ implements GoogleApiClient.ConnectionCallbacks,
     }
     private Special_launch special_launch;
 
+    private Ads ads;
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,6 +83,9 @@ implements GoogleApiClient.ConnectionCallbacks,
                 .build();
 
         init_layout();
+
+        ads = new Ads(this);
+        ads.request_interstitial();
     }
 
     private void init_layout() {
@@ -242,13 +250,20 @@ implements GoogleApiClient.ConnectionCallbacks,
     public void onConnected(@Nullable Bundle bundle) {
         draw_connected_interface();
         syncronize_score_with_cloud();
+        can_show_ads();
+    }
+
+    private void can_show_ads() {
+        if (last_score >= 1) {
+            ads.can_show_interstitial();
+        }
     }
 
     private void syncronize_score_with_cloud() {
         if (last_score > 0) {
             if (is_signed_in()) {
                 Games.Leaderboards.submitScore(
-                        googleApiClient, getString(R.string.leaderboard), last_score);
+                    googleApiClient, getString(R.string.leaderboard), last_score);
             }
         }
     }
@@ -284,14 +299,23 @@ implements GoogleApiClient.ConnectionCallbacks,
                     if (last_score > 0) {
                         lab_score.setVisibility(View.VISIBLE);
                         lab_score.setText(String.valueOf(last_score));
+
                     } else {
                         lab_score.setVisibility(View.GONE);
                     }
+                    update_interface();
                     // сохранить очки в облаке можно только после Коннекшена Гугл-айпи, а это НЕ сразу после возврата
                     // результата Активити игры
             }
         } catch (RuntimeException e) {
             last_score = 0;
+        }
+    }
+    private void update_interface() {
+        if (is_signed_in()) {
+            draw_connected_interface();
+        } else {
+            draw_disconnected_interface();
         }
     }
 

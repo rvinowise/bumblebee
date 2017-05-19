@@ -31,8 +31,8 @@ public class Ads extends AdListener implements RewardedVideoAdListener {
                 context.getApplicationContext(), context.getString(R.string.app_admob_id));
 
         interstitialAd = new InterstitialAd(context);
-        interstitialAd.setAdUnitId(context.getString(R.string.interstitial_ad_test));
-        //interstitialAd.setAdUnitId(context.getString(R.string.bumblebee_interstitial_ad_1));
+        //interstitialAd.setAdUnitId(context.getString(R.string.interstitial_ad_test));
+        interstitialAd.setAdUnitId(context.getString(R.string.bumblebee_interstitial_ad_1));
         interstitialAd.setAdListener(this);
 
         rewardedAd = MobileAds.getRewardedVideoAdInstance(context);
