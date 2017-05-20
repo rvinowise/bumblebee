@@ -265,7 +265,8 @@ public class BumblebeeEngine extends Engine
         Sprite_loader sprite_loader = new Sprite_loader();
 
         sprite_loader.start_background_registration();
-        sprite_loader.add(new Sprite_for_loading(R.drawable.grass, new Rectangle (512,512), 1));
+        //sprite_loader.add(new Sprite_for_loading(R.drawable.grass, new Rectangle (512,512), 1));
+        sprite_loader.add(new Sprite_for_loading(R.drawable.grass_no_bottom, new Rectangle (512,512), 1));
 
         sprite_loader.start_foreground_registration();
         sprite_loader.add(new Sprite_for_loading(R.drawable.strawberry_stalk, new Rectangle(512,2048), 1, 4.26f, new Point(175,160)));

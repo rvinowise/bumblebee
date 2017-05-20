@@ -8,8 +8,8 @@ android {
         applicationId "org.rvinowise.bumblebee_jumper"
         minSdkVersion 18
         targetSdkVersion 18
-        versionCode 1
-        versionName "1.0"
+        versionCode 4
+        versionName "1.02"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }
@@ -32,11 +32,11 @@ dependencies {
 
     compile 'com.android.support:multidex:1.0.1'
 
-    compile 'com.google.firebase:firebase-core:10.2.4'
-    compile 'com.google.firebase:firebase-ads:10.2.4'
+    compile 'com.google.firebase:firebase-core:10.2.6'
+    compile 'com.google.firebase:firebase-ads:10.2.6'
 
-    compile 'com.google.android.gms:play-services-games:10.2.4'
-    compile 'com.google.android.gms:play-services-auth:10.2.4'
+    compile 'com.google.android.gms:play-services-games:10.2.6'
+    compile 'com.google.android.gms:play-services-auth:10.2.6'
 
     testCompile 'junit:junit:4.12'
     compile 'junit:junit:4.12'

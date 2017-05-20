@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Bumblebee</string>
+    <string name="app_name">Bumblebee-Jumper</string>
 
     <!-- Ads -->
     <string name="app_admob_id">ca-app-pub-5352818398814409~1999466172</string>

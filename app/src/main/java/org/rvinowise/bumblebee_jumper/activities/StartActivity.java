@@ -20,15 +20,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.games.Game;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.Player;
 
 import org.rvinowise.bumblebee_jumper.BuildConfig;
-import org.rvinowise.bumblebee_jumper.BumblebeeEngine;
 import org.rvinowise.bumblebee_jumper.R;
 
 import game.engine.ads.Ads;
@@ -39,7 +35,8 @@ import static com.google.android.gms.games.GamesActivityResultCodes.RESULT_SIGN_
 public class StartActivity extends FragmentActivity
 implements GoogleApiClient.ConnectionCallbacks,
             GoogleApiClient.OnConnectionFailedListener,
-        View.OnClickListener
+        View.OnClickListener//,
+        //AdListener
 {
     GoogleApiClient googleApiClient;
     private boolean resolving_connection_failure = false;
@@ -82,10 +79,26 @@ implements GoogleApiClient.ConnectionCallbacks,
                 .addApi(Games.API).addScope(Games.SCOPE_GAMES)
                 .build();
 
+        if (savedInstanceState != null) {
+            restoreInstanceState(savedInstanceState);
+        }
         init_layout();
 
         ads = new Ads(this);
         ads.request_interstitial();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putInt("last_score", last_score);
+        savedInstanceState.putBoolean("player_wants_signing_in", player_wants_signing_in);
+
+        super.onSaveInstanceState(savedInstanceState);
+    }
+    public void restoreInstanceState(Bundle savedInstanceState) {
+        last_score = savedInstanceState.getInt("last_score");
+        player_wants_signing_in = savedInstanceState.getBoolean("player_wants_signing_in");
+        can_connect_to_cloud();
     }
 
     private void init_layout() {
@@ -100,14 +113,24 @@ implements GoogleApiClient.ConnectionCallbacks,
 
         lab_hello = (TextView) findViewById(R.id.lab_hello);
         lab_score = (TextView) findViewById(R.id.lab_score);
-        lab_score.setVisibility(View.GONE);
+        if(last_score ==0) {
+            lab_score.setVisibility(View.GONE);
+        } else {
+            lab_score.setText(String.valueOf(last_score));
+        }
         btn_sign_in = (Button) findViewById(R.id.btn_sign_in);
         btn_sign_in.setOnClickListener(this);
         btn_sign_out = (Button) findViewById(R.id.btn_sign_out);
         btn_show_leaderboard = (Button) findViewById(R.id.btn_show_leaderboard);
 
-
         draw_disconnected_interface();
+    }
+
+    private void can_connect_to_cloud() {
+        if (player_wants_signing_in) {
+            googleApiClient.connect();
+            Log.d("ACTT", "can_connect_to_cloud connect()");
+        }
     }
 
 
@@ -116,12 +139,24 @@ implements GoogleApiClient.ConnectionCallbacks,
         super.onStart();
     }
     @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d("ACTT", "onPause()");
+
+    }
+    @Override
     protected void onStop() {
         super.onStop();
-        Log.d(TAG, "onStop(): disconnecting");
-        if (googleApiClient.isConnected()) {
+        Log.d("ACTT", "onStop(): disconnecting");
+        if (is_signed_in()) {
+            submit_score();
             googleApiClient.disconnect();
         }
+    }
+    @Override
+    protected  void onResume() {
+        super.onResume();
+        can_connect_to_cloud();
     }
 
 
@@ -147,8 +182,9 @@ implements GoogleApiClient.ConnectionCallbacks,
 
     public void onSignOutButtonClicked(View v) {
         player_wants_signing_in = false;
-        Games.signOut(googleApiClient);
+
         if (googleApiClient.isConnected()) {
+            Games.signOut(googleApiClient);
             googleApiClient.disconnect();
             resolving_connection_failure = false;
             draw_disconnected_interface();
@@ -204,7 +240,6 @@ implements GoogleApiClient.ConnectionCallbacks,
 
         if (player_wants_signing_in || auto_signing_in) {
             auto_signing_in = false;
-            player_wants_signing_in = false;
             resolving_connection_failure = true;
             if (resolveConnectionFailure(googleApiClient, connectionResult)) {
                 //draw_connected_interface();
@@ -240,31 +275,40 @@ implements GoogleApiClient.ConnectionCallbacks,
     }
 
     public void on_btn_start_game_click(View v) {
-        boolean test = is_signed_in();
+        clear_score();
         Intent game_intent = new Intent(StartActivity.this, GameActivity.class);
         startActivityForResult(game_intent, GAME_REQUEST);
+    }
+
+    private void clear_score() {
+        last_score = 0;
     }
 
     /* callback of google play services (for leaderboard)  */
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         draw_connected_interface();
-        syncronize_score_with_cloud();
-        can_show_ads();
+        can_syncronize_score_with_cloud();
+
     }
 
     private void can_show_ads() {
-        if (last_score >= 1) {
+        final int min_score_for_ads = 10;
+        if (last_score >= min_score_for_ads) {
             ads.can_show_interstitial();
         }
     }
 
-    private void syncronize_score_with_cloud() {
-        if (last_score > 0) {
+    private void can_syncronize_score_with_cloud() {
             if (is_signed_in()) {
-                Games.Leaderboards.submitScore(
-                    googleApiClient, getString(R.string.leaderboard), last_score);
+                submit_score();
             }
+    }
+    private void submit_score() {
+        if (last_score > 0) {
+            Games.Leaderboards.submitScore(
+                    googleApiClient, getString(R.string.leaderboard), last_score);
+            Log.d("ACTT", "score suibmitted to cloud");
         }
     }
 
@@ -287,6 +331,7 @@ implements GoogleApiClient.ConnectionCallbacks,
             googleApiClient.connect();
         } else if (resultCode == RESULT_SIGN_IN_FAILED) {
             //info_dialog(this, getString(R.string.sign_in_problem)).show();
+            player_wants_signing_in = false;
             Toast.makeText(this, getString(R.string.sign_in_problem), Toast.LENGTH_SHORT).show();
         }
     }
@@ -303,6 +348,9 @@ implements GoogleApiClient.ConnectionCallbacks,
                     } else {
                         lab_score.setVisibility(View.GONE);
                     }
+                    //update_interface();
+                    can_show_ads();
+                    can_connect_to_cloud();
                     update_interface();
                     // сохранить очки в облаке можно только после Коннекшена Гугл-айпи, а это НЕ сразу после возврата
                     // результата Активити игры
@@ -365,4 +413,14 @@ implements GoogleApiClient.ConnectionCallbacks,
         }
         prefs.edit().putInt(PREF_VERSION_CODE_KEY, currentVersionCode).apply();
     }
+
+    //@Override
+    /*public void onAdClosed() {
+        Log.d("ADS","onAdClosed");
+    }
+    @Override
+    public void onAdLeftApplication() {
+        can_syncronize_score_with_cloud();
+    }*/
+
 }

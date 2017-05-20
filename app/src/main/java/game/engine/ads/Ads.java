@@ -1,6 +1,7 @@
 package game.engine.ads;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.ads.AdListener;
@@ -18,14 +19,14 @@ import org.rvinowise.bumblebee_jumper.R; //todo make it more universal
 public class Ads extends AdListener implements RewardedVideoAdListener {
 
     private final Context context;
-    private final FirebaseAnalytics firebaseAnalytics;
+    //private final FirebaseAnalytics firebaseAnalytics;
     private final InterstitialAd interstitialAd;
     private final RewardedVideoAd rewardedAd;
 
     public Ads(Context in_context) {
         context = in_context;
-        // Obtain the FirebaseAnalytics instance.
-        firebaseAnalytics = FirebaseAnalytics.getInstance(context);
+
+        //firebaseAnalytics = FirebaseAnalytics.getInstance(context);
 
         MobileAds.initialize(
                 context.getApplicationContext(), context.getString(R.string.app_admob_id));
@@ -84,6 +85,10 @@ public class Ads extends AdListener implements RewardedVideoAdListener {
         if (!interstitialAd.isLoading()) {
             request_interstitial();
         }
+    }
+    @Override
+    public void onAdLeftApplication() {
+        Log.d("ADS","onAdLeftApplication");
     }
 
 

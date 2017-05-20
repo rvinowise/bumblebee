@@ -19,7 +19,7 @@ class Units_generator {
     private final Random random;
     private Backgrownd water_flow = new Backgrownd();
     private Backgrownd grass_flow = new Backgrownd();
-    private int min_strawberries_qty = 40;
+    private int min_strawberries_qty = 6;
     private Animated last_animated;
     //private int min_strawberries_qty = 20;
 
@@ -35,7 +35,7 @@ class Units_generator {
         water_flow.init(engine.getViewport(), Animation.valueOf(R.drawable.water), new Point(1,1));
         water_flow.setAnimation_speed(0.6f);
 
-        grass_flow.init(engine.getViewport(), Animation.valueOf(R.drawable.grass), new Point(12,12));
+        grass_flow.init(engine.getViewport(), Animation.valueOf(R.drawable.grass_no_bottom), new Point(12,12));
 
         water_flow.create_first_instances(-4);
         grass_flow.create_first_instances(water_flow.getLast_instance().getPosition().getY()+
@@ -132,12 +132,19 @@ class Units_generator {
     }
 
     private void place_to_free_position(Animated animated) {
-        Collection<Animated> collided = engine.getCollided_rect(animated);
+        Collection<Animated> collided = engine.getCollided_rect(animated, Strawberry.class);
         if (!collided.isEmpty()) {
                 animated.getPosition().plus(
                         animated.getRadius()+Strawberry.get_max_radius(),
                         0);
         }
+        //test
+        //animated.setSize(new Point(0.5f,2f));
+        /*for(Animated a_collided: collided) {
+            a_collided.setSize(new Point(2f,0.5f));
+        }*/
+        //testend
+
         last_animated = animated;
     }
 

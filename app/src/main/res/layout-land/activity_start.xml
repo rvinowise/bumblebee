@@ -64,7 +64,14 @@
         >
 
 
-
+        <Button
+            android:id="@+id/btn_start_game"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_start_game"
+            style="@style/AppTheme.TextAppearance.Menu_button"
+            android:onClick="on_btn_start_game_click"
+            />
 
         <Button
             android:id="@+id/btn_sign_in"
@@ -74,15 +81,6 @@
             style="@style/AppTheme.TextAppearance.Menu_button"
             />
         <!--android:onClick="onSignInButtonClicked"-->
-
-        <Button
-            android:id="@+id/btn_start_game"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/btn_start_game"
-            style="@style/AppTheme.TextAppearance.Menu_button"
-            android:onClick="on_btn_start_game_click"
-            />
 
 
         <Button

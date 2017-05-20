@@ -31,7 +31,7 @@ public class Score {
     Paint textPaint;
     Canvas canvas;
     int value = 0;
-
+    final int normal_color = Color.argb(0x77, 0x45, 0x45, 0x55);
 
 
     public Score() {
@@ -45,7 +45,8 @@ public class Score {
         textPaint.setTextSize(128);
         //textPaint.setTextSize(20);
         textPaint.setAntiAlias(true);
-        textPaint.setColor(Color.argb(0xAA, 0x50, 0x50, 0x50));
+
+        textPaint.setColor(normal_color);
         textPaint.setTextAlign(Paint.Align.CENTER);
         textPaint.setTextScaleX(0.6f);
     }
@@ -88,7 +89,7 @@ public class Score {
         this.value += value;
         prepare_text(String.valueOf(this.value));
         //prepare_text(String.valueOf(Fps_counter.getCurrent_fps()));
-        //Log.d("FPS",String.valueOf(Fps_counter.getCurrent_fps()));
+        Log.d("FPS",String.valueOf(Fps_counter.getCurrent_fps()));
     }
 
     public void setColor(int color) {

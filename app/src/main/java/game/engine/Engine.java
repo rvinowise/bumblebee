@@ -384,6 +384,28 @@ public abstract class Engine
         }
         return result;
     }
+    public Collection<Animated> getCollided_rect(Animated in_physical, Class type) {
+        Vector<Animated> result = new Vector<Animated>();
+        for (Animated physical: animateds) {
+            if (
+                    (physical == in_physical) ||
+                            (!type.isInstance(physical))
+                    ) {
+                continue;
+            }
+            final float collision_distance = in_physical.getRadius() + physical.getRadius();
+            final float diff_x = in_physical.getPosition().getX() - physical.getPosition().getX();
+            final float diff_y = in_physical.getPosition().getY() - physical.getPosition().getY();
+            if (
+                    (Math.abs(diff_x) <= collision_distance)&&
+                            (Math.abs(diff_y) <= collision_distance)
+                    )
+            {
+                result.add(physical);
+            }
+        }
+        return result;
+    }
 
     public void setHandler_menu(Handler handler_menu) {
         this.handler_menu = handler_menu;
