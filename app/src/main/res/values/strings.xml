@@ -18,5 +18,7 @@
     <string name="authorized_yout_score_is">%1$s, your score is:</string>
     <string name="yout_score_is">Your score is:</string>
     <string name="sign_in_problem">problem with singing in</string>
+    <string name="lab_google_frame">google</string>
+    <string name="lab_facebook_frame">facebook</string>
 
 </resources>

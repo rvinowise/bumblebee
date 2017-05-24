@@ -5,58 +5,50 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
-import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.games.Games;
-import com.google.android.gms.games.Player;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 
 import org.rvinowise.bumblebee_jumper.BuildConfig;
 import org.rvinowise.bumblebee_jumper.R;
+import org.rvinowise.bumblebee_jumper.activities.fragments.Facebook_fragment;
+import org.rvinowise.bumblebee_jumper.activities.fragments.Google_fragment;
 
 import game.engine.ads.Ads;
 
-import static com.google.android.gms.games.GamesActivityResultCodes.RESULT_SIGN_IN_FAILED;
+//facebook
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
+import com.google.android.gms.games.Games;
 
 
 public class StartActivity extends FragmentActivity
-implements GoogleApiClient.ConnectionCallbacks,
-            GoogleApiClient.OnConnectionFailedListener,
-        View.OnClickListener//,
-        //AdListener
+implements Game_menu_activity
 {
-    GoogleApiClient googleApiClient;
-    private boolean resolving_connection_failure = false;
-    private boolean player_wants_signing_in = false;
-    private boolean auto_signing_in = true;
-    private static final int RC_UNUSED = 5001;
-    private static final int RC_SIGN_IN = 9001;
-    private static final int GAME_REQUEST = 0;
+    CallbackManager facebookCallbackManager;
+
     private int last_score = 0;
 
     final String TAG = "StartActivity";
+    private static final int GAME_REQUEST = 0;
 
     ImageView img_tutorial;
     TextView lab_hello;
     TextView lab_score;
-    Button btn_sign_in;
-    Button btn_sign_out;
-    Button btn_show_leaderboard;
-    LinearLayout lay_sign_in;
-    LinearLayout lay_sign_out;
+    LoginButton btn_login_facebook;
+
+    Google_fragment google_fragment;
+    Facebook_fragment facebook_fragment;
 
     enum Special_launch {
         first_launch,
@@ -72,12 +64,10 @@ implements GoogleApiClient.ConnectionCallbacks,
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         check_first_run();
-        // Create the Google API Client with access to Games
-        googleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(Games.API).addScope(Games.SCOPE_GAMES)
-                .build();
+
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        AppEventsLogger.activateApp(this);
+        facebookCallbackManager = CallbackManager.Factory.create();
 
         if (savedInstanceState != null) {
             restoreInstanceState(savedInstanceState);
@@ -91,14 +81,10 @@ implements GoogleApiClient.ConnectionCallbacks,
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putInt("last_score", last_score);
-        savedInstanceState.putBoolean("player_wants_signing_in", player_wants_signing_in);
-
         super.onSaveInstanceState(savedInstanceState);
     }
     public void restoreInstanceState(Bundle savedInstanceState) {
         last_score = savedInstanceState.getInt("last_score");
-        player_wants_signing_in = savedInstanceState.getBoolean("player_wants_signing_in");
-        can_connect_to_cloud();
     }
 
     private void init_layout() {
@@ -118,20 +104,39 @@ implements GoogleApiClient.ConnectionCallbacks,
         } else {
             lab_score.setText(String.valueOf(last_score));
         }
-        btn_sign_in = (Button) findViewById(R.id.btn_sign_in);
-        btn_sign_in.setOnClickListener(this);
-        btn_sign_out = (Button) findViewById(R.id.btn_sign_out);
-        btn_show_leaderboard = (Button) findViewById(R.id.btn_show_leaderboard);
+
+        google_fragment = (Google_fragment) getFragmentManager().findFragmentById(R.id.fragment_google);
+        facebook_fragment = (Facebook_fragment) getFragmentManager().findFragmentById(R.id.fragment_facebook);
+
+
+        btn_login_facebook = (LoginButton) findViewById(R.id.btn_login_facebook);
+        btn_login_facebook.setReadPermissions("email");
+        // Callback registration
+        btn_login_facebook.registerCallback(facebookCallbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                // App code
+                Log.d("FACEBOOK", "onSuccess "+loginResult);
+            }
+
+            @Override
+            public void onCancel() {
+                // App code
+                Log.d("FACEBOOK", "onCancel");
+            }
+
+            @Override
+            public void onError(FacebookException exception) {
+                // App code
+                Log.d("FACEBOOK", "onError "+exception);
+            }
+        });
+
+
 
         draw_disconnected_interface();
     }
 
-    private void can_connect_to_cloud() {
-        if (player_wants_signing_in) {
-            googleApiClient.connect();
-            Log.d("ACTT", "can_connect_to_cloud connect()");
-        }
-    }
 
 
     @Override
@@ -147,71 +152,18 @@ implements GoogleApiClient.ConnectionCallbacks,
     @Override
     protected void onStop() {
         super.onStop();
-        Log.d("ACTT", "onStop(): disconnecting");
-        if (is_signed_in()) {
-            submit_score();
-            googleApiClient.disconnect();
-        }
     }
     @Override
     protected  void onResume() {
         super.onResume();
-        can_connect_to_cloud();
     }
 
 
-    /* control of player account */
-    @Override
-    public void onClick(View v) {
-        switch ( v.getId() )
-        {
-            case R.id.btn_sign_in:
-                onSignInButtonClicked(v);
-                break;
-        }
-    }
-    public void onSignInButtonClicked(View v) {
-        player_wants_signing_in = true;
-        if (googleApiClient.isConnecting() || googleApiClient.isConnected()) {
-
-        } else {
-            googleApiClient.connect();
-            resolving_connection_failure = false;
-        }
-    }
-
-    public void onSignOutButtonClicked(View v) {
-        player_wants_signing_in = false;
-
-        if (googleApiClient.isConnected()) {
-            Games.signOut(googleApiClient);
-            googleApiClient.disconnect();
-            resolving_connection_failure = false;
-            draw_disconnected_interface();
-        }
-    }
-
-
-
-    private String get_player_name() {
-        Player player = Games.Players.getCurrentPlayer(googleApiClient);
-        if (player == null) {
-            Log.w(TAG, "Games.Players.getCurrentPlayer() is NULL!");
-            return getString(R.string.player_anonimous);
-        } else {
-            return player.getDisplayName();
-        }
-    }
 
     private void draw_connected_interface() {
         if (last_score > 0) {
-            lab_hello.setText(getString(R.string.authorized_yout_score_is, get_player_name()));
-        } else {
-            lab_hello.setText(getString(R.string.lab_hello, get_player_name()));
+            lab_hello.setText(getString(R.string.yout_score_is));
         }
-        btn_sign_in.setVisibility(View.GONE);
-        btn_sign_out.setVisibility(View.VISIBLE);
-        btn_show_leaderboard.setVisibility(View.VISIBLE);
     }
     private void draw_disconnected_interface() {
         if (last_score > 0) {
@@ -219,60 +171,10 @@ implements GoogleApiClient.ConnectionCallbacks,
         } else {
             lab_hello.setText(getString(R.string.sign_in_why));
         }
-        btn_sign_in.setVisibility(View.VISIBLE);
-        btn_sign_out.setVisibility(View.GONE);
-        btn_show_leaderboard.setVisibility(View.GONE);
     }
 
-    @Override
-    public void onConnectionSuspended(int i) {
-        Log.d(TAG, "onConnectionSuspended(): attempting to connect");
-        googleApiClient.connect();
-    }
 
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.d(TAG, "onConnectionFailed(): attempting to resolve");
-        if (resolving_connection_failure) {
-            Log.d(TAG, "onConnectionFailed(): already resolving");
-            return;
-        }
 
-        if (player_wants_signing_in || auto_signing_in) {
-            auto_signing_in = false;
-            resolving_connection_failure = true;
-            if (resolveConnectionFailure(googleApiClient, connectionResult)) {
-                //draw_connected_interface();
-                return;
-            } else {
-                resolving_connection_failure = false;
-            }
-        }
-
-        draw_disconnected_interface();
-    }
-
-    public boolean resolveConnectionFailure(
-            GoogleApiClient client, ConnectionResult result
-                                                   ) {
-
-        if (result.hasResolution()) {
-            try {
-                result.startResolutionForResult(this, RC_SIGN_IN);
-                return true;
-            } catch (IntentSender.SendIntentException e) {
-                // The intent was canceled before it was sent.  Return to the default
-                // state and attempt to connect to get an updated ConnectionResult.
-                client.connect();
-                return false;
-            }
-        } else {
-            // not resolvable... so show an error message
-            new AlertDialog.Builder(this).setMessage(getString(R.string.signing_other_error))
-                    .setNeutralButton(android.R.string.ok, null).create();
-            return false;
-        }
-    }
 
     public void on_btn_start_game_click(View v) {
         clear_score();
@@ -284,13 +186,6 @@ implements GoogleApiClient.ConnectionCallbacks,
         last_score = 0;
     }
 
-    /* callback of google play services (for leaderboard)  */
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        draw_connected_interface();
-        can_syncronize_score_with_cloud();
-
-    }
 
     private void can_show_ads() {
         final int min_score_for_ads = 10;
@@ -299,42 +194,20 @@ implements GoogleApiClient.ConnectionCallbacks,
         }
     }
 
-    private void can_syncronize_score_with_cloud() {
-            if (is_signed_in()) {
-                submit_score();
-            }
-    }
-    private void submit_score() {
-        if (last_score > 0) {
-            Games.Leaderboards.submitScore(
-                    googleApiClient, getString(R.string.leaderboard), last_score);
-            Log.d("ACTT", "score suibmitted to cloud");
-        }
-    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        boolean handled = facebookCallbackManager.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
-            case RC_SIGN_IN:
-                on_result_sign_in(resultCode);
-                break;
             case GAME_REQUEST:
                 fetch_result_score_from_game(resultCode, data);
                 img_tutorial.setVisibility(View.GONE);
                 break;
         }
     }
-    private void on_result_sign_in(int resultCode) {
-        resolving_connection_failure= false;
-        if (resultCode == RESULT_OK) {
-            googleApiClient.connect();
-        } else if (resultCode == RESULT_SIGN_IN_FAILED) {
-            //info_dialog(this, getString(R.string.sign_in_problem)).show();
-            player_wants_signing_in = false;
-            Toast.makeText(this, getString(R.string.sign_in_problem), Toast.LENGTH_SHORT).show();
-        }
-    }
+
     private void fetch_result_score_from_game(int resultCode, Intent data) {
         try {
             switch (resultCode) {
@@ -348,10 +221,8 @@ implements GoogleApiClient.ConnectionCallbacks,
                     } else {
                         lab_score.setVisibility(View.GONE);
                     }
-                    //update_interface();
                     can_show_ads();
-                    can_connect_to_cloud();
-                    update_interface();
+                    //can_connect_to_cloud();
                     // сохранить очки в облаке можно только после Коннекшена Гугл-айпи, а это НЕ сразу после возврата
                     // результата Активити игры
             }
@@ -359,28 +230,8 @@ implements GoogleApiClient.ConnectionCallbacks,
             last_score = 0;
         }
     }
-    private void update_interface() {
-        if (is_signed_in()) {
-            draw_connected_interface();
-        } else {
-            draw_disconnected_interface();
-        }
-    }
 
 
-    private boolean is_signed_in() {
-        return (googleApiClient != null && googleApiClient.isConnected());
-    }
-
-    public void onShowLeaderboardsRequested(View v) {
-        if (is_signed_in()) {
-            Intent leaderboardIntent =
-                    Games.Leaderboards.getLeaderboardIntent(googleApiClient, getString(R.string.leaderboard));
-            startActivityForResult(leaderboardIntent, RC_UNUSED);
-        } else {
-            //info_dialog(this, getString(R.string.leaderboards_not_available)).show();
-        }
-    }
     public static Dialog info_dialog(Activity activity, String text) {
         return (new AlertDialog.Builder(activity)).setMessage(text)
                 .setNeutralButton(android.R.string.ok, null).create();
@@ -422,5 +273,15 @@ implements GoogleApiClient.ConnectionCallbacks,
     public void onAdLeftApplication() {
         can_syncronize_score_with_cloud();
     }*/
+
+    @Override
+    public int getLast_score() {
+        return last_score;
+    }
+
+
+    public void onSignOutButtonClicked(View v) {
+        Log.d("lol","lol");
+    }
 
 }

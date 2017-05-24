@@ -42,6 +42,8 @@ dependencies {
     compile 'junit:junit:4.12'
     compile 'org.testng:testng:6.9.6'
 
+    // facebook
+    compile 'com.facebook.android:facebook-android-sdk:[4,5)'
 }
 
 
