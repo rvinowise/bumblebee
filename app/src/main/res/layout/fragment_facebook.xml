@@ -4,14 +4,6 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/lab_facebook_frame"
-        style="@style/TextAppearance.AppCompat.Large"
-        android:gravity="center"
-        />
-
     <com.facebook.login.widget.LoginButton
         android:id="@+id/btn_login_facebook"
         style="@style/AppTheme.TextAppearance.Menu_button"

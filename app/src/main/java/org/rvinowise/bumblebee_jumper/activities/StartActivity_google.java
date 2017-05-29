@@ -118,7 +118,7 @@ implements GoogleApiClient.ConnectionCallbacks,
         } else {
             lab_score.setText(String.valueOf(last_score));
         }
-        btn_sign_in = (Button) findViewById(R.id.btn_sign_in_google);
+        btn_sign_in = (Button) findViewById(R.id.btn_sign_in);
         btn_sign_in.setOnClickListener(this);
         btn_sign_out = (Button) findViewById(R.id.btn_sign_out);
         btn_show_leaderboard = (Button) findViewById(R.id.btn_show_leaderboard);
@@ -165,7 +165,7 @@ implements GoogleApiClient.ConnectionCallbacks,
     public void onClick(View v) {
         switch ( v.getId() )
         {
-            case R.id.btn_sign_in_google:
+            case R.id.btn_sign_in:
                 onSignInButtonClicked(v);
                 break;
         }

@@ -1,7 +1,9 @@
 package org.rvinowise.bumblebee_jumper.activities.fragments;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -15,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.Player;
@@ -38,11 +41,14 @@ implements GoogleApiClient.ConnectionCallbacks,
     private static final int RC_UNUSED = 5001;
     private static final int RC_SIGN_IN = 9001;
 
-    Button btn_sign_in;
-    Button btn_sign_out;
-    Button btn_show_leaderboard;
+    SignInButton btn_sign_in;
 
     Game_menu_activity game_menu_activity;
+    interface Google_social {
+        void onGoogle_connected();
+        void onGoogle_connection_failed();
+    }
+    Google_social google_social;
 
 
     Context context;
@@ -60,7 +66,7 @@ implements GoogleApiClient.ConnectionCallbacks,
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.google_fragment, container, false);
+        return inflater.inflate(R.layout.fragment_google, container, false);
     }
 
     @Override
@@ -86,9 +92,14 @@ implements GoogleApiClient.ConnectionCallbacks,
 
         try {
             game_menu_activity = (Game_menu_activity) context;
+            FragmentManager fragmentManager = ((Activity)context).getFragmentManager();
+            google_social = (Google_social)fragmentManager.findFragmentById(R.id.fragment_social);
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
                     + " must implement Game_menu_activity");
+        } catch (RuntimeException e) {
+            throw new RuntimeException(
+                    " unknown exception" + e.toString());
         }
     }
 
@@ -103,13 +114,8 @@ implements GoogleApiClient.ConnectionCallbacks,
     }
 
     private void init_layout() {
-
-        btn_sign_in = (Button) getView().findViewById(R.id.btn_sign_in_google);
+        btn_sign_in = (SignInButton) getView().findViewById(R.id.btn_sign_in);
         btn_sign_in.setOnClickListener(this);
-        btn_sign_out = (Button) getView().findViewById(R.id.btn_sign_out);
-        btn_show_leaderboard = (Button) getView().findViewById(R.id.btn_show_leaderboard);
-
-        draw_disconnected_interface();
     }
 
     private void can_connect_to_cloud() {
@@ -154,64 +160,24 @@ implements GoogleApiClient.ConnectionCallbacks,
     }
 
 
-    /* control of player account */
-    @Override
-    public void onClick(View v) {
-        switch ( v.getId() )
-        {
-            case R.id.btn_sign_in_google:
-                onSignInButtonClicked(v);
-                break;
-        }
+    public void sign_in() {
+        googleApiClient.connect();
     }
-    public void onSignInButtonClicked(View v) {
-        player_wants_signing_in = true;
-        if (googleApiClient.isConnecting() || googleApiClient.isConnected()) {
-
-        } else {
-            googleApiClient.connect();
-            resolving_connection_failure = false;
-        }
-    }
-
-    public void onSignOutButtonClicked(View v) {
+    public void sign_out() {
         player_wants_signing_in = false;
 
         Games.signOut(googleApiClient);
         if (googleApiClient.isConnected()) {
             googleApiClient.disconnect();
             resolving_connection_failure = false;
-            draw_disconnected_interface();
         }
     }
 
-
-
-    private String get_player_name() {
-        Player player = Games.Players.getCurrentPlayer(googleApiClient);
-        if (player == null) {
-            Log.w(TAG, "Games.Players.getCurrentPlayer() is NULL!");
-            return getString(R.string.player_anonimous);
-        } else {
-            return player.getDisplayName();
-        }
-    }
-
-    private void draw_connected_interface() {
-        btn_sign_in.setVisibility(View.GONE);
-        btn_sign_out.setVisibility(View.VISIBLE);
-        btn_show_leaderboard.setVisibility(View.VISIBLE);
-    }
-    private void draw_disconnected_interface() {
-        btn_sign_in.setVisibility(View.VISIBLE);
-        btn_sign_out.setVisibility(View.GONE);
-        btn_show_leaderboard.setVisibility(View.GONE);
-    }
 
     /* callback of google play services (for leaderboard)  */
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        draw_connected_interface();
+        google_social.onGoogle_connected();
         can_syncronize_score_with_cloud();
     }
     @Override
@@ -237,7 +203,7 @@ implements GoogleApiClient.ConnectionCallbacks,
             }
         }
 
-        draw_disconnected_interface();
+        google_social.onGoogle_connection_failed();
     }
 
     public boolean resolveConnectionFailure(
@@ -262,12 +228,43 @@ implements GoogleApiClient.ConnectionCallbacks,
         }
     }
 
-    public void onShowLeaderboardsRequested(View v) {
+
+    public String get_player_name() {
+        Player player = Games.Players.getCurrentPlayer(googleApiClient);
+        if (player == null) {
+            Log.w(TAG, "Games.Players.getCurrentPlayer() is NULL!");
+            return getString(R.string.player_anonimous);
+        } else {
+            return player.getDisplayName();
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch ( v.getId() )
+        {
+            case R.id.btn_sign_in:
+                onSignInButtonClicked(v);
+                break;
+        }
+    }
+
+    public void onSignInButtonClicked(View v) {
+        player_wants_signing_in = true;
+        if (googleApiClient.isConnecting() || googleApiClient.isConnected()) {
+
+        } else {
+            googleApiClient.connect();
+            resolving_connection_failure = false;
+        }
+    }
+
+    public void show_leaderboard() {
         if (is_signed_in()) {
-            //Intent leaderboardIntent =
-            //        Games.Leaderboards.getLeaderboardIntent(googleApiClient, getString(R.string.leaderboard));
             Intent leaderboardIntent =
-                    Games.Leaderboards.getAllLeaderboardsIntent(googleApiClient);
+                    Games.Leaderboards.getLeaderboardIntent(googleApiClient, getString(R.string.leaderboard));
+            /*Intent leaderboardIntent =
+                    Games.Leaderboards.getAllLeaderboardsIntent(googleApiClient);*/
             startActivityForResult(leaderboardIntent, RC_UNUSED);
         } else {
             //info_dialog(this, getString(R.string.leaderboards_not_available)).show();

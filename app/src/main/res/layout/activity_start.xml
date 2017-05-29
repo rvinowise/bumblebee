@@ -80,23 +80,16 @@
                 android:orientation="horizontal">
 
                 <fragment
-                    android:name="org.rvinowise.bumblebee_jumper.activities.fragments.Google_fragment"
-                    android:id="@+id/fragment_google"
-                    tools:layout="@layout/google_fragment"
+                    android:name="org.rvinowise.bumblebee_jumper.activities.fragments.Social_fragment"
+                    class="org.rvinowise.bumblebee_jumper.activities.fragments.Social_fragment"
+                    android:id="@+id/fragment_social"
+                    tools:layout="@layout/fragment_social"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     >
                 </fragment>
 
-                <fragment
-                    android:name="org.rvinowise.bumblebee_jumper.activities.fragments.Facebook_fragment"
-                    android:id="@+id/fragment_facebook"
-                    tools:layout="@layout/facebook_fragment"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1">
-                </fragment>
 
             </LinearLayout>
 

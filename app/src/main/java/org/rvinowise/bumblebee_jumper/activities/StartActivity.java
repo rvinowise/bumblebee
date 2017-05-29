@@ -23,6 +23,7 @@ import org.rvinowise.bumblebee_jumper.BuildConfig;
 import org.rvinowise.bumblebee_jumper.R;
 import org.rvinowise.bumblebee_jumper.activities.fragments.Facebook_fragment;
 import org.rvinowise.bumblebee_jumper.activities.fragments.Google_fragment;
+import org.rvinowise.bumblebee_jumper.activities.fragments.Social_fragment;
 
 import game.engine.ads.Ads;
 
@@ -47,8 +48,9 @@ implements Game_menu_activity
     TextView lab_score;
     LoginButton btn_login_facebook;
 
-    Google_fragment google_fragment;
-    Facebook_fragment facebook_fragment;
+    //Google_fragment google_fragment;
+    //Facebook_fragment facebook_fragment;
+    Social_fragment social_fragment;
 
     enum Special_launch {
         first_launch,
@@ -105,8 +107,9 @@ implements Game_menu_activity
             lab_score.setText(String.valueOf(last_score));
         }
 
-        google_fragment = (Google_fragment) getFragmentManager().findFragmentById(R.id.fragment_google);
-        facebook_fragment = (Facebook_fragment) getFragmentManager().findFragmentById(R.id.fragment_facebook);
+        //google_fragment = (Google_fragment) getFragmentManager().findFragmentById(R.id.fragment_google);
+        //facebook_fragment = (Facebook_fragment) getFragmentManager().findFragmentById(R.id.fragment_facebook);
+        social_fragment = (Social_fragment) getFragmentManager().findFragmentById(R.id.fragment_social);
 
 
         btn_login_facebook = (LoginButton) findViewById(R.id.btn_login_facebook);
@@ -279,9 +282,10 @@ implements Game_menu_activity
         return last_score;
     }
 
-
-    public void onSignOutButtonClicked(View v) {
-        Log.d("lol","lol");
+    @Override
+    public Social_fragment getSocial_fragment() {
+        return social_fragment;
     }
+
 
 }
