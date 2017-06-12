@@ -3,9 +3,9 @@ package org.rvinowise.bumblebee_jumper;
 
 import org.rvinowise.bumblebee_jumper.units.Bumblebee;
 
-import game.engine.Viewport;
-import game.engine.units.animation.Animated;
-import game.engine.utils.primitives.Rectangle;
+import org.rvinowise.game_engine.Viewport;
+import org.rvinowise.game_engine.units.animation.Animated;
+import org.rvinowise.game_engine.utils.primitives.Rectangle;
 
 
 public class BumblebeeViewport {

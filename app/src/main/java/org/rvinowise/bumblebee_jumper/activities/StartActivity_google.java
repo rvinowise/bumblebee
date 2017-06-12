@@ -27,7 +27,7 @@ import com.google.android.gms.games.Player;
 import org.rvinowise.bumblebee_jumper.BuildConfig;
 import org.rvinowise.bumblebee_jumper.R;
 
-import game.engine.ads.Ads;
+import org.rvinowise.game_engine.ads.Ads;
 
 import static com.google.android.gms.games.GamesActivityResultCodes.RESULT_SIGN_IN_FAILED;
 
@@ -84,7 +84,9 @@ implements GoogleApiClient.ConnectionCallbacks,
         }
         init_layout();
 
-        ads = new Ads(this);
+        ads = new Ads(this,
+                getString(R.string.app_admob_id),
+                getString(R.string.bumblebee_interstitial_ad_1));
         ads.request_interstitial();
     }
 

@@ -4,13 +4,13 @@ import org.rvinowise.bumblebee_jumper.R;
 
 import java.util.Random;
 
-import game.engine.Engine;
-import game.engine.opengl.matrices.Matrix;
-import game.engine.pos_functions.pos_functions;
-import game.engine.units.animation.Animated;
-import game.engine.units.animation.Animation;
-import game.engine.units.animation.Effect;
-import game.engine.utils.primitives.Point;
+import org.rvinowise.game_engine.Engine;
+import org.rvinowise.game_engine.opengl.matrices.Matrix;
+import org.rvinowise.game_engine.pos_functions.pos_functions;
+import org.rvinowise.game_engine.units.animation.Animated;
+import org.rvinowise.game_engine.units.animation.Animation;
+import org.rvinowise.game_engine.units.animation.Effect;
+import org.rvinowise.game_engine.utils.primitives.Point;
 
 
 public class Strawberry extends Animated {

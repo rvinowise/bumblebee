@@ -5,9 +5,9 @@ import android.util.Log;
 
 import org.rvinowise.bumblebee_jumper.R;
 import java.util.Vector;
-import game.engine.units.animation.Animated;
+import org.rvinowise.game_engine.units.animation.Animated;
 
-import game.engine.utils.primitives.Point;
+import org.rvinowise.game_engine.utils.primitives.Point;
 
 
 public class Bumblebee extends Animated {

@@ -2,7 +2,7 @@ package org.rvinowise.bumblebee_jumper;
 
 import org.junit.Test;
 
-import static game.engine.pos_functions.pos_functions.corner;
+import static org.rvinowise.game_engine.pos_functions.pos_functions.corner;
 import static org.junit.Assert.*;
 
 /**

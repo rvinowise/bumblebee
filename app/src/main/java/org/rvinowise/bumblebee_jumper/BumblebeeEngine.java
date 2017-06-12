@@ -11,16 +11,16 @@ import java.util.TimerTask;
 
 import javax.microedition.khronos.opengles.GL10;
 
-import game.engine.Engine;
-import game.engine.initialisation.Sprite_loader;
-import game.engine.pos_functions.pos_functions;
-import game.engine.units.animation.Animation;
-import game.engine.units.animation.Effect;
-import game.engine.units.animation.Sprite_for_loading;
-import game.engine.units.animation.Animated;
-import game.engine.utils.primitives.Point;
-import game.engine.utils.primitives.Rectangle;
-import game.engine.utils.primitives.Moving_vector;
+import org.rvinowise.game_engine.Engine;
+import org.rvinowise.game_engine.initialisation.Sprite_loader;
+import org.rvinowise.game_engine.pos_functions.pos_functions;
+import org.rvinowise.game_engine.units.animation.Animation;
+import org.rvinowise.game_engine.units.animation.Effect;
+import org.rvinowise.game_engine.units.animation.Sprite_for_loading;
+import org.rvinowise.game_engine.units.animation.Animated;
+import org.rvinowise.game_engine.utils.primitives.Point;
+import org.rvinowise.game_engine.utils.primitives.Rectangle;
+import org.rvinowise.game_engine.utils.primitives.Moving_vector;
 
 
 public class BumblebeeEngine extends Engine
@@ -56,8 +56,6 @@ public class BumblebeeEngine extends Engine
        на основе которых будут генерироваться новые объекты в процессе движения игры.
             При изменении важных характеристик (соотношение сторон монитора),
        эти контролирующие объекты изменятся/подстроятся      */
-
-    @Override
     public void init_scene() {
         bumblebee = new Bumblebee();
         init_viewport(bumblebee); //RV тут создается bumblebeeViewport который нужен при onSurfaceChanged
@@ -290,6 +288,7 @@ public class BumblebeeEngine extends Engine
         if (!scene_created) {
             init_scene();
             getBumblebeeViewport().setWatch_upto_bottom(0);
+            //scene_created = true; todo
         }
     }
 

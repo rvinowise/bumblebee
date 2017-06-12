@@ -13,8 +13,8 @@ import android.view.View;
 
 import org.rvinowise.bumblebee_jumper.BumblebeeEngine;
 
-import game.engine.Engine;
-import game.engine.ads.Ads;
+import org.rvinowise.game_engine.Engine;
+import org.rvinowise.game_engine.ads.Ads;
 
 
 public class GameActivity extends Activity

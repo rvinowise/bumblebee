@@ -9,9 +9,9 @@ import org.rvinowise.bumblebee_jumper.walls.Strawberry;
 import java.util.Collection;
 import java.util.Random;
 
-import game.engine.units.animation.Animated;
-import game.engine.units.animation.Animation;
-import game.engine.utils.primitives.Point;
+import org.rvinowise.game_engine.units.animation.Animated;
+import org.rvinowise.game_engine.units.animation.Animation;
+import org.rvinowise.game_engine.utils.primitives.Point;
 
 class Units_generator {
 

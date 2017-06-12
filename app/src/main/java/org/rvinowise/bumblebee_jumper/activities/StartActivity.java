@@ -25,7 +25,7 @@ import org.rvinowise.bumblebee_jumper.activities.fragments.Facebook_fragment;
 import org.rvinowise.bumblebee_jumper.activities.fragments.Google_fragment;
 import org.rvinowise.bumblebee_jumper.activities.fragments.Social_fragment;
 
-import game.engine.ads.Ads;
+import org.rvinowise.game_engine.ads.Ads;
 
 //facebook
 import com.facebook.FacebookSdk;
@@ -76,7 +76,9 @@ implements Game_menu_activity
         }
         init_layout();
 
-        ads = new Ads(this);
+        ads = new Ads(this,
+                getString(R.string.app_admob_id),
+                getString(R.string.bumblebee_interstitial_ad_1));
         ads.request_interstitial();
     }
 
