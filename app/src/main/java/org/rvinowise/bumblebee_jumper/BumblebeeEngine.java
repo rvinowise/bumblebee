@@ -111,8 +111,8 @@ public class BumblebeeEngine extends Engine
         generator.step();
     }
 
-    private void process_maybe_changing_viewport() {
 
+    private void process_maybe_changing_viewport() {
 
         final float water_y = generator.getWater_y();
         float distance_to_water = bumblebee.getPosition().getY() - water_y;
@@ -130,9 +130,6 @@ public class BumblebeeEngine extends Engine
 
     }
 
-    private void process_elementary_physics() {
-        super.step();
-    }
 
 
     private void process_player_physics() {
