@@ -193,7 +193,7 @@ implements Game_menu_activity
 
 
     private void can_show_ads() {
-        final int min_score_for_ads = 10;
+        final int min_score_for_ads = 3;
         if (last_score >= min_score_for_ads) {
             ads.can_show_interstitial();
         }

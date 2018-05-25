@@ -277,16 +277,12 @@ public class BumblebeeEngine extends Engine
         return sprite_loader;
     }
 
-    boolean scene_created = false;
     @Override
     public void onSurfaceChanged(GL10 glUnused, int width, int height) {
         super.getViewport().set_scale_of_shortest_side(7);
         super.onSurfaceChanged(glUnused, width, height);
-        if (!scene_created) {
-            init_scene();
-            getBumblebeeViewport().setWatch_upto_bottom(0);
-            //scene_created = true; todo
-        }
+        init_scene();
+        getBumblebeeViewport().setWatch_upto_bottom(0);
     }
 
 

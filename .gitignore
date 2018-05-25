@@ -5,8 +5,8 @@
 *.iml
 
 .DS_Store
-/local.properties
-/captures
+local.properties
+captures
 .externalNativeBuild
 gradlew
 gradlew.bat
