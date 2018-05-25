@@ -35,7 +35,7 @@ public class Backgrownd {
         animation_speed = speed;
     }
 
-    public  void create_first_instances(float in_y) {
+    public void create_first_instances(float in_y) {
         Point current_position = new Point(viewport.getRect().getLeft(), in_y);
         Point offset = new Point(getWidth(), 0);
         int qty_needed = (int)Math.ceil(viewport.getRect().getWidth() / getWidth());
